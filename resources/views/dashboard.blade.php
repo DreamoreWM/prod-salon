@@ -3,6 +3,28 @@
 
 <style>
 
+    .logo {
+        max-width: 200px;
+    }
+
+    .menu {
+        display: flex;
+        flex-direction: row;
+    }
+
+    @font-face {
+        font-family: 'YourFontName';
+        src: url('/font/BillionDreams_PERSONAL.ttf') format('truetype');
+    }
+
+    .slogan {
+        font-family: 'YourFontName';
+        font-size: 90px;
+        color: white;
+        text-align: center;
+        margin-top: 10px;
+    }
+
     .map-responsive iframe {
         left:0;
         top:0;
@@ -20,7 +42,6 @@
         text-transform: uppercase;
         font-size: 18px;
         letter-spacing: 2px;
-        border-radius: 40px;
         overflow: hidden;
         background: linear-gradient(90deg,#0162c8,#55e7fc);
     }
@@ -74,7 +95,7 @@
     .portfolio {
         justify-content: center;
         align-items: center;
-        background-image: url('/images/second-font.jpg');
+        background-color: #ff9a18;
         background-size: cover; /* Couvre toute la zone disponible sans redimensionner l'image */
         background-position: center;
         background-repeat: no-repeat; /* Empêche la répétition de l'image */
@@ -92,13 +113,11 @@
     .review {
         justify-content: center;
         align-items: center;
-        background-color: #9d9d9d;
     }
 
     .info {
         justify-content: center;
         align-items: center;
-        background-color: #a1a1a1;
     }
 
     .photo {
@@ -212,15 +231,57 @@
     .content {
         display: flex;
         flex-direction: column;
-        justify-content: center;
         align-items: center;
-        background-image: url('/images/background-home.webp');
+        background-image: url('/images/background-hair-shadow.jpeg');
         background-size: cover; /* Couvre toute la zone disponible sans redimensionner l'image */
         background-position: center;
         background-repeat: no-repeat; /* Empêche la répétition de l'image */ /* Définissez une hauteur fixe ou utilisez flexbox/grid pour définir la hauteur */
         margin: 0; /* Reset margin */
         padding: 0;
-        height: 105vh;
+        height: 100vh;
+    }
+
+    .menu-bar {
+        border-radius: 25px;
+        height: fit-content;
+        display: inline-flex;
+        background-color: rgba(0, 0, 0, 0.4);
+        -webkit-backdrop-filter: blur(10px);
+        backdrop-filter: blur(10px);
+        align-items: center;
+        padding: 0 50px;
+        margin: 50px 0 0 0;
+        font-size: x-large;
+    }
+    .menu-bar li {
+        list-style: none;
+        color: white;
+        font-family: sans-serif;
+        font-weight: bold;
+        padding: 12px 16px;
+        margin: 0 8px;
+        position: relative;
+        cursor: pointer;
+        white-space: nowrap;
+    }
+    .menu-bar li::before {
+        content: " ";
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        z-index: -1;
+        transition: 0.2s;
+        border-radius: 25px;
+    }
+    .menu-bar li:hover {
+        color: black;
+    }
+    .menu-bar li:hover::before {
+        background: linear-gradient(to bottom, #e8edec, #d2d1d3);
+        box-shadow: 0px 3px 20px 0px black;
+        transform: scale(1.2);
     }
 
 
@@ -240,11 +301,289 @@
     }
 </style>
 <style>
-    @media (max-width: 768px) {
+    @media (max-width: 900px) {
         .flex-container {
             flex-direction: column;
         }
+
+        .logo {
+            max-width: 100px;
+        }
+
+        .slogan {
+            font-size: 50px;
+        }
+
+        .icon-web {
+            padding-top: 200px;
+        }
     }
+</style>
+
+<style>
+    @import url(https://fonts.googleapis.com/css?family=Ek+Mukta:200);
+
+    .menu-responsive {
+        position: relative;
+        display: block;
+        width: 360px;
+        height: 567px;
+        margin: 10px auto 0;
+        box-shadow: 0 0 65px 15px rgba(0, 0, 0, 0.2);
+        overflow: hidden;
+        border-radius: 3px;
+        background: #F1F1F1;
+    }
+    .menu-responsive .header {
+        position: absolute;
+        display: block;
+        top: 0;
+        left: 0;
+        height: 50px;
+        width: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        overflow: hidden;
+        -webkit-transition: all 0.5s ease-out, background 1s ease-out;
+        transition: all 0.5s ease-out, background 1s ease-out;
+        -webkit-transition-delay: 0.2s;
+        transition-delay: 0.2s;
+        z-index: 1;
+    }
+    .menu-responsive .header .burger-container {
+        position: relative;
+        display: inline-block;
+        height: 50px;
+        width: 50px;
+        cursor: pointer;
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+        -webkit-transition: all 0.3s cubic-bezier(0.4, 0.01, 0.165, 0.99);
+        transition: all 0.3s cubic-bezier(0.4, 0.01, 0.165, 0.99);
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+    }
+    .menu-responsive .header .burger-container #burger {
+        width: 18px;
+        height: 8px;
+        position: relative;
+        display: block;
+        margin: -4px auto 0;
+        top: 50%;
+    }
+    .menu-responsive .header .burger-container #burger .bar {
+        width: 100%;
+        height: 1px;
+        display: block;
+        position: relative;
+        background: #FFF;
+        -webkit-transition: all 0.3s cubic-bezier(0.4, 0.01, 0.165, 0.99);
+        transition: all 0.3s cubic-bezier(0.4, 0.01, 0.165, 0.99);
+        -webkit-transition-delay: 0s;
+        transition-delay: 0s;
+    }
+    .menu-responsive .header .burger-container #burger .bar.topBar {
+        -webkit-transform: translateY(0px) rotate(0deg);
+        transform: translateY(0px) rotate(0deg);
+    }
+    .menu-responsive .header .burger-container #burger .bar.btmBar {
+        -webkit-transform: translateY(6px) rotate(0deg);
+        transform: translateY(6px) rotate(0deg);
+    }
+    .menu-responsive .header .icon {
+        display: inline-block;
+        position: absolute;
+        height: 100%;
+        line-height: 50px;
+        width: 50px;
+        height: 50px;
+        text-align: center;
+        color: #FFF;
+        font-size: 22px;
+        left: 50%;
+        -webkit-transform: translateX(-50%);
+        transform: translateX(-50%);
+    }
+    .menu-responsive .header .icon.icon-bag {
+        right: 0;
+        top: 0;
+        left: auto;
+        -webkit-transform: translateX(0px);
+        transform: translateX(0px);
+        -webkit-transition: -webkit-transform 0.5s cubic-bezier(0.4, 0.01, 0.165, 0.99);
+        transition: -webkit-transform 0.5s cubic-bezier(0.4, 0.01, 0.165, 0.99);
+        transition: transform 0.5s cubic-bezier(0.4, 0.01, 0.165, 0.99);
+        transition: transform 0.5s cubic-bezier(0.4, 0.01, 0.165, 0.99), -webkit-transform 0.5s cubic-bezier(0.4, 0.01, 0.165, 0.99);
+        -webkit-transition-delay: 0.65s;
+        transition-delay: 0.65s;
+    }
+    .menu-responsive .header ul.menu {
+        position: relative;
+        display: block;
+        padding: 0px 48px 0;
+        list-style: none;
+    }
+    .menu-responsive .header ul.menu li.menu-item {
+        border-bottom: 1px solid #333;
+        margin-top: 5px;
+        -webkit-transform: scale(1.15) translateY(-30px);
+        transform: scale(1.15) translateY(-30px);
+        opacity: 0;
+        -webkit-transition: opacity 0.6s cubic-bezier(0.4, 0.01, 0.165, 0.99), -webkit-transform 0.5s cubic-bezier(0.4, 0.01, 0.165, 0.99);
+        transition: opacity 0.6s cubic-bezier(0.4, 0.01, 0.165, 0.99), -webkit-transform 0.5s cubic-bezier(0.4, 0.01, 0.165, 0.99);
+        transition: transform 0.5s cubic-bezier(0.4, 0.01, 0.165, 0.99), opacity 0.6s cubic-bezier(0.4, 0.01, 0.165, 0.99);
+        transition: transform 0.5s cubic-bezier(0.4, 0.01, 0.165, 0.99), opacity 0.6s cubic-bezier(0.4, 0.01, 0.165, 0.99), -webkit-transform 0.5s cubic-bezier(0.4, 0.01, 0.165, 0.99);
+    }
+    .menu-responsive .header ul.menu li.menu-item:nth-child(1) {
+        -webkit-transition-delay: 0.49s;
+        transition-delay: 0.49s;
+    }
+    .menu-responsive .header ul.menu li.menu-item:nth-child(2) {
+        -webkit-transition-delay: 0.42s;
+        transition-delay: 0.42s;
+    }
+    .menu-responsive .header ul.menu li.menu-item:nth-child(3) {
+        -webkit-transition-delay: 0.35s;
+        transition-delay: 0.35s;
+    }
+    .menu-responsive .header ul.menu li.menu-item:nth-child(4) {
+        -webkit-transition-delay: 0.28s;
+        transition-delay: 0.28s;
+    }
+    .menu-responsive .header ul.menu li.menu-item:nth-child(5) {
+        -webkit-transition-delay: 0.21s;
+        transition-delay: 0.21s;
+    }
+    .menu-responsive .header ul.menu li.menu-item:nth-child(6) {
+        -webkit-transition-delay: 0.14s;
+        transition-delay: 0.14s;
+    }
+    .menu-responsive .header ul.menu li.menu-item:nth-child(7) {
+        -webkit-transition-delay: 0.07s;
+        transition-delay: 0.07s;
+    }
+    .menu-responsive .header ul.menu li.menu-item a {
+        display: block;
+        position: relative;
+        color: #FFF;
+        font-family: "Ek Mukta", sans-serif;
+        font-weight: 100;
+        text-decoration: none;
+        font-size: 22px;
+        line-height: 2.35;
+        font-weight: 200;
+        width: 100%;
+    }
+    .menu-responsive .header.menu-opened {
+        height: 100%;
+        background-color: #000;
+        -webkit-transition: all 0.3s ease-in, background 0.5s ease-in;
+        transition: all 0.3s ease-in, background 0.5s ease-in;
+        -webkit-transition-delay: 0.25s;
+        transition-delay: 0.25s;
+    }
+    .menu-responsive .header.menu-opened .burger-container {
+        -webkit-transform: rotate(90deg);
+        transform: rotate(90deg);
+    }
+    .menu-responsive .header.menu-opened .burger-container #burger .bar {
+        -webkit-transition: all 0.4s cubic-bezier(0.4, 0.01, 0.165, 0.99);
+        transition: all 0.4s cubic-bezier(0.4, 0.01, 0.165, 0.99);
+        -webkit-transition-delay: 0.2s;
+        transition-delay: 0.2s;
+    }
+    .menu-responsive .header.menu-opened .burger-container #burger .bar.topBar {
+        -webkit-transform: translateY(4px) rotate(45deg);
+        transform: translateY(4px) rotate(45deg);
+    }
+    .menu-responsive .header.menu-opened .burger-container #burger .bar.btmBar {
+        -webkit-transform: translateY(3px) rotate(-45deg);
+        transform: translateY(3px) rotate(-45deg);
+    }
+    .menu-responsive .header.menu-opened ul.menu li.menu-item {
+        -webkit-transform: scale(1) translateY(0px);
+        transform: scale(1) translateY(0px);
+        opacity: 1;
+    }
+    .menu-responsive .header.menu-opened ul.menu li.menu-item:nth-child(1) {
+        -webkit-transition-delay: 0.27s;
+        transition-delay: 0.27s;
+    }
+    .menu-responsive .header.menu-opened ul.menu li.menu-item:nth-child(2) {
+        -webkit-transition-delay: 0.34s;
+        transition-delay: 0.34s;
+    }
+    .menu-responsive .header.menu-opened ul.menu li.menu-item:nth-child(3) {
+        -webkit-transition-delay: 0.41s;
+        transition-delay: 0.41s;
+    }
+    .menu-responsive .header.menu-opened ul.menu li.menu-item:nth-child(4) {
+        -webkit-transition-delay: 0.48s;
+        transition-delay: 0.48s;
+    }
+    .menu-responsive .header.menu-opened ul.menu li.menu-item:nth-child(5) {
+        -webkit-transition-delay: 0.55s;
+        transition-delay: 0.55s;
+    }
+    .menu-responsive .header.menu-opened ul.menu li.menu-item:nth-child(6) {
+        -webkit-transition-delay: 0.62s;
+        transition-delay: 0.62s;
+    }
+    .menu-responsive .header.menu-opened ul.menu li.menu-item:nth-child(7) {
+        -webkit-transition-delay: 0.69s;
+        transition-delay: 0.69s;
+    }
+    .menu-responsive .header.menu-opened .icon.icon-bag {
+        -webkit-transform: translateX(75px);
+        transform: translateX(75px);
+        -webkit-transition-delay: 0.3s;
+        transition-delay: 0.3s;
+    }
+    .menu-responsive .content {
+        font-family: "Ek Mukta", sans-serif;
+        padding: 67px 4% 0;
+        text-align: justify;
+        overflow: scroll;
+        max-height: 100%;
+    }
+    .menu-responsive .content::-webkit-scrollbar {
+        display: none;
+    }
+    .menu-responsive .content h2 {
+        margin-bottom: 0px;
+        letter-spacing: 1px;
+    }
+    .menu-responsive .content img {
+        width: 95%;
+        position: relative;
+        display: block;
+        margin: 75px auto 75px;
+    }
+    .menu-responsive .content img:nth-of-type(2) {
+        margin: 75px auto;
+    }
+
+    .menu-responsive {
+        display: none;
+    }
+    @media (max-width: 960px) {
+        .menu-responsive {
+            display: block;
+            width: 100%;
+            margin: 0;
+            border-radius: 0px;
+        }
+        .menu-responsive .header {
+            position: fixed;
+        }
+
+        .menu {
+            display: none;
+        }
+    }
+
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
 <link
@@ -257,8 +596,43 @@
 
     <div id="loader" class="loader"></div>
 
+
+
     <div id="loader-content" class="loader-content">
         <div id="content" class="content">
+            <div class="menu-responsive">
+                <div class="header">
+                    <div class="burger-container">
+                        <div id="burger">
+                            <div class="bar topBar"></div>
+                            <div class="bar btmBar"></div>
+                        </div>
+                    </div>
+                    <h2 class="p-2 text-center" data-aos="fade-down" style="position:relative; margin:2px 70px 0px; color: white; float:right; font-size: 30px; font-family: 'YourFontName';">Salon de coiffure</h2>
+                    <div class="icon icon-apple"></div>
+                    <ul class="menu">
+                        <li class="menu-item"><a href="#">Accueil</a></li>
+                        <li class="menu-item"><a href="#">Services</a></li>
+                        <li class="menu-item"><a href="#">iPhone</a></li>
+                        <li class="menu-item"><a href="#">Portfolio</a></li>
+                        <li class="menu-item"><a href="#">À propos</a></li>
+                        <li class="menu-item"><a href="#">Contact</a></li>
+                    </ul>
+                    <div class="shop icon icon-bag"></div>
+                </div>
+            </div>
+            <div class="menu">
+                <div style="background: rgba(255, 255, 255, 0.8); margin-right: 4vmin; margin-bottom: 25px; margin-top: 5vmin; padding: 5px; border-radius: 50%; display: inline-flex; justify-content: center; align-items: center;">
+                    <img src="/images/logo.png" alt="Logo Salon de Coiffure" style="max-width: 60px;">
+                </div>
+                <div class="menu-bar">
+                    <li>Accueil</li>
+                    <li>Services</li>
+                    <li>Portfolio</li>
+                    <li>À propos</li>
+                    <li>Contact</li>
+                </div>
+            </div>
             <div class="py-6">
                 @if(session()->has('success'))
                     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 alert alert-success alert-dismissible fade show" role="alert">
@@ -277,34 +651,34 @@
                     <div style="display: flex; flex-direction: column; flex-wrap: wrap; justify-content: center; align-items: center;">
 
                         <!-- First set of hours -->
-                        <div style="font-size: 10px; font-weight: bold; color: white; min-width: 300px; padding: 10px; margin: 2vmin; border-radius: 15px; backdrop-filter: blur(60px); -webkit-backdrop-filter: blur(60px); box-shadow: 0px 4px 14px 0px rgba(0,0,0,0.1); border: 1px solid rgba(0,0,0,0.1); display: flex; justify-content: space-around; flex-wrap: wrap;">
+                        <div class="icon-web" style="font-size: 10px; font-weight: bold; color: white; min-width: 300px; padding: 10px; margin: 2vmin; border-radius: 15px; backdrop-filter: blur(60px); -webkit-backdrop-filter: blur(60px); box-shadow: 0px 4px 14px 0px rgba(0,0,0,0.1); border: 1px solid rgba(0,0,0,0.1); display: flex; justify-content: space-around; flex-wrap: wrap;">
 
                             <a href="https://www.tiktok.com" target="_blank">
-                                <img src="/images/tiktok.png" alt="TikTok" style="width: 30px; height: 30px;">
+                                <img src="/images/tiktok.png" alt="TikTok" style="width: 50px; height: 50px;">
                             </a>
 
                             <a href="https://www.snapchat.com" target="_blank">
-                                <img src="/images/snap.png" alt="Snapchat" style="width: 30px; height: 30px;">
+                                <img src="/images/snap.png" alt="Snapchat" style="width: 50px; height: 50px;">
                             </a>
 
                             <a href="https://www.facebook.com" target="_blank">
-                                <img src="/images/facebook.png" alt="Facebook" style="width: 30px; height: 30px;">
+                                <img src="/images/facebook.png" alt="Facebook" style="width: 50px; height: 50px;">
                             </a>
 
                             <a href="https://www.whatsapp.com" target="_blank">
-                                <img src="/images/whatsapp.png" alt="WhatsApp" style="width: 30px; height: 30px;">
+                                <img src="/images/whatsapp.png" alt="WhatsApp" style="width: 50px; height: 50px;">
                             </a>
 
                             <a href="https://www.youtube.com" target="_blank">
-                                <img src="/images/youtube.png" alt="YouTube" style="width: 30px; height: 30px;">
+                                <img src="/images/youtube.png" alt="YouTube" style="width: 50px; height: 50px;">
                             </a>
 
                             <a href="https://www.linkedin.com" target="_blank">
-                                <img src="/images/linkedin.png" alt="LinkedIn" style="width: 30px; height: 30px;">
+                                <img src="/images/linkedin.png" alt="LinkedIn" style="width: 50px; height: 50px;">
                             </a>
 
                             <a href="https://www.instagram.com" target="_blank">
-                                <img src="/images/instagram.png" alt="Instagram" style="width: 30px; height: 30px;">
+                                <img src="/images/instagram.png" alt="Instagram" style="width: 50px; height: 50px;">
                             </a>
 
                         </div>
@@ -313,8 +687,12 @@
                         <div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
                             <!-- Logo -->
                             <div style="background: rgba(255, 255, 255, 0.8); margin-top: 4vmin; padding: 15px; border-radius: 50%; display: inline-flex; justify-content: center; align-items: center;">
-                                <img src="/images/logo.png" alt="Logo Salon de Coiffure" style="max-width: 160px;">
+                                <img class="logo" src="/images/logo.png" alt="Logo Salon de Coiffure">
                             </div>
+
+                            <span class="slogan">
+                                Le salon de vos envies.
+                            </span>
 
                             @if(Auth::check())
                                 <a href="{{ route('appointments.create') }}" class="btn-booking">
@@ -326,43 +704,9 @@
                                     Prendre un rendez-vous
                                 </a>
                             @endif
+
+                            <span style="height: 250px"></span>
                         </div>
-
-
-                        <!-- Second set of hours -->
-                        <div style="font-size: 10px; font-weight: bold; color: white; min-width: 300px; padding: 10px; margin: 2vmin; border-radius: 15px; backdrop-filter: blur(60px); -webkit-backdrop-filter: blur(60px); box-shadow: 0px 4px 14px 0px rgba(0,0,0,0.1); border: 1px solid rgba(0,0,0,0.1);">
-
-
-                                <div style="display: flex; align-items: center; padding-bottom: 10px">
-                                    <div style="flex-grow: 1; border-bottom: 3px solid white;"></div>
-                                    <div style="padding: 0 7px; font-weight: bold; font-size: 15px">Nos horaires</div>
-                                    <div style="flex-grow: 1; border-bottom: 3px solid white;"></div>
-                                </div>
-
-                                <!-- Insert the dynamic opening hours here -->
-                                @foreach(['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] as $day)
-                                    <ul>
-                                        <div style="display: flex; justify-content: space-between;">
-                                            <span>{{ strtoupper($day) }}</span>
-                                            <span>
-                                @if(isset($openDays[$day]))
-                                                    {{ $openDays[$day]['open'] }} / {{ $openDays[$day]['break_start'] }} - {{ $openDays[$day]['break_end'] }} / {{ $openDays[$day]['close'] }}
-                                                @else
-                                                    Fermé
-                                                @endif
-                                    </span>
-                                        </div>
-                                    </ul>
-                                @endforeach
-
-                                <div style="display: flex; align-items: center; padding-top: 10px">
-                                    <div style="flex-grow: 1; border-bottom: 3px solid white;"></div>
-                                    <div style="padding: 0 7px; font-weight: bold; font-size: 15px">01 23 45 67 89</div>
-                                    <div style="flex-grow: 1; border-bottom: 3px solid white;"></div>
-                                </div>
-
-                            </div>
-
                     </div>
 
                 </div>
@@ -370,26 +714,12 @@
             </div>
         </div>
 
-        <div class="review" data-aos="fade-down">
-            <section>
-                <div class="mx-auto max-w-screen-lg px-4 lg:px-12">
-                    <div class="mb-4 d-flex justify-content-center">
-                        <div class="col pb-10">
-                            <div>
-                                @include('reviews.index', ['reviews' => $reviews])
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </div>
-
         <div class="prestation" data-aos="fade-down">
             <section>
                 <div class="mx-auto max-w-screen-lg px-4 lg:px-12">
                     <div class="mb-4 d-flex justify-content-center">
                         <div class="col pb-10">
-                            <h2 class=" pt-10 text-center font-bold" data-aos="fade-down" style="font-size: 25px">Les tarifs</h2>
+                            <h2 class=" p-10 text-center" data-aos="fade-down" style="font-size: 60px; font-family: 'YourFontName';">Nos tarifs</h2>
                             <div class="row">
                                 @foreach($categories as $category)
                                     <div class="col-md-6" data-aos="fade-up" data-aos-offset="100">
@@ -416,7 +746,23 @@
         </div>
 
         <div class="portfolio" data-aos="fade-right" data-aos-offset="150">
-            <h2 class=" p-10 text-center font-bold" data-aos="fade-down" style="font-size: 25px; color: white; backdrop-filter: blur(60px); -webkit-backdrop-filter: blur(60px) ">Nos réalisations</h2>
+
+            <h2 class=" p-10 text-center" data-aos="fade-down" style="font-size: 60px; color: white; font-family: 'YourFontName';">Les avis</h2>
+            <div class="review" data-aos="fade-down">
+                <section>
+                    <div class="mx-auto max-w-screen-lg px-4 lg:px-12">
+                        <div class="mb-4 d-flex justify-content-center">
+                            <div class="col pb-10">
+                                <div>
+                                    @include('reviews.index', ['reviews' => $reviews])
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <h2 class=" p-10 text-center" data-aos="fade-down" style="font-size: 60px;  color: white; font-family: 'YourFontName';">Nos réalisations</h2>
             <div class="container-fluid tm-container-content" >
                 <div class="row tm-gallery pt-5" style="justify-content: center !important">
                         <div class="swiper">
@@ -450,7 +796,7 @@
 
         <div class="info" data-aos="fade-down" data-aos-offset="250" style="padding-bottom: 30px">
             <section>
-                <h2 class=" pt-5 pb-5 text-center font-bold" data-aos="fade-down" style="font-size: 25px">Nos coordonnées</h2>
+                <h2 class=" p-10 text-center" data-aos="fade-down" style="font-size: 60px; font-family: 'YourFontName';">Nos coordonnées</h2>
                 <div class="mx-auto max-w-screen-lg px-4 lg:px-12">
                     <div class="mb-4">
                         <div class="col">
@@ -604,6 +950,17 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
     <script>
         AOS.init();
+    </script>
+
+    <script>
+        (function(){
+            var burger = document.querySelector('.burger-container'),
+                header = document.querySelector('.header');
+
+            burger.onclick = function() {
+                header.classList.toggle('menu-opened');
+            }
+        }());
     </script>
 
 
