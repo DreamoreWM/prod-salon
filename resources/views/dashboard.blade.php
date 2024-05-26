@@ -249,9 +249,8 @@
         -webkit-backdrop-filter: blur(10px);
         backdrop-filter: blur(10px);
         align-items: center;
-        padding: 0 50px;
         margin: 50px 0 0 0;
-        font-size: x-large;
+        font-size: large;
     }
     .menu-bar li {
         list-style: none;
@@ -568,7 +567,7 @@
     .menu-responsive {
         display: none;
     }
-    @media (max-width: 960px) {
+    @media (max-width: 1050px) {
         .menu-responsive {
             display: block;
             width: 100%;
@@ -611,12 +610,24 @@
                     <h2 class="p-2 text-center" data-aos="fade-down" style="position:relative; margin:2px 70px 0px; color: white; float:right; font-size: 30px; font-family: 'YourFontName';">Salon de coiffure</h2>
                     <div class="icon icon-apple"></div>
                     <ul class="menu">
-                        <li class="menu-item"><a href="#">Accueil</a></li>
-                        <li class="menu-item"><a href="#">Services</a></li>
-                        <li class="menu-item"><a href="#">iPhone</a></li>
-                        <li class="menu-item"><a href="#">Portfolio</a></li>
-                        <li class="menu-item"><a href="#">À propos</a></li>
-                        <li class="menu-item"><a href="#">Contact</a></li>
+                        <li class="menu-item"><a href="dashboard">Accueil</a></li>
+                        <li class="menu-item"><a href="login" >Connexion</a></li>
+                        @if(Auth::check())
+                            @if(Auth::user()->role == 'admin')
+                                <li class="menu-item"><a href="employees" >Coiffeurs</a></li>
+                                <li class="menu-item"><a href="prestations" >Prestations</a></li>
+                                <li class="menu-item"><a href="calendar" >Calendrier</a></li>
+                                <li class="menu-item"><a href="salon" >Paramétres</a></li>
+                                <li class="menu-item"><a href="absences" >Absences</a></li>
+                                <li class="menu-item"><a href="photos" >Photos</a></li>
+                                <form method="POST" action="logout">
+                                    @csrf
+                                    <li class="menu-item"><a href="logout"
+                                                             onclick="event.preventDefault();
+                                                this.closest('form').submit();" >Déconnexion</a></li>
+                                </form>
+                            @endif
+                        @endif
                     </ul>
                     <div class="shop icon icon-bag"></div>
                 </div>
@@ -626,11 +637,24 @@
                     <img src="/images/logo.png" alt="Logo Salon de Coiffure" style="max-width: 60px;">
                 </div>
                 <div class="menu-bar">
-                    <li>Accueil</li>
-                    <li>Services</li>
-                    <li>Portfolio</li>
-                    <li>À propos</li>
-                    <li>Contact</li>
+                    <li><a href="dashboard" >Accueil</a></li>
+                    <li><a href="login" >Connexion</a></li>
+                    @if(Auth::check())
+                        @if(Auth::user()->role == 'admin')
+                            <li><a href="employees" >Coiffeurs</a></li>
+                            <li><a href="prestations" >Prestations</a></li>
+                            <li><a href="calendar" >Calendrier</a></li>
+                            <li><a href="salon" >Paramétres</a></li>
+                            <li><a href="absences" >Absences</a></li>
+                            <li><a href="photos" >Photos</a></li>
+                            <form method="POST" action="logout">
+                                @csrf
+                                <li><a href="logout"
+                                       onclick="event.preventDefault();
+                                                this.closest('form').submit();" >Déconnexion</a></li>
+                            </form>
+                        @endif
+                    @endif
                 </div>
             </div>
             <div class="py-6">
