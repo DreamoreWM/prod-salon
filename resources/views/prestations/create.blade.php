@@ -8,5 +8,8 @@
 @endsection
 
 @section('content')
-    <livewire:prestations-management />
+
+    <div style="background-color: #ff9a18;">
+        <livewire:prestations-management />
+    </div>
 @endsection

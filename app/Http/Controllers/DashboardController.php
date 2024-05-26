@@ -21,9 +21,14 @@ class DashboardController extends Controller
         $isOpen = $this->isOpen();
         $categories = Category::with('prestations')->get();
         $reviews = Review::with('appointment.bookable')->with('photo')->get();
-        return view('dashboard', compact('categories', 'reviews', 'isOpen', 'facebookPageUrl', 'openDays', 'photos', 'address'));
+        $showNavigation = false;
+        return view('dashboard', compact('categories', 'reviews', 'isOpen', 'facebookPageUrl', 'openDays', 'photos', 'address', 'showNavigation'));
     }
 
+    public function showDashboard()
+    {
+        return view('dashboard', ['showNavigation' => false]);
+    }
     public function isOpen()
     {
         // 1. Retrieve the open_days JSON from the salon_settings table

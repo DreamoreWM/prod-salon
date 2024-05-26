@@ -6,8 +6,16 @@
     </h2>
 @endsection
 
+
 @section('content')
-    <div class="py-6">
+
+    <style>
+        .content {
+            background-color: #ff9a18;
+        }
+
+    </style>
+    <div class="content py-6">
         <livewire:employees-slots-table/>
     </div>
 @endsection

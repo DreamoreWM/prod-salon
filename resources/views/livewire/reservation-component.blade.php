@@ -188,13 +188,13 @@
                     <section class="mt-2">
                         <div class="mx-auto max-w-screen-lg px-4 lg:px-12">
                             @php
-                                $startOfMonth = \Carbon\Carbon::now()->startOfMonth();
+                                $startOfMonth = \Carbon\Carbon::now()->startOfWeek();
                                 $endOfMonth = \Carbon\Carbon::now()->endOfMonth();
                                 $currentWeekStart = $startOfMonth->copy();
                             @endphp
                             <swiper-container class="mySwiper" navigation="true">
                                 @php
-                                    $currentWeekStart = $startOfMonth->copy();
+                                    $currentWeekStart = \Carbon\Carbon::now()->startOfWeek();
                                     $oneMonthLater = $currentWeekStart->copy()->addMonth();
                                 @endphp
                                 @while($currentWeekStart->lt($oneMonthLater))
@@ -240,6 +240,77 @@
                     </div>
                 </div>
             @endif
+
+            @if(count($selectedPrestations) !== 0 && $selectedEmployee)
+                <div class="div-responsive">
+                    <div class="mx-auto max-w-screen-lg px-4 lg:px-12" style="font-size: 30px">
+                        <div class="inline-block">
+                            <h1><span style="color: dodgerblue">2.</span> Choix de la date</h1>
+                        </div>
+                    </div>
+                    <section class="mt-2">
+                        <div class="mx-auto max-w-screen-lg px-4 lg:px-12">
+                            @php
+                                $startOfMonth = \Carbon\Carbon::now()->startOfWeek();
+                                $endOfMonth = $startOfMonth->copy()->addMonth();
+                                $currentWeekStart = $startOfMonth->copy();
+                                $oneMonthLater = $currentWeekStart->copy()->addMonth();
+                            @endphp
+                            @while($currentWeekStart->lt($oneMonthLater))
+                                @php
+                                    $currentWeekEnd = $currentWeekStart->copy()->addDays(6);
+                                @endphp
+                                <div class="week-container mb-4 d-flex align-items-center justify-center justify-content-center bg-white rounded-lg shadow" style="min-height: 50vh; overflow-x: auto;">
+                                    <div class="col flex-nowrap">
+                                        @php $weekDayIndex = 0; @endphp
+                                        @while($currentWeekStart->lte($currentWeekEnd))
+                                            @php
+                                                $formattedDay = $currentWeekStart->format('Y-m-d');
+                                                $accordionId = 'dateAccordion' . $weekDayIndex;
+                                                $headingId = 'flush-heading' . $weekDayIndex;
+                                                $collapseId = 'flush-collapse' . $weekDayIndex;
+                                                $hasValidSlots = collect($availableSlots)->firstWhere('date', $formattedDay) !== null;
+                                            @endphp
+                                            <div class="accordion accordion-flush" id="{{ $accordionId }}">
+                                                <div class="accordion-item">
+                                                    <h2 class="accordion-header" id="{{ $headingId }}">
+                                                        <button class="accordion-button {{ $hasValidSlots ? '' : 'collapsed' }}" type="button" data-bs-toggle="collapse" data-bs-target="#{{ $collapseId }}" aria-expanded="{{ $hasValidSlots ? 'true' : 'false' }}" style="background-color: transparent !important">
+                                                            <div class="align-items-center justify-content-center">
+                                                                <h5>{{ $currentWeekStart->format('l') }}</h5>
+                                                                <h5 style="color: gray; font-weight: bold">{{ $currentWeekStart->format('d M') }}</h5>
+                                                            </div>
+                                                        </button>
+                                                    </h2>
+                                                    <div id="{{ $collapseId }}" class="accordion-collapse collapse {{ $hasValidSlots ? 'show' : '' }}" aria-labelledby="{{ $headingId }}" data-bs-parent="#{{ $accordionId }}">
+                                                        <div class="flex-wrap d-flex accordion-body">
+                                                            @foreach($availableSlots as $slot)
+                                                                @if($slot['date'] == $formattedDay)
+                                                                    <div>
+                                                            <span wire:click="confirmReservation('{{ $slot['date'] }}', '{{ $slot['start'] }}')" class="badge bg-gray-200 mb-2" style="font-weight: normal; color: black; font-size:14px; padding: 13px 40px; border-radius: 10px;">
+                                                                {{ $slot['start'] }}
+                                                            </span>
+                                                                    </div>
+                                                                @endif
+                                                            @endforeach
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            @php
+                                                $currentWeekStart->addDay();
+                                                $weekDayIndex++;
+                                            @endphp
+                                        @endwhile
+                                    </div>
+                                </div>
+                        @php
+                            $currentWeekStart = $currentWeekEnd->copy()->addDay();
+                        @endphp
+                        @endwhile
+                    </section>
+                </div>
+        </div>
+        @endif
         </div>
     </div>
 
