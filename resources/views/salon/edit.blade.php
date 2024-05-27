@@ -85,6 +85,9 @@
 
                                     <div class="mb-3">
                                         <label class="form-label"><i class="fas fa-image"></i> Image de fond</label>
+                                        <button type="button" id="uploadBgButton" class="btn btn-primary">Ajouter une image</button>
+                                        <img id="previewbg" style="display: none;">
+                                        <input type="file" id="bgUpload" name="bg_upload" style="display: none;">
                                         <div class="image-selector" id="image-selector">
                                             @foreach(File::files(public_path('background')) as $file)
                                                 @php
@@ -168,6 +171,26 @@
                 reader.readAsDataURL(file);
             } else {
                 document.getElementById('preview').style.display = 'none';
+            }
+        });
+
+        document.getElementById('uploadBgButton').addEventListener('click', function() {
+            document.getElementById('bgUpload').click();
+        });
+
+        document.getElementById('bgUpload').addEventListener('change', function() {
+            var file = this.files[0];
+            var reader = new FileReader();
+
+            reader.onloadend = function() {
+                document.getElementById('previewbg').src = reader.result;
+                document.getElementById('previewbg').style.display = 'block';
+            }
+
+            if (file) {
+                reader.readAsDataURL(file);
+            } else {
+                document.getElementById('previewbg').style.display = 'none';
             }
         });
 

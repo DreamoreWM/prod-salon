@@ -22,7 +22,8 @@ class SalonController extends Controller
     public function update(Request $request)
     {
         $request->validate([
-            'logo_upload' => 'nullable|image|mimes:jpg,png,jpeg,gif,svg|max:2048',
+            'logo_upload' => 'nullable|image|mimes:jpg,png,jpeg,gif,svg|max:52048',
+            'bg_upload' => 'nullable|image|mimes:jpg,png,jpeg,gif,svg|max:52048',
         ]);
 
         $setting = SalonSetting::firstOrNew([]);
@@ -34,7 +35,14 @@ class SalonController extends Controller
             $setting->logo = $filename;
         }
 
-        $data = $request->except('logo_upload'); // Get all the other data
+        if ($request->hasFile('bg_upload')) {
+            $background = $request->file('bg_upload');
+            $filename = $background->getClientOriginalName();
+            $background->move(public_path('background'), $filename);
+            $setting->background_image = $filename;
+        }
+
+        $data = $request->except('logo_upload','bg_upload'); // Get all the other data
         $data['open_days'] = json_encode($data['open_days']);
 
         $setting->fill($data)->save();
