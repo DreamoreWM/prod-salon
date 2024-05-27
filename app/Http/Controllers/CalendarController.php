@@ -22,6 +22,7 @@ class CalendarController extends Controller
     public $categories;
     public function index()
     {
+        $background_color = SalonSetting::first()->background_color;
         $this->categories = Category::all();
         $appointments = Appointment::all();
         $employees = Employee::all();
@@ -49,6 +50,7 @@ class CalendarController extends Controller
             'slotDurationInMinutes' => $slotDurationInMinutes,
             'slotDurationInSeconds' => $slotDurationInSec,
             'categories' => $this->categories,
+            'background_color' => $background_color,
         ]);
     }
 

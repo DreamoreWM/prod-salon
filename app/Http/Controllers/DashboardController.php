@@ -22,7 +22,10 @@ class DashboardController extends Controller
         $categories = Category::with('prestations')->get();
         $reviews = Review::with('appointment.bookable')->with('photo')->get();
         $showNavigation = false;
-        return view('dashboard', compact('categories', 'reviews', 'isOpen', 'facebookPageUrl', 'openDays', 'photos', 'address', 'showNavigation'));
+        $backgroundImage = SalonSetting::first()->background_image;
+        $slogan = SalonSetting::first()->slogan;
+        $background_color = SalonSetting::first()->background_color;
+        return view('dashboard', compact('categories', 'reviews', 'isOpen', 'facebookPageUrl', 'openDays', 'photos', 'address', 'showNavigation', 'backgroundImage', 'background_color', 'slogan'));
     }
 
     public function showDashboard()

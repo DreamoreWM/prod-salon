@@ -9,7 +9,7 @@
 
 @section('content')
 
-    <div style="background-color: #ff9a18;">
+    <div style="background-color: {{ $background_color }}; min-height: 100vh; padding: 20px">
         <livewire:prestations-management />
     </div>
 @endsection

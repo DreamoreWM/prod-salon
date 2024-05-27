@@ -13,6 +13,17 @@
     }
 
     @font-face {
+        font-family: 'Denver-Broncos-Custom';
+        src:url('/font/Denver-Broncos-Custom.ttf.woff') format('woff'),
+        url('/font/Denver-Broncos-Custom.ttf.svg#Denver-Broncos-Custom') format('svg'),
+        url('/font/Denver-Broncos-Custom.ttf.eot'),
+        url('/font/Denver-Broncos-Custom.ttf.eot?#iefix') format('embedded-opentype');
+        font-weight: normal;
+        font-style: normal;
+    }
+
+
+    @font-face {
         font-family: 'YourFontName';
         src: url('/font/BillionDreams_PERSONAL.ttf') format('truetype');
     }
@@ -95,7 +106,7 @@
     .portfolio {
         justify-content: center;
         align-items: center;
-        background-color: #ff9a18;
+        background-color: {{ $background_color }};
         background-size: cover; /* Couvre toute la zone disponible sans redimensionner l'image */
         background-position: center;
         background-repeat: no-repeat; /* Empêche la répétition de l'image */
@@ -232,7 +243,7 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        background-image: url('/images/background-hair-shadow.jpeg');
+        background-image: url('{{ asset('background/' . $backgroundImage) }}');
         background-size: cover; /* Couvre toute la zone disponible sans redimensionner l'image */
         background-position: center;
         background-repeat: no-repeat; /* Empêche la répétition de l'image */ /* Définissez une hauteur fixe ou utilisez flexbox/grid pour définir la hauteur */
@@ -611,13 +622,15 @@
                     <div class="icon icon-apple"></div>
                     <ul class="menu">
                         <li class="menu-item"><a href="dashboard">Accueil</a></li>
+                        @if(!Auth::check())
                         <li class="menu-item"><a href="login" >Connexion</a></li>
+                        @endif
                         @if(Auth::check())
                             @if(Auth::user()->role == 'admin')
                                 <li class="menu-item"><a href="employees" >Coiffeurs</a></li>
                                 <li class="menu-item"><a href="prestations" >Prestations</a></li>
                                 <li class="menu-item"><a href="calendar" >Calendrier</a></li>
-                                <li class="menu-item"><a href="salon" >Paramétres</a></li>
+                                <li class="menu-item"><a href="salon/settings" >Paramétres</a></li>
                                 <li class="menu-item"><a href="absences" >Absences</a></li>
                                 <li class="menu-item"><a href="photos" >Photos</a></li>
                                 <form method="POST" action="logout">
@@ -634,17 +647,19 @@
             </div>
             <div class="menu">
                 <div style="background: rgba(255, 255, 255, 0.8); margin-right: 4vmin; margin-bottom: 25px; margin-top: 5vmin; padding: 5px; border-radius: 50%; display: inline-flex; justify-content: center; align-items: center;">
-                    <img src="/images/logo.png" alt="Logo Salon de Coiffure" style="max-width: 60px;">
+                    <img src="/logo/logo.png" alt="Logo Salon de Coiffure" style="max-width: 60px;">
                 </div>
                 <div class="menu-bar">
                     <li><a href="dashboard" >Accueil</a></li>
+                    @if(!Auth::check())
                     <li><a href="login" >Connexion</a></li>
+                    @endif
                     @if(Auth::check())
                         @if(Auth::user()->role == 'admin')
                             <li><a href="employees" >Coiffeurs</a></li>
                             <li><a href="prestations" >Prestations</a></li>
                             <li><a href="calendar" >Calendrier</a></li>
-                            <li><a href="salon" >Paramétres</a></li>
+                            <li><a href="salon/settings" >Paramétres</a></li>
                             <li><a href="absences" >Absences</a></li>
                             <li><a href="photos" >Photos</a></li>
                             <form method="POST" action="logout">
@@ -711,11 +726,11 @@
                         <div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
                             <!-- Logo -->
                             <div style="background: rgba(255, 255, 255, 0.8); margin-top: 4vmin; padding: 15px; border-radius: 50%; display: inline-flex; justify-content: center; align-items: center;">
-                                <img class="logo" src="/images/logo.png" alt="Logo Salon de Coiffure">
+                                <img class="logo" src="/logo/logo.png" alt="Logo Salon de Coiffure">
                             </div>
 
                             <span class="slogan">
-                                Le salon de vos envies.
+                                {{ $slogan }}
                             </span>
 
                             @if(Auth::check())

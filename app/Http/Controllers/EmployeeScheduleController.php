@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Employee;
+use App\Models\SalonSetting;
 use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\Log;
@@ -38,8 +39,9 @@ class EmployeeScheduleController extends Controller
      */
     public function edit(Employee $employee)
     {
+        $background_color = SalonSetting::first()->background_color;
         $schedules = $employee->schedules()->get();
-        return view('employees.schedule', compact('employee', 'schedules'));
+        return view('employees.schedule', compact('employee', 'schedules', 'background_color'));
     }
 
     /**

@@ -31,7 +31,7 @@ use App\Http\Controllers\EmployeeScheduleController;
 |
 */
 
-Route::resource('/', DashboardController::class);
+Route::get('/', [DashboardController::class, 'index'])->name('dashboard.index');
 
 // Route pour la redirection vers Google
 Route::get('auth/google', [LoginController::class, 'redirectToGoogle'])->name('auth.google');

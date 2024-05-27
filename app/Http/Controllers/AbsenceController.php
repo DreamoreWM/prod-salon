@@ -8,6 +8,7 @@ use App\Models\Absence;
 use App\Models\Appointment;
 use App\Models\Employee;
 use App\Models\EmployeeSchedule;
+use App\Models\SalonSetting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -15,14 +16,36 @@ class AbsenceController extends Controller
 {
     public function index()
     {
+        $backgroundColor = SalonSetting::first()->background_color;
         $absences = Absence::with('employee')->get();
-        return view('absences.index', compact('absences'));
+        return view('absences.index', compact('absences', 'backgroundColor'));
     }
 
     public function create()
     {
+        $backgroundColor = SalonSetting::first()->background_color;
         $employees = Employee::all();
-        return view('absences.create', compact('employees'));
+        return view('absences.create', compact('employees', 'backgroundColor'));
+    }
+
+    public function edit(Absence $absence)
+    {
+        $backgroundColor = SalonSetting::first()->background_color;
+        $employees = Employee::all();
+        return view('absences.edit', compact('absence', 'employees', 'backgroundColor'));
+    }
+
+    public function update(Request $request, Absence $absence)
+    {
+        $backgroundColor = SalonSetting::first()->background_color;
+        $absence->update($request->all());
+        return redirect()->route('absences.index', compact('backgroundColor'));
+    }
+
+    public function destroy(Absence $absence)
+    {
+        $absence->delete();
+        return redirect()->route('absences.index');
     }
 
     public function store(Request $request)
@@ -110,23 +133,6 @@ class AbsenceController extends Controller
 
         // Sinon, le créneau est disponible
         return true;
-    }
-    public function edit(Absence $absence)
-    {
-        $employees = Employee::all();
-        return view('absences.edit', compact('absence', 'employees'));
-    }
-
-    public function update(Request $request, Absence $absence)
-    {
-        $absence->update($request->all());
-        return redirect()->route('absences.index');
-    }
-
-    public function destroy(Absence $absence)
-    {
-        $absence->delete();
-        return redirect()->route('absences.index');
     }
 
     private function hasSchedule($employeeId, $startTime, $endTime)

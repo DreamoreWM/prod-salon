@@ -11,7 +11,8 @@
 
     <style>
         .content {
-            background-color: #ff9a18;
+            min-height: 100vh;
+            background-color: {{ $background_color }};
         }
 
     </style>

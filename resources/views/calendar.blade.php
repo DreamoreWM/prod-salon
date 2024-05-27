@@ -9,7 +9,7 @@
     <style>
 
         .content {
-            background-color: #ff9a18;
+            background-color: {{ $background_color }};
         }
         ul {
             list-style-type: disc;

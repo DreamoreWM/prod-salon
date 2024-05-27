@@ -4,19 +4,22 @@
 namespace App\Http\Controllers;
 
 use App\Models\Prestation;
+use App\Models\SalonSetting;
 use Illuminate\Http\Request;
 
 class PrestationController extends Controller
 {
     public function index()
     {
+        $background_color = SalonSetting::first()->background_color;
         $prestations = Prestation::all();
-        return view('prestations.create', compact('prestations'));
+        return view('prestations.create', compact('prestations', 'background_color'));
     }
 
     public function create()
     {
-        return view('prestations.create');
+        $background_color = SalonSetting::first()->background_color;
+        return view('prestations.create', compact('background_color'));
     }
 
     public function store(Request $request)

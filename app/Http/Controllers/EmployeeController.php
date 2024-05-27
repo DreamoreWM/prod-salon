@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\SalonSetting;
 use App\Models\Slot;
 use App\Models\Employee;
 use Illuminate\Http\Request;
@@ -15,8 +16,9 @@ class EmployeeController extends Controller
      */
     public function index()
     {
+        $background_color = SalonSetting::first()->background_color;
         $employees = Employee::all();
-        return view('employees.manage-employees', compact('employees'));
+        return view('employees.manage-employees', compact('employees', 'background_color'));
     }
 
     /**
