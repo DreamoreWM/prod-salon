@@ -618,7 +618,7 @@
                             <div class="bar btmBar"></div>
                         </div>
                     </div>
-                    <h2 class="p-2 text-center" data-aos="fade-down" style="position:relative; margin:2px 70px 0px; color: white; float:right; font-size: 30px; font-family: 'YourFontName';">Salon de coiffure</h2>
+                    <h2 class="p-2 text-center" style="position:relative; margin:2px 70px 0px; color: white; float:right; font-size: 30px; font-family: 'YourFontName';">Salon de coiffure</h2>
                     <div class="icon icon-apple"></div>
                     <ul class="menu">
                         <li class="menu-item"><a href="dashboard">Accueil</a></li>
@@ -753,15 +753,15 @@
             </div>
         </div>
 
-        <div class="prestation" data-aos="fade-down">
+        <div class="prestation">
             <section>
                 <div class="mx-auto max-w-screen-lg px-4 lg:px-12">
                     <div class="mb-4 d-flex justify-content-center">
                         <div class="col pb-10">
-                            <h2 class=" p-10 text-center" data-aos="fade-down" style="font-size: 60px; font-family: 'YourFontName';">Nos tarifs</h2>
+                            <h2 class=" p-10 text-center" style="font-size: 60px; font-family: 'YourFontName';">Nos tarifs</h2>
                             <div class="row">
                                 @foreach($categories as $category)
-                                    <div class="col-md-6" data-aos="fade-up" data-aos-offset="100">
+                                    <div class="col-md-6">
                                         <div class="card mt-4 border-0 bg-transparent">
                                             <div class="card-header bg-transparent">
                                                 <h3 class="text-left font-bold">{{ strtoupper($category->name) }}</h3>
@@ -784,10 +784,10 @@
             </section>
         </div>
 
-        <div class="portfolio" data-aos="fade-right" data-aos-offset="150">
+        <div class="portfolio">
 
-            <h2 class=" p-10 text-center" data-aos="fade-down" style="font-size: 60px; color: white; font-family: 'YourFontName';">Les avis</h2>
-            <div class="review" data-aos="fade-down">
+            <h2 class=" p-10 text-center" style="font-size: 60px; color: white; font-family: 'YourFontName';">Les avis</h2>
+            <div class="review">
                 <section>
                     <div class="mx-auto max-w-screen-lg px-4 lg:px-12">
                         <div class="mb-4 d-flex justify-content-center">
@@ -801,7 +801,7 @@
                 </section>
             </div>
 
-            <h2 class=" p-10 text-center" data-aos="fade-down" style="font-size: 60px;  color: white; font-family: 'YourFontName';">Nos réalisations</h2>
+            <h2 class=" p-10 text-center" style="font-size: 60px;  color: white; font-family: 'YourFontName';">Nos réalisations</h2>
             <div class="container-fluid tm-container-content" >
                 <div class="row tm-gallery pt-5" style="justify-content: center !important">
                         <div class="swiper">
@@ -833,17 +833,17 @@
             </div>
         </div>
 
-        <div class="info" data-aos="fade-down" data-aos-offset="250" style="padding-bottom: 30px">
+        <div class="info" style="padding-bottom: 30px">
             <section>
-                <h2 class=" p-10 text-center" data-aos="fade-down" style="font-size: 60px; font-family: 'YourFontName';">Nos coordonnées</h2>
+                <h2 class=" p-10 text-center" style="font-size: 60px; font-family: 'YourFontName';">Nos coordonnées</h2>
                 <div class="mx-auto max-w-screen-lg px-4 lg:px-12">
                     <div class="mb-4">
                         <div class="col">
                             <div class="row">
-                                <div class="col-md-6" data-aos="fade-right" >
+                                <div class="col-md-6" >
                                                 <iframe src="https://maps.google.com/maps?q={{$address}}&output=embed" width="100%" height="450" frameborder="0" style="border:0;" allowfullscreen="" aria-hidden="false" tabindex="0"></iframe>
                                 </div>
-                                <div class="col-md-6" data-aos="fade-right" >
+                                <div class="col-md-6" >
                                             <iframe src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2F{{$facebookPageUrl}}&amp;locale%3Dfr_FR&tabs=timeline&width=500&height=500&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=true&appId"  data-adapt-container-width="true" width="100%" height="500" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>
                                 </div>
                             </div>

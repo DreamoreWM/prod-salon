@@ -284,7 +284,7 @@
             padding: 20,
             autoplay: true,
             dots:false,
-            autoplayTimeout: 250000000,
+            autoplayTimeout: 2000,
             smartSpeed: 450,
             autoplayHoverPause: true,
             responsive: {
