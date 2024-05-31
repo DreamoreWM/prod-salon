@@ -8,11 +8,17 @@ use App\Models\Review;
 use App\Models\SalonSetting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Prometheus\Exception\MetricsRegistrationException;
 
 class DashboardController extends Controller
 {
+    /**
+     * @throws MetricsRegistrationException
+     */
     public function index()
     {
+        $startTime = microtime(true);
+        $this->countRequest('dashboard.index');
         $photos = Photospres::all();
         $facebookPageUrl = SalonSetting::first()->facebook_page_url;
         $json = SalonSetting::first()->open_days;
@@ -25,6 +31,7 @@ class DashboardController extends Controller
         $backgroundImage = SalonSetting::first()->background_image;
         $slogan = SalonSetting::first()->slogan;
         $background_color = SalonSetting::first()->background_color;
+        $this->measureResponseTime('dashboard.index', $startTime);
         return view('dashboard', compact('categories', 'reviews', 'isOpen', 'facebookPageUrl', 'openDays', 'photos', 'address', 'showNavigation', 'backgroundImage', 'background_color', 'slogan'));
     }
 

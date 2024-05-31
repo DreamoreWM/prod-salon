@@ -19,6 +19,7 @@ use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\SalonSettingsController;
 use App\Http\Controllers\PhotoPresController;
 use App\Http\Controllers\EmployeeScheduleController;
+use App\Http\Controllers\MetricsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -84,6 +85,8 @@ Route::middleware(['auth', 'can:admin'])->group(function () {
     Route::resource('/absences',AbsenceController::class);
     Route::resource('/reviews', ReviewController::class);
     Route::resource('/photos', PhotoPresController::class);
+    Route::get('/metrics', [MetricsController::class, 'getMetrics']);
+
 });
 
 require __DIR__.'/auth.php';
