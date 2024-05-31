@@ -14,7 +14,18 @@
 // ***********************************************************
 
 // Import commands.js using ES2015 syntax:
-import './commands'
 
 // Alternatively you can use CommonJS syntax:
-// require('./commands')
+require('./commands')
+
+before(() => {
+    cy.createUser();
+});
+
+after(() => {
+    cy.deleteUser();
+});
+
+// Prevents Cypress from failing test
+// when an unhandled error occur
+Cypress.on("uncaught:exception", () => false);

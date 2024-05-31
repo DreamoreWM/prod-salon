@@ -23,3 +23,12 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+
+Cypress.Commands.add("createUser", () => {
+
+    cy.task('queryDb', 'INSERT INTO users (name, email) VALUES ("Test User", "testuser@example.com")');
+});
+
+Cypress.Commands.add("deleteUser", () => {
+    cy.task('queryDb', 'DELETE FROM users WHERE email = "testuser@example.com"' );
+});
