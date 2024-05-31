@@ -22,6 +22,8 @@ class CalendarController extends Controller
     public $categories;
     public function index()
     {
+        $startTime = microtime(true);
+        $this->countRequest('dashboard.index');
         $background_color = SalonSetting::first()->background_color;
         $this->categories = Category::all();
         $appointments = Appointment::all();
@@ -40,6 +42,7 @@ class CalendarController extends Controller
 
         $events = $this->generateCalendarEvents($appointments, $employees, $openDays);
 
+        $this->measureResponseTime('calendar.index', $startTime);
         return view('calendar', [
             'events' => $events,
             'employees' => $employees,

@@ -6,6 +6,8 @@
         "build": "vite build"
     },
     "devDependencies": {
+        "@badeball/cypress-cucumber-preprocessor": "^20.0.5",
+        "@bahmutov/cypress-esbuild-preprocessor": "^2.2.0",
         "@fullcalendar/core": "^6.1.11",
         "@fullcalendar/daygrid": "^6.1.11",
         "@fullcalendar/interaction": "^6.1.11",
@@ -16,8 +18,13 @@
         "axios": "^1.6.4",
         "bootstrap": "^5.2.3",
         "bootstrap-icons": "^1.11.3",
+        "cucumber-html-reporter": "^6.0.0",
+        "cypress": "^13.10.0",
+        "cypress-cucumber-preprocessor": "^4.3.1",
+        "esbuild": "^0.21.4",
         "laravel-datatables-vite": "^0.5.2",
         "laravel-vite-plugin": "^1.0.0",
+        "multiple-cucumber-html-reporter": "^3.6.2",
         "postcss": "^8.4.31",
         "sass": "^1.56.1",
         "tailwindcss": "^3.1.0",
@@ -25,6 +32,19 @@
     },
     "dependencies": {
         "bootstrap": "^5.3.3",
+        "mysql2": "^3.9.9",
         "swiper": "^11.0.7"
+    },
+    "cypress-cucumber-preprocessor": {
+        "json": {
+            "enabled": true,
+            "formatter" : "cucumber-json-formatter",
+            "output": "cypress/cucumber-json/report.json"
+        },
+        "html": {
+            "enabled": true,
+            "formatter" : "cucumber-html-formatter",
+            "output": "cypress/cucumber-html/report.html"
+        }
     }
 }
