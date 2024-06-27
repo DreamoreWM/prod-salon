@@ -20,6 +20,9 @@ use App\Http\Controllers\SalonSettingsController;
 use App\Http\Controllers\PhotoPresController;
 use App\Http\Controllers\EmployeeScheduleController;
 use App\Http\Controllers\MetricsController;
+use Prometheus\CollectorRegistry;
+use Prometheus\RenderTextFormat;
+use Prometheus\Storage\InMemory;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,6 +34,15 @@ use App\Http\Controllers\MetricsController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+Route::get('/metrics2', [MetricsController::class, 'getMetrics']);
+Route::get('/metrics', function() {
+    $registry = app(CollectorRegistry::class);
+    $renderer = new RenderTextFormat();
+
+    header('Content-Type: ' . RenderTextFormat::MIME_TYPE);
+    echo $renderer->render($registry->getMetricFamilySamples());
+});
+
 
 Route::get('/', [DashboardController::class, 'index'])->name('dashboard.index');
 
@@ -85,7 +97,6 @@ Route::middleware(['auth', 'can:admin'])->group(function () {
     Route::resource('/absences',AbsenceController::class);
     Route::resource('/reviews', ReviewController::class);
     Route::resource('/photos', PhotoPresController::class);
-    Route::get('/metrics', [MetricsController::class, 'getMetrics']);
 
 });
 

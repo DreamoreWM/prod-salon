@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use DateInterval;
 use DateTime;
 use DateTimeZone;
+use Exception;
 use Google_Client;
 use Google_Service_Calendar;
 use Google_Service_Calendar_Event;
@@ -111,7 +112,7 @@ class ReservationComponent extends Component
 
             \Mail::to($employee->email)->send(new \App\Mail\SlotBookedForEmployee($user, $appointment, $prestations));
 
-            $this->addEventToGoogleCalendar($user, $appointment);
+
 
             // Réinitialiser les données
             $this->selectedPrestations = [];

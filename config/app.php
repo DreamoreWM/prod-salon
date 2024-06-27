@@ -169,6 +169,7 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         Livewire\LivewireServiceProvider::class,
+        App\Providers\PrometheusServiceProvider::class,
 
     ])->toArray(),
 

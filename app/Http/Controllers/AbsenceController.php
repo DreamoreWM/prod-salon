@@ -10,7 +10,6 @@ use App\Models\Employee;
 use App\Models\EmployeeSchedule;
 use App\Models\SalonSetting;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class AbsenceController extends Controller
 {
