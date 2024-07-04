@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Scout\Searchable;
 
 class Review extends Model
 {
-    use HasFactory;
+    use hasFactory;
+    use Searchable;
 
     protected $fillable = ['appointment_id', 'rating', 'comment', 'photo_id'];
 

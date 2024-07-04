@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Scout\Searchable;
 
 class Prestation extends Model
 {
-    use HasFactory;
+    use hasFactory;
+    use Searchable;
 
 
     // Protéger les champs assignables en masse
