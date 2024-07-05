@@ -9,7 +9,6 @@ use Laravel\Scout\Searchable;
 class Photospres extends Model
 {
     use hasFactory;
-    use Searchable;
 
     protected $fillable = ['path'];
 }

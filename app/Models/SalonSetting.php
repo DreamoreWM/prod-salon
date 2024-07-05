@@ -9,7 +9,6 @@ use Laravel\Scout\Searchable;
 class SalonSetting extends Model
 {
     use hasFactory;
-    use Searchable;
 
     protected $fillable = ['name', 'address', 'open_days', 'slot_duration', 'facebook_page_url', 'image_selector', 'background_color', 'background_image', 'slogan', 'logo'];
 

@@ -9,7 +9,6 @@ use Laravel\Scout\Searchable;
 class Prestation extends Model
 {
     use hasFactory;
-    use Searchable;
 
 
     // Protéger les champs assignables en masse

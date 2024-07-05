@@ -16,28 +16,7 @@ return [
     |
     */
 
-    'driver' => env('SCOUT_DRIVER', 'elastic'),
-
-    'elasticsearch' => [
-        'hosts' => [
-            env('ELASTICSEARCH_HOST', 'http://localhost:9200'),
-        ],
-        'index' => [
-            'appointments' => env('ELASTICSEARCH_APPOINTMENTS_INDEX', 'appointments_index'),
-            'absences' => env('ELASTICSEARCH_ABSENCES_INDEX', 'absences_index'),
-            'categories' => env('ELASTICSEARCH_CATEGORIES_INDEX', 'categories_index'),
-            'employees' => env('ELASTICSEARCH_EMPLOYEES_INDEX', 'employees_index'),
-            'employee_schedules' => env('ELASTICSEARCH_EMPLOYEE_SCHEDULES_INDEX', 'employee_schedules_index'),
-            'photos' => env('ELASTICSEARCH_PHOTOS_INDEX', 'photos_index'),
-            'photos_pres' => env('ELASTICSEARCH_PHOTOS_PRES_INDEX', 'photos_pres_index'),
-            'prestations' => env('ELASTICSEARCH_PRESTATIONS_INDEX', 'prestations_index'),
-            'reviews' => env('ELASTICSEARCH_REVIEWS_INDEX', 'reviews_index'),
-            'salon_settings' => env('ELASTICSEARCH_SALON_SETTINGS_INDEX', 'salon_settings_index'),
-            'slots' => env('ELASTICSEARCH_SLOTS_INDEX', 'slots_index'),
-            'temporary_users' => env('ELASTICSEARCH_TEMPORARY_USERS_INDEX', 'temporary_users_index'),
-            'users' => env('ELASTICSEARCH_USERS_INDEX', 'users_index'),
-        ],
-    ],
+    'driver' => env('SCOUT_DRIVER', 'algolia'),
 
     /*
     |--------------------------------------------------------------------------

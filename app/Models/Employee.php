@@ -9,7 +9,6 @@ use Laravel\Scout\Searchable;
 class Employee extends Model
 {
     use hasFactory;
-    use Searchable;
 
     protected $fillable = ['name','surname','email'];
 

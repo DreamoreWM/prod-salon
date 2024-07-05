@@ -9,7 +9,6 @@ use Laravel\Scout\Searchable;
 class Review extends Model
 {
     use hasFactory;
-    use Searchable;
 
     protected $fillable = ['appointment_id', 'rating', 'comment', 'photo_id'];
 

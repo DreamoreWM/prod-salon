@@ -9,7 +9,6 @@ use Laravel\Scout\Searchable;
 class Photo extends Model
 {
     use hasFactory;
-    use Searchable;
 
     protected $fillable = ['review_id', 'filename'];
 

@@ -9,7 +9,6 @@ use Laravel\Scout\Searchable;
 class EmployeeSchedule extends Model
 {
     use hasFactory;
-    use Searchable;
 
     protected $fillable = ['employee_id', 'day_of_week', 'start_time', 'end_time'];
 

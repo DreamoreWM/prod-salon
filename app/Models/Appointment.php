@@ -9,7 +9,6 @@ use Laravel\Scout\Searchable;
 class Appointment extends Model
 {
     use HasFactory;
-    use Searchable;
 
     protected $fillable = ['employee_id', 'start_time', 'end_time', 'bookable_id', 'bookable_type'];
 

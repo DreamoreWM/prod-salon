@@ -10,7 +10,6 @@ class TemporaryUser extends Model
 {
 
     use hasFactory;
-    use Searchable;
 
     /**
      * La table associée au modèle.

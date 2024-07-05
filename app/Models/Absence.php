@@ -9,7 +9,6 @@ use Laravel\Scout\Searchable;
 class Absence extends Model
 {
     use HasFactory;
-    use Searchable;
 
     protected $fillable = ['employee_id', 'start_time', 'end_time'];
 

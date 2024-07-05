@@ -9,7 +9,6 @@ use Laravel\Scout\Searchable;
 class Category extends Model
 {
     use HasFactory;
-    use Searchable;
 
     protected $fillable = [
         'name',
