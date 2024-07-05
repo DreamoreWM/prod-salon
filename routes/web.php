@@ -3,11 +3,10 @@
 use App\Http\Controllers\AbsenceController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\EmployeeCalendarController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\SalonController;
-use App\Http\Livewire\EmployeeCalendar;
 use App\Models\Review;
+use Elastic\Elasticsearch\ClientBuilder;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SlotController;
 use App\Http\Controllers\UsersController;
@@ -16,7 +15,6 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\PrestationController;
 use App\Http\Controllers\AppointmentController;
-use App\Http\Controllers\SalonSettingsController;
 use App\Http\Controllers\PhotoPresController;
 use App\Http\Controllers\EmployeeScheduleController;
 
@@ -28,8 +26,122 @@ use App\Http\Controllers\EmployeeScheduleController;
 | Here is where you can register web routes for your application. These
 | routes are loaded by the RouteServiceProvider and all of them will
 | be assigned to the "web" middleware group. Make something great!
-|
+|*
 */
+
+use App\Http\Controllers\ElasticsearchController;
+
+Route::get('/test-elasticsearch', [ElasticsearchController::class, 'testConnection']);
+
+Route::get('/create-employees-index', function() {
+    $host = sprintf(
+        '%s://%s:%s@%s',
+        env('ELASTICSEARCH_SCHEME'),
+        env('ELASTICSEARCH_USERNAME'),
+        env('ELASTICSEARCH_PASSWORD'),
+        env('ELASTICSEARCH_HOST')
+    );
+
+    $client = ClientBuilder::create()
+        ->setHosts([$host])
+        ->setSSLVerification(false)
+        ->build();
+
+    $params = [
+        'index' => env('ELASTICSEARCH_EMPLOYEES_INDEX'),
+        'body'  => [
+            'settings' => [
+                'number_of_shards' => 1,
+                'number_of_replicas' => 1
+            ],
+            'mappings' => [
+                'properties' => [
+                    'name' => [
+                        'type' => 'text'
+                    ],
+                    'email' => [
+                        'type' => 'keyword'
+                    ],
+                    'created_at' => [
+                        'type' => 'date'
+                    ]
+                ]
+            ]
+        ]
+    ];
+
+    try {
+        $response = $client->indices()->create($params);
+        return response()->json($response);
+    } catch (\Exception $e) {
+        return response()->json(['error' => $e->getMessage()]);
+    }
+});
+
+Route::get('/insert-employees', function() {
+    $host = sprintf(
+        '%s://%s:%s@%s:%d',
+        env('ELASTICSEARCH_SCHEME'),
+        env('ELASTICSEARCH_USERNAME'),
+        env('ELASTICSEARCH_PASSWORD'),
+        env('ELASTICSEARCH_HOST'),
+        env('ELASTICSEARCH_PORT')
+    );
+
+    $client = ClientBuilder::create()
+        ->setHosts([$host])
+        ->setSSLVerification(false)
+        ->build();
+
+    $params = [
+        'index' => env('ELASTICSEARCH_EMPLOYEES_INDEX'),
+        'body'  => [
+            'name' => 'John Doe',
+            'email' => 'john.doe@example.com',
+            'created_at' => date('Y-m-d H:i:s')
+        ]
+    ];
+
+    try {
+        $response = $client->index($params);
+        return response()->json($response);
+    } catch (\Exception $e) {
+        return response()->json(['error' => $e->getMessage()]);
+    }
+});
+
+Route::get('/search/employees', function() {
+    $host = sprintf(
+        '%s://%s:%s@%s:%d',
+        env('ELASTICSEARCH_SCHEME'),
+        env('ELASTICSEARCH_USERNAME'),
+        env('ELASTICSEARCH_PASSWORD'),
+        env('ELASTICSEARCH_HOST'),
+        env('ELASTICSEARCH_PORT')
+    );
+
+    $client = ClientBuilder::create()
+        ->setHosts([$host])
+        ->setSSLVerification(false)
+        ->build();
+
+    $params = [
+        'index' => env('ELASTICSEARCH_EMPLOYEES_INDEX'),
+        'body'  => [
+            'query' => [
+                'match_all' => (object) []
+            ]
+        ]
+    ];
+
+    try {
+        $response = $client->search($params);
+        return response()->json($response['hits']['hits']);
+    } catch (\Exception $e) {
+        return response()->json(['error' => $e->getMessage()]);
+    }
+});
+
 
 Route::get('/', [DashboardController::class, 'index'])->name('dashboard.index');
 

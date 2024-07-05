@@ -7,9 +7,11 @@
     "require": {
         "php": "^8.1",
         "babenkoivan/elastic-scout-driver": "*",
+        "elasticsearch/elasticsearch": "^7.16",
         "google/apiclient": "^2.15",
         "guzzlehttp/guzzle": "^7.2",
         "jenssegers/agent": "^2.6",
+        "jeroen-g/explorer": "^3.14",
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.3",
         "laravel/scout": "^10.10",
