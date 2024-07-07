@@ -711,6 +711,45 @@
         padding: 20px; /* Ajoutez de l'espace intérieur */
     }
 
+    @media (max-width: 599px) {
+        .btn-home{
+            padding: 12px 12px !important;
+            top: 50px !important;
+            right: 20px !important;
+            font-size: 13px !important;
+            position: static;
+        }
+    }
+
+    /* Appareils moyens (tablettes en mode portrait, 600px à 767px) */
+    @media (min-width: 600px) and (max-width: 767px) {
+        .btn-home{
+            top: 30px !important;
+        }
+    }
+
+    /* Appareils larges (tablettes en mode paysage, petits ordinateurs portables, 768px à 991px) */
+    @media (min-width: 768px) and (max-width: 991px) {
+        .btn-home{
+            top: 50px !important;
+        }
+    }
+
+    /* Appareils extra-larges (ordinateurs portables et de bureau, 992px à 1199px) */
+    @media (min-width: 992px) and (max-width: 1199px) {
+        .btn-home{
+            top: 80px !important;
+        }
+    }
+
+    /* Appareils ultra-larges (grands écrans de bureau, 1200px et plus) */
+    @media (min-width: 1200px) {
+        .btn-home{
+            top: 80px !important;
+            right: 40px !important;
+        }
+    }
+
 
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
@@ -776,12 +815,12 @@
                                 </div>
                                 <div class="boutton-home">
                                     @if(Auth::check())
-                                        <a href="{{ route('appointments.create') }}" style="z-index: 10; position: absolute; top: 200px; right: 55px; font-size: 18px; padding: 12px 36px;" class="btn btn-red">
+                                        <a href="{{ route('appointments.create') }}" style="z-index: 10; position: absolute; top: 200px; right: 55px; font-size: 18px; padding: 12px 36px;" class="btn-home btn btn-red">
                                             Prendre Rendez-Vous
                                         </a>
                                     @else
                                         <!-- Bouton qui ouvre la modal pour les utilisateurs non connectés -->
-                                        <a class="btn btn-red" style="z-index: 10; position: absolute; top: 200px; right: 55px; font-size: 18px; padding: 12px 36px;" data-toggle="modal" data-target="#loginModal">
+                                        <a class="btn-home btn btn-red" style="z-index: 10; position: absolute; top: 200px; right: 55px; font-size: 18px; padding: 12px 36px;" data-toggle="modal" data-target="#loginModal">
                                             Prendre un rendez-vous
                                         </a>
                                     @endif
