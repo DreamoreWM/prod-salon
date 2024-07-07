@@ -84,8 +84,9 @@
             width: 100%;
         }
 
-        .testimonials{
-            max-width: 400px;
+        .testimonial-name {
+            padding-bottom: 7px;
+            font-size: 12px;
         }
     }
 
@@ -213,10 +214,7 @@
 {{--@endforeach--}}
 
 <!-- TESTIMONIALS -->
-<section class="testimonials">
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-12">
+
                 <div id="customers-testimonials" class="owl-carousel">
                     @foreach ($reviews as $review)
                         <!--TESTIMONIAL 1 -->
@@ -254,9 +252,6 @@
                         <!--END OF TESTIMONIAL 1 -->
                     @endforeach
                 </div>
-            </div>
-    </div>
-</section>
 
 <div id="image-modal" onclick="this.style.display='none'">
     <span class="close">&times;</span>
@@ -292,10 +287,10 @@
                     items: 1
                 },
                 768: {
-                    items: 2
+                    items: 1
                 },
                 1170: {
-                    items: 3
+                    items: 1
                 }
             }
         });

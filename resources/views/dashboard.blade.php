@@ -30,7 +30,7 @@
 
     .slogan {
         font-family: 'YourFontName';
-        font-size: 90px;
+        font-size: 65px;
         color: white;
         text-align: center;
         margin-top: 10px;
@@ -56,6 +56,29 @@
         overflow: hidden;
         background: linear-gradient(90deg,#0162c8,#55e7fc);
     }
+
+    .btn {
+        padding: 10px 20px;
+        border-radius: 20px;
+        font-weight: bold;
+        text-align: center;
+        cursor: pointer;
+        transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+        border: 2px solid transparent; /* Par défaut, pas de bordure */
+    }
+
+    /* Style pour le bouton rouge */
+    .btn-red {
+        background-color: #e74c3c; /* Rouge */
+        color: white;
+        border-color: #e74c3c; /* Bordure rouge */
+    }
+
+    .btn-red:hover {
+        background-color: #c0392b; /* Rouge foncé pour le hover */
+    }
+
+
     .effect{
         position: absolute;
         background: #fff;
@@ -243,6 +266,7 @@
         display: flex;
         flex-direction: column;
         align-items: center;
+        justify-content: center;
         background-image: url('{{ asset('background/' . $backgroundImage) }}');
         background-size: cover; /* Couvre toute la zone disponible sans redimensionner l'image */
         background-position: center;
@@ -294,6 +318,66 @@
         transform: scale(1.2);
     }
 
+    .content-wrapper {
+        display: flex;
+        justify-content: space-between;
+        width: 80%;
+        max-width: 75vw;
+    }
+
+    .left-section,
+    .right-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 50%;
+    }
+
+    @media (max-width: 1500px){
+        .logo {
+            max-width: 150px;
+        }
+
+        .slogan {
+            font-size: 60px;
+        }
+
+        .content-wrapper {
+            width: 100%;
+        }
+    }
+
+
+    @media (max-width: 1100px){
+        .content-wrapper {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .left-section{
+            padding-top: 4em
+        }
+
+        .left-section,
+        .right-section {
+            width: 80% !important;
+        }
+
+    }
+
+    @media (max-width: 800px){
+        .content-wrapper {
+            max-width: 100vw;
+        }
+
+        .left-section,
+        .right-section {
+            width: 100% !important;
+        }
+    }
+
+
 
 </style>
 <style>
@@ -311,7 +395,7 @@
     }
 </style>
 <style>
-    @media (max-width: 900px) {
+    @media (max-width: 1100px) {
         .flex-container {
             flex-direction: column;
         }
@@ -594,6 +678,40 @@
         }
     }
 
+    .right-section {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .main-image {
+        position: relative;
+        z-index: 2; /* Place la première image au-dessus */
+    }
+
+    .overlay-image {
+        position: absolute;
+        top: 0;
+        right: 0;
+        max-width: 55%; /* Ajustez la taille de l'image selon vos besoins */ /* Ajoutez un peu de marge pour un meilleur espacement */
+        z-index: 1; /* Place la nouvelle image derrière */
+        margin-right: 30px; /* Ajoutez un peu de marge pour un meilleur espacement */
+        margin-top: 55px;
+    }
+
+    .review-card-container {
+        position: relative;
+        width: 80%; /* Ajustez la largeur selon vos besoins */
+        margin-top: -150px; /* Espace négatif pour coller à la première image */
+        z-index: 3; /* Place cette div au-dessus de la première image si besoin */
+    }
+
+    .review-card {
+        padding: 20px; /* Ajoutez de l'espace intérieur */
+    }
+
+
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
 <link
@@ -610,68 +728,9 @@
 
     <div id="loader-content" class="loader-content">
         <div id="content" class="content">
-            <div class="menu-responsive">
-                <div class="header">
-                    <div class="burger-container">
-                        <div id="burger">
-                            <div class="bar topBar"></div>
-                            <div class="bar btmBar"></div>
-                        </div>
-                    </div>
-                    <h2 class="p-2 text-center" style="position:relative; margin:2px 70px 0px; color: white; float:right; font-size: 30px; font-family: 'YourFontName';">Salon de coiffure</h2>
-                    <div class="icon icon-apple"></div>
-                    <ul class="menu">
-                        <li class="menu-item"><a href="dashboard">Accueil</a></li>
-                        @if(!Auth::check())
-                        <li class="menu-item"><a href="login" >Connexion</a></li>
-                        @endif
-                        @if(Auth::check())
-                            @if(Auth::user()->role == 'admin')
-                                <li class="menu-item"><a href="employees" >Coiffeurs</a></li>
-                                <li class="menu-item"><a href="prestations" >Prestations</a></li>
-                                <li class="menu-item"><a href="calendar" >Calendrier</a></li>
-                                <li class="menu-item"><a href="salon/settings" >Paramétres</a></li>
-                                <li class="menu-item"><a href="absences" >Absences</a></li>
-                                <li class="menu-item"><a href="photos" >Photos</a></li>
-                                <form method="POST" action="logout">
-                                    @csrf
-                                    <li class="menu-item"><a href="logout"
-                                                             onclick="event.preventDefault();
-                                                this.closest('form').submit();" >Déconnexion</a></li>
-                                </form>
-                            @endif
-                        @endif
-                    </ul>
-                    <div class="shop icon icon-bag"></div>
-                </div>
-            </div>
-            <div class="menu">
-                <div style="background: rgba(255, 255, 255, 0.8); margin-right: 4vmin; margin-bottom: 25px; margin-top: 5vmin; padding: 5px; border-radius: 50%; display: inline-flex; justify-content: center; align-items: center;">
-                    <img src="/logo/logo.png" alt="Logo Salon de Coiffure" style="max-width: 60px;">
-                </div>
-                <div class="menu-bar">
-                    <li><a href="dashboard" >Accueil</a></li>
-                    @if(!Auth::check())
-                    <li><a href="login" >Connexion</a></li>
-                    @endif
-                    @if(Auth::check())
-                        @if(Auth::user()->role == 'admin')
-                            <li><a href="employees" >Coiffeurs</a></li>
-                            <li><a href="prestations" >Prestations</a></li>
-                            <li><a href="calendar" >Calendrier</a></li>
-                            <li><a href="salon/settings" >Paramétres</a></li>
-                            <li><a href="absences" >Absences</a></li>
-                            <li><a href="photos" >Photos</a></li>
-                            <form method="POST" action="logout">
-                                @csrf
-                                <li><a href="logout"
-                                       onclick="event.preventDefault();
-                                                this.closest('form').submit();" >Déconnexion</a></li>
-                            </form>
-                        @endif
-                    @endif
-                </div>
-            </div>
+
+
+
             <div class="py-6">
                 @if(session()->has('success'))
                     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 alert alert-success alert-dismissible fade show" role="alert">
@@ -685,70 +744,52 @@
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"><i class="bi bi-x-circle"></i></button>
                     </div>
                 @endif
-                <div class="home" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                    <div class="home" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                        <div class="content-wrapper">
+                            <!-- Section de gauche pour le logo et le slogan -->
+                            <div class="left-section">
 
-                    <div style="display: flex; flex-direction: column; flex-wrap: wrap; justify-content: center; align-items: center;">
 
-                        <!-- First set of hours -->
-                        <div class="icon-web" style="font-size: 10px; font-weight: bold; color: white; min-width: 300px; padding: 10px; margin: 2vmin; border-radius: 15px; backdrop-filter: blur(60px); -webkit-backdrop-filter: blur(60px); box-shadow: 0px 4px 14px 0px rgba(0,0,0,0.1); border: 1px solid rgba(0,0,0,0.1); display: flex; justify-content: space-around; flex-wrap: wrap;">
 
-                            <a href="https://www.tiktok.com" target="_blank">
-                                <img src="/images/tiktok.png" alt="TikTok" style="width: 50px; height: 50px;">
-                            </a>
+                                <!-- Logo -->
 
-                            <a href="https://www.snapchat.com" target="_blank">
-                                <img src="/images/snap.png" alt="Snapchat" style="width: 50px; height: 50px;">
-                            </a>
+                                <div class="logo">
+                                    <a href="{{ route('dashboard.index') }}">
+                                        <img src="{{ asset('logo/logo.png') }}" alt="Logo" class="w-auto">
+                                    </a>
+                                </div>
 
-                            <a href="https://www.facebook.com" target="_blank">
-                                <img src="/images/facebook.png" alt="Facebook" style="width: 50px; height: 50px;">
-                            </a>
 
-                            <a href="https://www.whatsapp.com" target="_blank">
-                                <img src="/images/whatsapp.png" alt="WhatsApp" style="width: 50px; height: 50px;">
-                            </a>
-
-                            <a href="https://www.youtube.com" target="_blank">
-                                <img src="/images/youtube.png" alt="YouTube" style="width: 50px; height: 50px;">
-                            </a>
-
-                            <a href="https://www.linkedin.com" target="_blank">
-                                <img src="/images/linkedin.png" alt="LinkedIn" style="width: 50px; height: 50px;">
-                            </a>
-
-                            <a href="https://www.instagram.com" target="_blank">
-                                <img src="/images/instagram.png" alt="Instagram" style="width: 50px; height: 50px;">
-                            </a>
-
-                        </div>
-
-                        <!-- Logo -->
-                        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                            <!-- Logo -->
-                            <div style="background: rgba(255, 255, 255, 0.8); margin-top: 4vmin; padding: 15px; border-radius: 50%; display: inline-flex; justify-content: center; align-items: center;">
-                                <img class="logo" src="/logo/logo.png" alt="Logo Salon de Coiffure">
+                                <span class="slogan">
+                                    {{ $slogan }}
+                                </span>
                             </div>
 
-                            <span class="slogan">
-                                {{ $slogan }}
-                            </span>
-
-                            @if(Auth::check())
-                                <a href="{{ route('appointments.create') }}" class="btn-booking">
-                                    Prendre Rendez-Vous
-                                </a>
-                            @else
-                                <!-- Bouton qui ouvre la modal pour les utilisateurs non connectés -->
-                                <a class="btn-booking" data-toggle="modal" data-target="#loginModal">
-                                    Prendre un rendez-vous
-                                </a>
-                            @endif
-
-                            <span style="height: 250px"></span>
+                            <!-- Section de droite pour l'image des avis -->
+                            <div class="right-section">
+                                <img src="/images/femme.png" alt="Avis" class="main-image" style="max-width: 80%;">
+                                <div class="review-card-container">
+                                    <div class="review-card">
+                                        <!-- Contenu de la carte des avis -->
+                                        @include('reviews.index', ['reviews' => $reviews])
+                                    </div>
+                                </div>
+                                <div class="boutton-home">
+                                    @if(Auth::check())
+                                        <a href="{{ route('appointments.create') }}" style="z-index: 10; position: absolute; top: 200px; right: 55px; font-size: 18px; padding: 12px 36px;" class="btn btn-red">
+                                            Prendre Rendez-Vous
+                                        </a>
+                                    @else
+                                        <!-- Bouton qui ouvre la modal pour les utilisateurs non connectés -->
+                                        <a class="btn btn-red" style="z-index: 10; position: absolute; top: 200px; right: 55px; font-size: 18px; padding: 12px 36px;" data-toggle="modal" data-target="#loginModal">
+                                            Prendre un rendez-vous
+                                        </a>
+                                    @endif
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                </div>
 
             </div>
         </div>

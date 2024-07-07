@@ -20,9 +20,7 @@
 </head>
 <body class="font-sans antialiased">
 <div class="min-h-screen bg-gray-100">
-    @if(!request()->routeIs('dashboard.index'))
-        @include('layouts.navigation')
-    @endif
+
 
 
     <!-- Page Heading
@@ -37,6 +35,8 @@
 
     <!-- Page Content -->
     <main>
+
+        @include('layouts.navigation')
         @if(isset($slot))
             {{ $slot }}
         @endif
