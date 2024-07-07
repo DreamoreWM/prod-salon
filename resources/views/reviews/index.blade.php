@@ -242,7 +242,7 @@
                                     @if(optional($review->photo))
                                         @foreach($review->photo as $photo)
                                             <div class="photo">
-                                                <img src="{{ Storage::url('reviews/' . $photo->filename) }}" alt="Photo de la revue" class="review-image" onclick="showImage(this)">
+                                                <img src="{{ asset('storage/app/public/reviews/' . $photo->filename) }}" alt="Photo de la revue" class="review-image" onclick="showImage(this)">
                                             </div>
                                         @endforeach
                                     @endif
