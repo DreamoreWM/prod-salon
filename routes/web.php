@@ -3,10 +3,9 @@
 use App\Http\Controllers\AbsenceController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\EmployeeCalendarController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SalonController;
-use App\Http\Livewire\EmployeeCalendar;
 use App\Models\Review;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SlotController;
@@ -16,7 +15,6 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\PrestationController;
 use App\Http\Controllers\AppointmentController;
-use App\Http\Controllers\SalonSettingsController;
 use App\Http\Controllers\PhotoPresController;
 use App\Http\Controllers\EmployeeScheduleController;
 
@@ -46,17 +44,15 @@ Route::get('/confidentiality', function () {
     return view('confidentiality');
 })->name('confidentiality');
 
-Route::middleware(['auth'])->group(function () {
+
+Route::middleware(['auth', 'role:user,admin'])->group(function () {
     Route::get('/appointments/create', [AppointmentController::class, 'create'])->name('appointments.create');
     Route::post('/appointments', [AppointmentController::class, 'store'])->name('appointments.store');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
-
-
-
-Route::middleware(['auth', 'can:admin'])->group(function () {
+Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/roles', [RoleController::class, 'index'])->name('roles.index');
     Route::get('/roles/create', [RoleController::class, 'create'])->name('roles.create');
     Route::post('/roles', [RoleController::class, 'store'])->name('roles.store');
