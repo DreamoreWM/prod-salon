@@ -318,18 +318,62 @@
         transform: scale(1.2);
     }
 
-    @media (max-width: 768px) {
+    .content-wrapper {
+        display: flex;
+        justify-content: space-between;
+        width: 80%;
+        max-width: 75vw;
+    }
+
+    .left-section,
+    .right-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 50%;
+    }
+
+    @media (max-width: 1500px){
+        .logo {
+            max-width: 150px;
+        }
+
+        .slogan {
+            font-size: 60px;
+        }
+
+        .content-wrapper {
+            width: 100%;
+        }
+    }
+
+
+    @media (max-width: 1100px){
         .content-wrapper {
             flex-direction: column;
+            align-items: center;
+        }
+
+        .left-section{
+            padding-top: 4em
         }
 
         .left-section,
         .right-section {
-            width: 100%;
+            width: 80% !important;
         }
 
+    }
+
+    @media (max-width: 800px){
+        .content-wrapper {
+            max-width: 100vw;
+        }
+
+        .left-section,
         .right-section {
-            margin-top: 20px; /* Ajoutez un peu d'espace entre les sections */
+            width: 100% !important;
         }
     }
 
@@ -351,7 +395,7 @@
     }
 </style>
 <style>
-    @media (max-width: 900px) {
+    @media (max-width: 1100px) {
         .flex-container {
             flex-direction: column;
         }
@@ -701,41 +745,18 @@
                     </div>
                 @endif
                     <div class="home" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                        <div class="content-wrapper" style="display: flex; justify-content: space-between; width: 100%; max-width: 1200px;">
+                        <div class="content-wrapper">
                             <!-- Section de gauche pour le logo et le slogan -->
-                            <div class="left-section" style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 50%;">
+                            <div class="left-section">
+
+
+
                                 <!-- Logo -->
 
-                                <div class="icon-web" style="font-size: 10px; font-weight: bold; color: white; min-width: 300px; padding: 10px; margin: 2vmin; border-radius: 15px; backdrop-filter: blur(60px); -webkit-backdrop-filter: blur(60px); box-shadow: 0px 4px 14px 0px rgba(0,0,0,0.1); border: 1px solid rgba(0,0,0,0.1); display: flex; justify-content: space-around; flex-wrap: wrap;">
-
-                                    <a href="https://www.tiktok.com" target="_blank">
-                                        <img src="/images/tiktok.png" alt="TikTok" style="width: 50px; height: 50px;">
+                                <div class="logo">
+                                    <a href="{{ route('dashboard.index') }}">
+                                        <img src="{{ asset('logo/logo.png') }}" alt="Logo" class="w-auto">
                                     </a>
-
-                                    <a href="https://www.snapchat.com" target="_blank">
-                                        <img src="/images/snap.png" alt="Snapchat" style="width: 50px; height: 50px;">
-                                    </a>
-
-                                    <a href="https://www.facebook.com" target="_blank">
-                                        <img src="/images/facebook.png" alt="Facebook" style="width: 50px; height: 50px;">
-                                    </a>
-
-                                    <a href="https://www.whatsapp.com" target="_blank">
-                                        <img src="/images/whatsapp.png" alt="WhatsApp" style="width: 50px; height: 50px;">
-                                    </a>
-
-                                    <a href="https://www.youtube.com" target="_blank">
-                                        <img src="/images/youtube.png" alt="YouTube" style="width: 50px; height: 50px;">
-                                    </a>
-
-                                    <a href="https://www.linkedin.com" target="_blank">
-                                        <img src="/images/linkedin.png" alt="LinkedIn" style="width: 50px; height: 50px;">
-                                    </a>
-
-                                    <a href="https://www.instagram.com" target="_blank">
-                                        <img src="/images/instagram.png" alt="Instagram" style="width: 50px; height: 50px;">
-                                    </a>
-
                                 </div>
 
 
@@ -745,7 +766,7 @@
                             </div>
 
                             <!-- Section de droite pour l'image des avis -->
-                            <div class="right-section" style="position: relative; display: flex; align-items: center; justify-content: center; width: 50%;">
+                            <div class="right-section">
                                 <img src="/images/femme.png" alt="Avis" class="main-image" style="max-width: 80%;">
                                 <div class="review-card-container">
                                     <div class="review-card">

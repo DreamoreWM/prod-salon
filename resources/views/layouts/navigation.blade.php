@@ -71,16 +71,59 @@
         .navbar-white .btn-white:hover {
             background-color: rgba(231, 76, 60, 0.1); /* Légère teinte rouge pour le hover */
         }
+
+        .burger-menu {
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 24px;
+            width: 30px;
+        }
+
+        .burger-bar {
+            height: 3px;
+            width: 100%;
+            background-color: #333;
+        }
+
+
+
+        /* Media query pour afficher le menu burger sur les petits écrans */
+        @media (max-width: 800px) {
+            .burger-menu {
+                display: flex;
+            }
+
+            .menu-items {
+                display: none;
+            }
+
+            .navbar {
+                align-items: flex-start;
+            }
+
+
+            .btn.btn-red {
+                padding: 8px 8px !important;
+                top: 50px !important;
+                right: auto;
+                font-size: 13px !important;
+                position: static;
+                margin-top: 20px;
+            }
+
+        }
+
     </style>
 
     <nav class="navbar navbar-transparent">
-        <div class="logo">
 
-        </div>
-        <div class="flex space-x-6 items-center">
-            <a href="{{ route('dashboard.index') }}">
-                <img src="{{ asset('logo/logo.png') }}" alt="Logo" class="h-10 w-auto m-5">
-            </a>
+        <div class="flex space-x-6 items-center menu-items">
+            <div class="logo">
+                <a href="{{ route('dashboard.index') }}">
+                    <img src="{{ asset('logo/logo.png') }}" alt="Logo" class="h-10 w-auto m-5">
+                </a>
+            </div>
             <a href="{{ route('dashboard.index') }}" class="btn btn-red">Accueil</a>
             @if(Auth::check())
                 @if(Auth::user()->role == 'admin')
@@ -93,8 +136,7 @@
                     <form method="POST" action="logout">
                         @csrf
                         <a href="logout" class="text-black hover:text-gray-300"
-                                                 onclick="event.preventDefault();
-                                                    this.closest('form').submit();" >Déconnexion</a>
+                           onclick="event.preventDefault(); this.closest('form').submit();">Déconnexion</a>
                     </form>
                 @endif
             @endif
@@ -105,33 +147,44 @@
                 <a href="{{ route('login') }}" class="btn btn-white">Se connecter</a>
             @endauth
         </div>
+        <div class="burger-menu" style="display: none; cursor: pointer;">
+            <div class="burger-bar"></div>
+            <div class="burger-bar"></div>
+            <div class="burger-bar"></div>
+        </div>
     </nav>
 
     <nav class="navbar navbar-white">
-        <div class="logo">
-            <a href="{{ route('dashboard.index') }}">
-                <img src="{{ asset('path/to/logo.png') }}" alt="Logo" class="h-8 w-auto">
-            </a>
-        </div>
-        <div class="flex space-x-8 items-center">
+        <div class="flex space-x-8 items-center menu-items">
+
+            <div class="logo">
+                <a href="{{ route('dashboard.index') }}">
+                    <img src="{{ asset('logo/logo.png') }}" alt="Logo" class="h-10 w-auto m-5">
+                </a>
+            </div>
             <a href="{{ route('dashboard.index') }}" class="text-black hover:text-gray-300">Accueil</a>
             @if(Auth::check())
-            @if(Auth::user()->role == 'admin')
-                <a href="{{ route('employees.index') }}" class="text-black hover:text-gray-300">Coiffeurs</a>
-                <a href="{{ route('prestations.create') }}" class="text-black hover:text-gray-300">Prestations</a>
-                <a href="{{ route('calendar.index') }}" class="text-black hover:text-gray-300">Calendrier</a>
-                <a href="{{ route('salon.edit') }}" class="text-black hover:text-gray-300">Paramétres</a>
-                <a href="{{ route('absences.index') }}" class="text-black hover:text-gray-300">Absences</a>
-                <a href="{{ route('photos.index') }}" class="text-black hover:text-gray-300">Photos</a>
-            @endif
+                @if(Auth::user()->role == 'admin')
+                    <a href="{{ route('employees.index') }}" class="text-black hover:text-gray-300">Coiffeurs</a>
+                    <a href="{{ route('prestations.create') }}" class="text-black hover:text-gray-300">Prestations</a>
+                    <a href="{{ route('calendar.index') }}" class="text-black hover:text-gray-300">Calendrier</a>
+                    <a href="{{ route('salon.edit') }}" class="text-black hover:text-gray-300">Paramétres</a>
+                    <a href="{{ route('absences.index') }}" class="text-black hover:text-gray-300">Absences</a>
+                    <a href="{{ route('photos.index') }}" class="text-black hover:text-gray-300">Photos</a>
+                @endif
             @endif
             <a href="{{ route('prestations.create') }}" class="btn btn-red">Commander</a>
             <a href="{{ route('register') }}" class="btn btn-white">Créer un compte</a>
             <a href="{{ route('login') }}" class="btn btn-white">Se connecter</a>
         </div>
+        <div class="burger-menu" style="display: none; cursor: pointer;">
+            <div class="burger-bar"></div>
+            <div class="burger-bar"></div>
+            <div class="burger-bar"></div>
+        </div>
     </nav>
 
-<!-- Le reste du contenu de ta page -->
+    <!-- Le reste du contenu de ta page -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const navbarTransparent = document.querySelector('.navbar-transparent');
@@ -140,6 +193,14 @@
             const scrollThreshold = 100; // Nombre de pixels de défilement avant de cacher le menu
 
             function handleScroll() {
+
+                if (window.innerWidth <= 768) {
+                    navbarTransparent.style.opacity = '1';
+                    navbarWhite.style.opacity = '0';
+                    navbarWhite.style.pointerEvents = 'none';
+                    return; // Ne pas appliquer le comportement de défilement sur les petits écrans
+                }
+
                 const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
 
                 if (scrollTop > scrollThreshold) {
@@ -177,6 +238,7 @@
             window.addEventListener('scroll', handleScroll);
         });
     </script>
+
 
 
 

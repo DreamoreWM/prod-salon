@@ -84,8 +84,9 @@
             width: 100%;
         }
 
-        .testimonials{
-            max-width: 400px;
+        .testimonial-name {
+            padding-bottom: 7px;
+            font-size: 12px;
         }
     }
 
