@@ -56,6 +56,7 @@ Route::middleware(['auth', 'can:user'])->group(function () {
 
 
 Route::middleware(['auth', 'can:admin'])->group(function () {
+
     Route::post('/appointments', [AppointmentController::class, 'store'])->name('appointments.store');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
