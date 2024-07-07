@@ -160,12 +160,12 @@
                 <a href="{{ route('salon.edit') }}" class="btn btn-white">Paramétres</a>
                 <a href="{{ route('absences.index') }}" class="btn btn-white">Absences</a>
                 <a href="{{ route('photos.index') }}" class="btn btn-white">Photos</a>
+            @endif
                 <form method="POST" action="logout">
                     @csrf
                     <a href="logout" class="text-black hover:text-gray-300"
                        onclick="event.preventDefault(); this.closest('form').submit();">Déconnexion</a>
                 </form>
-            @endif
         @endif
 
         @if(!Auth::check())
@@ -194,9 +194,14 @@
                 <a href="{{ route('absences.index') }}" class="text-black hover:text-gray-300">Absences</a>
                 <a href="{{ route('photos.index') }}" class="text-black hover:text-gray-300">Photos</a>
             @endif
+                <form method="POST" action="logout">
+                    @csrf
+                    <a href="logout" class="text-black hover:text-gray-300"
+                       onclick="event.preventDefault(); this.closest('form').submit();">Déconnexion</a>
+                </form>
         @endif
         @if(!Auth::check())
-            <a href="{{ route('appointments.create') }}" class="btn btn-red">Prendez rendez-vous</a>
+            <a href="{{ route('register') }}" class="btn btn-red">Prendez rendez-vous</a>
             <a href="{{ route('register') }}" class="btn btn-white">Créer un compte</a>
             <a href="{{ route('login') }}" class="btn btn-white">Se connecter</a>
         @endauth
@@ -218,7 +223,7 @@
         @endif
     @endif
     @if(!Auth::check())
-        <a href="{{ route('appointments.create') }}" class="btn btn-red">Prendez rendez-vous</a>
+        <a href="{{ route('register') }}" class="btn btn-red">Prendez rendez-vous</a>
         <a href="{{ route('register') }}" class="btn btn-white">Créer un compte</a>
         <a href="{{ route('login') }}" class="btn btn-white">Se connecter</a>
     @endauth
