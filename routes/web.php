@@ -46,7 +46,7 @@ Route::get('/confidentiality', function () {
     return view('confidentiality');
 })->name('confidentiality');
 
-Route::middleware(['auth', 'can:user'])->group(function () {
+Route::middleware(['auth'])->group(function () {
     Route::get('/appointments/create', [AppointmentController::class, 'create'])->name('appointments.create');
     Route::post('/appointments', [AppointmentController::class, 'store'])->name('appointments.store');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -55,12 +55,8 @@ Route::middleware(['auth', 'can:user'])->group(function () {
 });
 
 
-Route::middleware(['auth', 'can:admin'])->group(function () {
 
-    Route::post('/appointments', [AppointmentController::class, 'store'])->name('appointments.store');
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+Route::middleware(['auth', 'can:admin'])->group(function () {
     Route::get('/roles', [RoleController::class, 'index'])->name('roles.index');
     Route::get('/roles/create', [RoleController::class, 'create'])->name('roles.create');
     Route::post('/roles', [RoleController::class, 'store'])->name('roles.store');
