@@ -178,21 +178,21 @@
 </nav>
 
 <nav class="navbar navbar-white">
-    <div class="menu-items flex space-x-8 items-center">
+    <div class="menu-items flex space-x-6 items-center">
         <div class="logo-nav">
             <a href="{{ route('dashboard.index') }}">
                 <img src="{{ asset('logo/logo.png') }}" alt="Logo">
             </a>
         </div>
-        <a href="{{ route('dashboard.index') }}" class="text-black hover:text-gray-300">Accueil</a>
+        <a href="{{ route('dashboard.index') }}" class="btn btn-red">Accueil</a>
         @if(Auth::check())
             @if(Auth::user()->role == 'admin')
-                <a href="{{ route('employees.index') }}" class="text-black hover:text-gray-300">Coiffeurs</a>
-                <a href="{{ route('prestations.create') }}" class="text-black hover:text-gray-300">Prestations</a>
-                <a href="{{ route('calendar.index') }}" class="text-black hover:text-gray-300">Calendrier</a>
-                <a href="{{ route('salon.edit') }}" class="text-black hover:text-gray-300">Paramétres</a>
-                <a href="{{ route('absences.index') }}" class="text-black hover:text-gray-300">Absences</a>
-                <a href="{{ route('photos.index') }}" class="text-black hover:text-gray-300">Photos</a>
+                <a href="{{ route('employees.index') }}" class="btn btn-white">Coiffeurs</a>
+                <a href="{{ route('prestations.create') }}" class="btn btn-white">Prestations</a>
+                <a href="{{ route('calendar.index') }}" class="btn btn-white">Calendrier</a>
+                <a href="{{ route('salon.edit') }}" class="btn btn-white">Paramétres</a>
+                <a href="{{ route('absences.index') }}" class="btn btn-white">Absences</a>
+                <a href="{{ route('photos.index') }}" class="btn btn-white">Photos</a>
             @endif
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
