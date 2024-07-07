@@ -40,7 +40,7 @@ class ReviewController extends Controller
         {
             foreach($request->file('photos') as $file)
             {
-                $path = $file->store('reviews', 'public');
+                $path = $file->store('photosPres', 'public');
                 $photo = new Photo;
                 $photo->filename = $path;
                 $photo->review_id = $review->id;
