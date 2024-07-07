@@ -161,11 +161,11 @@
                 <a href="{{ route('absences.index') }}" class="btn btn-white">Absences</a>
                 <a href="{{ route('photos.index') }}" class="btn btn-white">Photos</a>
             @endif
-                <form method="POST" action="logout">
+                <form method="POST" action="{{ route('logout') }}">
                     @csrf
-                    <a href="logout" class="text-black hover:text-gray-300"
-                       onclick="event.preventDefault(); this.closest('form').submit();">Déconnexion</a>
+                    <button type="submit" class="text-black hover:text-gray-300">Déconnexion</button>
                 </form>
+
         @endif
 
         @if(!Auth::check())
@@ -194,11 +194,11 @@
                 <a href="{{ route('absences.index') }}" class="text-black hover:text-gray-300">Absences</a>
                 <a href="{{ route('photos.index') }}" class="text-black hover:text-gray-300">Photos</a>
             @endif
-                <form method="POST" action="logout">
+                <form method="POST" action="{{ route('logout') }}">
                     @csrf
-                    <a href="logout" class="text-black hover:text-gray-300"
-                       onclick="event.preventDefault(); this.closest('form').submit();">Déconnexion</a>
+                    <button type="submit" class="text-black hover:text-gray-300">Déconnexion</button>
                 </form>
+
         @endif
         @if(!Auth::check())
             <a href="{{ route('register') }}" class="btn btn-red">Prendez rendez-vous</a>
