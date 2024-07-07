@@ -866,24 +866,9 @@
 
         <div class="portfolio">
 
-            <h2 class=" p-10 text-center" style="font-size: 60px; color: white; font-family: 'YourFontName';">Les avis</h2>
-            <div class="review">
-                <section>
-                    <div class="mx-auto max-w-screen-lg px-4 lg:px-12">
-                        <div class="mb-4 d-flex justify-content-center">
-                            <div class="col pb-10">
-                                <div>
-                                    @include('reviews.index', ['reviews' => $reviews])
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-            </div>
-
             <h2 class=" p-10 text-center" style="font-size: 60px;  color: white; font-family: 'YourFontName';">Nos réalisations</h2>
             <div class="container-fluid tm-container-content" >
-                <div class="row tm-gallery pt-5" style="justify-content: center !important">
+                <div class="row tm-gallery pt-5 pb-5" style="justify-content: center !important">
                         <div class="swiper">
                             <!-- Additional required wrapper -->
                             <div class="swiper-wrapper">
