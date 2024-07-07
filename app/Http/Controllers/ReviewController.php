@@ -40,12 +40,10 @@ class ReviewController extends Controller
         {
             foreach($request->file('photos') as $file)
             {
-                $name = time().'_'.$file->getClientOriginalName();
-                $file->storeAs('public/reviews', $name);  // stores the image in the 'public/reviews' directory
-
-                $photo = new Photo;  // assuming you have a Photo model
+                $path = $file->store('reviews', 'public');
+                $photo = new Photo;
+                $photo->filename = $path;
                 $photo->review_id = $review->id;
-                $photo->filename = $name;
                 $photo->save();
             }
         }
