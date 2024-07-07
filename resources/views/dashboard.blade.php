@@ -890,7 +890,7 @@
                                 @foreach($photos as $photo)
                                     <div class="swiper-slide">
                                         <figure class="effect-ming tm-video-item">
-                                            <img src="{{ asset('storage/' . $photo->path) }}" alt="Image" class="img-fluid" style="width: 100%; height: 260px; object-fit: cover;">
+                                            <img src="{{ asset('storage/app/public/' . $photo->path) }}" alt="Image" class="img-fluid" style="width: 100%; height: 260px; object-fit: cover;">
                                             <figcaption class="d-flex align-items-center justify-content-center">
                                                 <h2>Image</h2>
                                                 <a href="photo-detail.html">View more</a>
