@@ -4,6 +4,8 @@ describe('Navigation Test', () => {
     it('Vérifie les boutons de navigation pour un utilisateur non connecté', () => {
         cy.visit('/dashboard'); // Remplacez par l'URL de votre tableau de bord
 
+        cy.get('nav.navbar.navbar-transparent').should('have.css', 'opacity', '1');
+
         // Vérifie que les boutons pour un utilisateur non connecté sont présents
         cy.contains('Prendez rendez-vous').should('be.visible');
         cy.contains('Créer un compte').should('be.visible');
