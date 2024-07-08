@@ -3,7 +3,9 @@
     "type": "module",
     "scripts": {
         "dev": "vite",
-        "build": "vite build"
+        "build": "vite build",
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "test:cypress": "cypress run"
     },
     "devDependencies": {
         "@fullcalendar/core": "^6.1.11",
@@ -16,6 +18,7 @@
         "axios": "^1.6.4",
         "bootstrap": "^5.2.3",
         "bootstrap-icons": "^1.11.3",
+        "cypress": "^13.13.0",
         "laravel-datatables-vite": "^0.5.2",
         "laravel-vite-plugin": "^1.0.0",
         "postcss": "^8.4.31",
