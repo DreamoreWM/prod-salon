@@ -6,10 +6,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use JeroenG\Explorer\Application\Explored;
 use Laravel\Sanctum\HasApiTokens;
 use Laravel\Scout\Searchable;
 
-class User extends Authenticatable
+class User extends Authenticatable implements Explored
 {
     use HasApiTokens, HasFactory, Notifiable, Searchable;
 
@@ -56,6 +57,15 @@ class User extends Authenticatable
                 'google_token' => $newAccessToken['access_token'],
             ]);
         }
+    }
+
+    public function mappableAs(): array
+    {
+        return [
+            'name' => 'text',
+            'email' => 'keyword',
+            'created_at' => 'date'
+        ];
     }
 
     public function scopeSearch($query, $value)

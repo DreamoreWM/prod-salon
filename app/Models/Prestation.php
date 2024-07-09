@@ -4,9 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use JeroenG\Explorer\Application\Explored;
 use Laravel\Scout\Searchable;
 
-class Prestation extends Model
+class Prestation extends Model implements Explored
 {
     use hasFactory;
     use Searchable;
@@ -34,5 +35,12 @@ class Prestation extends Model
     public function category()
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function mappableAs(): array
+    {
+        return [
+            'nom' => 'text'
+        ];
     }
 }

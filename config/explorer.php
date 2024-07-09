@@ -13,8 +13,8 @@ return [
         'port' => '443',
         'scheme' => 'https',
         'auth' => [
-            'username' => env('ELASTICSEARCH_USERNAME', 'coiffeur'),
-            'password' => env('ELASTICSEARCH_PASSWORD', 'Efddb4693'),
+            'username' => env('ELASTICSEARCH_USERNAME', 'super-admin'),
+            'password' => env('ELASTICSEARCH_PASSWORD', 'p@ssw0rd'),
         ],
     ],
 
@@ -34,6 +34,71 @@ return [
      */
     'indexes' => [
         'employees' => [
+            'settings' => [
+                'analysis' => [
+                    'analyzer' => [
+                        'standard_lowercase' => [
+                            'type' => 'custom',
+                            'tokenizer' => 'standard',
+                            'filter' => ['lowercase'],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+        'users' => [
+            'settings' => [
+                'analysis' => [
+                    'analyzer' => [
+                        'standard_lowercase' => [
+                            'type' => 'custom',
+                            'tokenizer' => 'standard',
+                            'filter' => ['lowercase'],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+        'categories' => [
+            'settings' => [
+                'analysis' => [
+                    'analyzer' => [
+                        'standard_lowercase' => [
+                            'type' => 'custom',
+                            'tokenizer' => 'standard',
+                            'filter' => ['lowercase'],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+        'prestations' => [
+            'settings' => [
+                'analysis' => [
+                    'analyzer' => [
+                        'standard_lowercase' => [
+                            'type' => 'custom',
+                            'tokenizer' => 'standard',
+                            'filter' => ['lowercase'],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+        'absences' => [
+            'settings' => [
+                'analysis' => [
+                    'analyzer' => [
+                        'standard_lowercase' => [
+                            'type' => 'custom',
+                            'tokenizer' => 'standard',
+                            'filter' => ['lowercase'],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+        'appointments' => [
             'settings' => [
                 'analysis' => [
                     'analyzer' => [

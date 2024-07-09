@@ -4,9 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use JeroenG\Explorer\Application\Explored;
 use Laravel\Scout\Searchable;
 
-class Appointment extends Model
+class Appointment extends Model implements Explored
 {
     use HasFactory;
     use Searchable;
@@ -34,4 +35,12 @@ class Appointment extends Model
         return $this->belongsToMany(Prestation::class, 'appointment_prestation');
     }
 
+    public function mappableAs(): array
+    {
+        return [
+            'start_time' => 'date',
+            'end_time' => 'date',
+            'created_at' => 'date'
+        ];
+    }
 }

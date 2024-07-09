@@ -8,7 +8,7 @@ use JeroenG\Explorer\Application\Explored;
 use JeroenG\Explorer\Application\IndexSettings;
 use Laravel\Scout\Searchable;
 
-class Employee extends Model implements Explored, IndexSettings
+class Employee extends Model implements Explored
 {
     use hasFactory;
     use Searchable;
@@ -21,21 +21,6 @@ class Employee extends Model implements Explored, IndexSettings
             'name' => 'text',
             'email' => 'keyword',
             'created_at' => 'date'
-        ];
-    }
-
-    public function indexSettings(): array
-    {
-        return [
-            'analysis' => [
-                'analyzer' => [
-                    'standard_lowercase' => [
-                        'type' => 'custom',
-                        'tokenizer' => 'standard',
-                        'filter' => ['lowercase'],
-                    ],
-                ],
-            ],
         ];
     }
 
