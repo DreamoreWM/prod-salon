@@ -90,8 +90,8 @@
     </div>
 
 
-    @foreach( $users as $user)
-        <div class="modal fade" id="userInfoModal{{$user->id}}" tabindex="-1" aria-labelledby="userInfoModalLabel" aria-hidden="true">
+    @foreach($users as $user)
+        <div class="modal fade" id="userInfoModal{{$user->id}}" aria-labelledby="userInfoModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -103,20 +103,25 @@
                     <div class="modal-body">
                         <p>Name: {{ $user->name }}</p>
                         <p>Email: {{ $user->email }}</p>
-                        <!-- Add more user details here -->
+                        <!-- Ajout du champ select pour le rôle -->
+                        <div class="mb-4">
+                            <label for="role{{$user->id}}" class="block text-sm font-medium text-gray-900">Role</label>
+                            <select id="role{{$user->id}}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                                <option value="user" @if($user->role == 'user') selected @endif>Utilisateur</option>
+                                <option value="admin" @if($user->role == 'admin') selected @endif>Administrateur</option>
+                            </select>
+                        </div>
 
                         <h2>RENDEZ VOUS</h2>
                         <td>
-                                @foreach($user->getAppointments() as $appointment)
-                                    {{ $appointment->slot_id }}
-                                {{ $appointment->slot->date }}
-
-                                @endforeach
+                            @foreach($user->getAppointments() as $appointment)
+                                {{ $appointment->start_time }}
+                            @endforeach
                         </td>
                     </div>
                     <div class="modal-footer">
-                        <!-- Include the Delete Button inside the modal -->
-                        <button wire:click="delete({{$user->id}})"  data-dismiss="modal" class="btn btn-danger">Delete User</button>
+                        <!-- Bouton pour ouvrir la modal de confirmation -->
+                        <button type="button" class="btn btn-primary" onclick="showConfirmationModal({{ $user->id }})">Save Changes</button>
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     </div>
                 </div>
@@ -124,4 +129,78 @@
         </div>
     @endforeach
 
+    <!-- Modal de confirmation -->
+    <div class="modal fade"  id="confirmationModal"  tabindex="-1"  aria-labelledby="confirmationModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmationModalLabel">Confirm Role Change</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to change the role of this user?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="confirmButton">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
 </div>
+
+<script>
+    let selectedUserId = null;
+
+    function showConfirmationModal(userId) {
+        selectedUserId = userId;
+        $('#confirmationModal').modal('show');
+    }
+
+    document.getElementById('confirmButton').addEventListener('click', function() {
+        if (selectedUserId !== null) {
+            updateUserRole(selectedUserId);
+        }
+    });
+
+    function updateUserRole(userId) {
+        var role = document.getElementById('role' + userId).value;
+
+        fetch(`/users/${userId}/update-role`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({
+                role: role
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message === 'Role updated successfully') {
+                    // Fermez la modal de confirmation et la modal utilisateur, affichez un message de succès
+                    $('#confirmationModal').modal('hide');
+                    $('#userInfoModal' + userId).modal('hide');
+                    alert('Role updated successfully');
+                    location.reload(); // Pour rafraîchir la page et voir les modifications
+                } else {
+                    alert('Failed to update role');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to update role');
+            });
+    }
+</script>
+
+
+
+
+

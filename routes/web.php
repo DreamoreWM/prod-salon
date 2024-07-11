@@ -53,6 +53,8 @@ Route::middleware(['auth', 'role:user,admin'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 Route::middleware(['auth', 'role:admin'])->group(function () {
+
+    Route::post('/users/{id}/update-role', [UsersController::class, 'updateRole']);
     Route::get('/roles', [RoleController::class, 'index'])->name('roles.index');
     Route::get('/roles/create', [RoleController::class, 'create'])->name('roles.create');
     Route::post('/roles', [RoleController::class, 'store'])->name('roles.store');
