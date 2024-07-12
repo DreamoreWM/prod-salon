@@ -1,4 +1,31 @@
-<div>
+<html lang="fr">
+<head>
+    @php
+        // Supposons que vous avez une table 'settings' avec une colonne 'background_color'
+        use App\Models\SalonSetting;
+        $backgroundColor = SalonSetting::first()->background_color;
+
+    @endphp
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des utilisateurs</title>
+    <style>
+        .modal-backdrop {
+            display: none;
+        }
+
+        .content {
+            background: {{ $backgroundColor }};
+            min-height: 100vh;
+        }
+
+        .navbar {
+            position: absolute
+        }
+    </style>
+</head>
+<body>
+<div class="content pt-10">
     <div>
         <section class="mt-10">
             <div class="mx-auto max-w-screen-xl px-4 lg:px-12">
@@ -130,7 +157,7 @@
     @endforeach
 
     <!-- Modal de confirmation -->
-    <div class="modal fade"  id="confirmationModal"  tabindex="-1"  aria-labelledby="confirmationModalLabel" aria-hidden="true">
+    <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -149,9 +176,6 @@
             </div>
         </div>
     </div>
-
-
-
 </div>
 
 <script>
@@ -198,9 +222,13 @@
                 alert('Failed to update role');
             });
     }
+
+    // Ajouter des gestionnaires d'événements pour fermer les modals
+    $(document).ready(function() {
+        $('.close, .btn-secondary').on('click', function() {
+            $('#confirmationModal').modal('hide');
+        });
+    });
 </script>
-
-
-
-
-
+</body>
+</html>

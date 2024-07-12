@@ -13,7 +13,7 @@
     @endif
 
 
-    <section class="mt-2">
+    <section>
         <div class="mx-auto max-w-screen-lg px-4 lg:px-12">
             <div class="mb-4 d-flex justify-content-center bg-white rounded-lg shadow">
                 <div class="col">

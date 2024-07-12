@@ -101,20 +101,6 @@
         }
     }
 
-
-
-    .loader {
-        top: 50vh !important;
-        bottom: 0;
-        right: 0;
-        align-items: center;
-        background: rgba(0, 0, 0, 0.5);
-    }
-
-    .loader-content {
-        visibility: hidden;
-    }
-
     .home {
         display: flex;
         flex-direction: column;
@@ -761,11 +747,11 @@
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 <x-app-layout>
 
-    <div id="loader" class="loader"></div>
 
 
 
-    <div id="loader-content" class="loader-content">
+
+
         <div id="content" class="content">
 
 
@@ -806,7 +792,7 @@
 
                             <!-- Section de droite pour l'image des avis -->
                             <div class="right-section">
-                                <img src="/images/femme.png" alt="Avis" class="main-image" style="max-width: 80%;">
+                                <img src="/images/homme.png" alt="Avis" class="main-image" style="max-width: 80%;">
                                 <div class="review-card-container">
                                     <div class="review-card">
                                         <!-- Contenu de la carte des avis -->
@@ -966,7 +952,6 @@
             </div>
         </footer>
 
-    </div>
 
 
     <script type="text/javascript">
@@ -1027,13 +1012,6 @@
                 slideShadows: true, // Enables slides shadows
             },
         });
-    </script>
-
-    <script>
-        window.onload = function() {
-            document.getElementById('loader').style.display = "none";
-            document.getElementById('loader-content').style.visibility = "visible";
-        };
     </script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>

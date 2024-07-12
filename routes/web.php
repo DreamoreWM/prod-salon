@@ -7,6 +7,8 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SalonController;
 use App\Models\Review;
+use App\Models\SalonSetting;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SlotController;
 use App\Http\Controllers\UsersController;
@@ -37,6 +39,10 @@ Route::get('auth/google', [LoginController::class, 'redirectToGoogle'])->name('a
 // Route pour le callback de Google
 Route::get('auth/google/callback', [LoginController::class, 'handleGoogleCallback'])->name('auth.google.callback');
 
+Route::get('/navbar', function () {
+    $backgroundColor = SalonSetting::first()->background_color;
+    return view('navbar', ['backgroundColor' => $backgroundColor]);
+});
 
 Route::resource('/dashboard', DashboardController::class);
 
