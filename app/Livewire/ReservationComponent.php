@@ -40,7 +40,8 @@ class ReservationComponent extends Component
     public $slotDurationInSecondes;
 
     public $categories;
-
+    public $selectedSlotDetails = null;
+    public $selectedPrestationsDetails = [];
 
     public function mount()
     {
@@ -55,6 +56,50 @@ class ReservationComponent extends Component
         $this->employees = Employee::all();
         $this->setting = SalonSetting::first();
         $this->openDays = json_decode($this->setting->open_days, true);
+    }
+
+    public function showConfirmationModal($date, $start)
+    {
+        // Récupérer les prestations sélectionnées
+        $this->selectedPrestationsDetails = $this->getSelectedPrestations();
+
+        // Calculer l'heure de fin en additionnant les durées de toutes les prestations
+        $totalDuration = 0;
+        foreach ($this->selectedPrestationsDetails as $prestation) {
+            $totalDuration += $prestation['temps'];
+        }
+
+        // Convertir l'heure de début en objet DateTime
+        $startDatetime = new DateTime($date . ' ' . $start);
+
+        // Calculer l'heure de fin en ajoutant la durée totale des prestations à l'heure de début
+        $endDatetime = clone $startDatetime;
+        $endDatetime->add(new DateInterval('PT' . $totalDuration . 'M'));
+
+        // Mettre à jour les détails du créneau sélectionné
+        $this->selectedSlotDetails = [
+            'date' => $date,
+            'start' => $start,
+            'end' => $endDatetime->format('H:i')
+        ];
+
+        // Afficher le modal
+        $this->dispatch('show-confirmation-modal');
+    }
+
+    public function confirmFinalReservation()
+    {
+        // Appeler la méthode de confirmation de la réservation
+        $this->confirmReservation($this->selectedSlotDetails['date'], $this->selectedSlotDetails['start']);
+
+        // Fermer le modal
+        $this->dispatch('hide-modal');
+    }
+
+    public function closeModal()
+    {
+        // Fermer le modal
+        $this->dispatch('hide-modal');
     }
 
     public function confirmReservation($date, $start)
@@ -100,8 +145,6 @@ class ReservationComponent extends Component
             foreach ($this->selectedPrestations as $prestationId) {
                 $appointment->prestations()->attach($prestationId);
             }
-
-
 
             $prestations = $appointment->prestations()->get();
 

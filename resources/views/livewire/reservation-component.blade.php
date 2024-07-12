@@ -216,9 +216,9 @@
                                                         @foreach($availableSlots as $slot)
                                                             @if($slot['date'] == $formattedDay)
                                                                 <div>
-                                                                <span  wire:click="confirmReservation('{{ $slot['date'] }}', '{{ $slot['start'] }}')" class="badge bg-gray-200 mb-2" style="font-weight: normal; color: black; font-size:14px; padding: 13px 40px; border-radius: 10px;">
-                                                                    {{ $slot['start'] }}
-                                                                </span>
+                                                            <span wire:click="showConfirmationModal('{{ $slot['date'] }}', '{{ $slot['start'] }}')" class="badge bg-gray-200 mb-2" style="font-weight: normal; color: black; font-size:14px; padding: 13px 40px; border-radius: 10px;">
+                                                                {{ $slot['start'] }}
+                                                            </span>
                                                                 </div>
                                                             @endif
                                                         @endforeach
@@ -235,9 +235,6 @@
                             </swiper-container>
                         </div>
                     </section>
-                    <div class="mx-auto max-w-screen-lg px-4 lg:px-12 mt-4">
-                        <button wire:click="confirmReservation" class="btn btn-primary">Valider</button>
-                    </div>
                 </div>
             @endif
 
@@ -286,9 +283,9 @@
                                                             @foreach($availableSlots as $slot)
                                                                 @if($slot['date'] == $formattedDay)
                                                                     <div>
-                                                            <span wire:click="confirmReservation('{{ $slot['date'] }}', '{{ $slot['start'] }}')" class="badge bg-gray-200 mb-2" style="font-weight: normal; color: black; font-size:14px; padding: 13px 40px; border-radius: 10px;">
-                                                                {{ $slot['start'] }}
-                                                            </span>
+                                                                <span wire:click="showConfirmationModal('{{ $slot['date'] }}', '{{ $slot['start'] }}')" class="badge bg-gray-200 mb-2" style="font-weight: normal; color: black; font-size:14px; padding: 13px 40px; border-radius: 10px;">
+                                                                    {{ $slot['start'] }}
+                                                                </span>
                                                                     </div>
                                                                 @endif
                                                             @endforeach
@@ -309,11 +306,49 @@
                         @endwhile
                     </section>
                 </div>
+            @endif
         </div>
-        @endif
-        </div>
-    </div>
 
+        <!-- Modal -->
+        <div wire:ignore.self class="modal fade" id="confirmationModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Confirmation de réservation</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <h6>Prestations sélectionnées :</h6>
+                        <ul>
+                            @foreach ($selectedPrestationsDetails as $prestation)
+                                <li>{{ $prestation['name'] }} ({{ $prestation['temps'] }} min) - {{ $prestation['prix'] }} €</li>
+                            @endforeach
+                        </ul>
+                        <h6>Date et heure :</h6>
+                        <p>{{ $selectedSlotDetails ? $selectedSlotDetails['date'] . ' à ' . $selectedSlotDetails['start'] : '' }}</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" wire:click="closeModal">Annuler</button>
+                        <button type="button" class="btn btn-primary" wire:click="confirmFinalReservation">Confirmer</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @script
+        <script>
+            $wire.on('show-confirmation-modal', () => {
+                $('#confirmationModal').modal('show');
+            });
+
+            $wire.on('hide-modal', () => {
+                $('#confirmationModal').modal('hide');
+            });
+        </script>
+        @endscript
 </div>
+
 
 
