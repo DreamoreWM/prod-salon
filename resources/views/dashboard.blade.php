@@ -3,6 +3,21 @@
 
 <style>
 
+    .contact-details p {
+        margin: 0;
+        padding: 10px 0;
+    }
+
+    .contact-details i {
+        margin-right: 10px;
+    }
+
+    @media (max-width: 600px) {
+        .contact-details p {
+            font-size: 20px;
+        }
+    }
+
     .logo {
         max-width: 200px;
     }
@@ -890,12 +905,24 @@
                 <div class="mx-auto max-w-screen-lg px-4 lg:px-12">
                     <div class="mb-4">
                         <div class="col">
+                            <div class="contact-details text-center">
+                                <p style="font-size: 24px; color: #333;">
+                                    <i class="fas fa-map-marker-alt" style="color: #e74c3c;"></i> {{$address}}
+                                </p>
+                                <p style="font-size: 24px; color: #333;">
+                                    <i class="fas fa-phone" style="color: #e74c3c;"></i> +33 1 23 45 67 89
+                                </p>
+                            </div>
                             <div class="row">
                                 <div class="col-md-6" >
                                                 <iframe src="https://maps.google.com/maps?q={{$address}}&output=embed" width="100%" height="450" frameborder="0" style="border:0;" allowfullscreen="" aria-hidden="false" tabindex="0"></iframe>
                                 </div>
-                                <div class="col-md-6" >
-                                            <iframe src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2F{{$facebookPageUrl}}&amp;locale%3Dfr_FR&tabs=timeline&width=500&height=500&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=true&appId"  data-adapt-container-width="true" width="100%" height="500" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>
+
+                                <div class="col-md-6">
+                                    @if(!empty($facebookPageUrl))
+                                        <iframe src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2F{{$facebookPageUrl}}&amp;locale%3Dfr_FR&tabs=timeline&width=500&height=500&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=true&appId"  data-adapt-container-width="true" width="100%" height="500" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>                                    @else
+                                        <p>Facebook page URL is not set.</p>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -905,6 +932,7 @@
         </div>
         <!-- Structure de la modal -->
         <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">

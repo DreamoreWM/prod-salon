@@ -17,7 +17,7 @@ class AbsenceController extends Controller
     public function index()
     {
         $backgroundColor = SalonSetting::first()->background_color;
-        $absences = Absence::with('employee')->get();
+        $absences = Absence::with('employee')->paginate(3); // Paginer à 10 absences par page
         return view('absences.index', compact('absences', 'backgroundColor'));
     }
 

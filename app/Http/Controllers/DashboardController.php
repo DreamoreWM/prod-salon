@@ -14,19 +14,22 @@ class DashboardController extends Controller
     public function index()
     {
         $photos = Photospres::all();
-        $facebookPageUrl = SalonSetting::first()->facebook_page_url;
-        $json = SalonSetting::first()->open_days;
-        $address = SalonSetting::first()->address;
+        $salonSetting = SalonSetting::first(); // Une seule requête pour SalonSetting
+        $facebookPageUrl = $salonSetting->facebook_page_url;
+        $json = $salonSetting->open_days;
+        $address = $salonSetting->address;
         $openDays = json_decode($json, true);
         $isOpen = $this->isOpen();
         $categories = Category::with('prestations')->get();
         $reviews = Review::with('appointment.bookable')->with('photo')->get();
         $showNavigation = false;
-        $backgroundImage = SalonSetting::first()->background_image;
-        $slogan = SalonSetting::first()->slogan;
-        $background_color = SalonSetting::first()->background_color;
+        $backgroundImage = $salonSetting->background_image;
+        $slogan = $salonSetting->slogan;
+        $background_color = $salonSetting->background_color;
+
         return view('dashboard', compact('categories', 'reviews', 'isOpen', 'facebookPageUrl', 'openDays', 'photos', 'address', 'showNavigation', 'backgroundImage', 'background_color', 'slogan'));
     }
+
 
     public function showDashboard()
     {
