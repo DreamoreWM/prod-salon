@@ -3,6 +3,17 @@
 
 <style>
 
+    .admin-notification {
+        position: fixed;
+        top: 300px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 9999; /* Assurez-vous que le z-index est suffisamment élevé pour passer devant tout */
+        width: 90%;
+        max-width: 1200px;
+        text-align: center;
+    }
+
     .contact-details p {
         margin: 0;
         padding: 10px 0;
@@ -785,7 +796,7 @@
 
             <div class="py-6">
                 @if(session()->has('admin_notification'))
-                    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 alert alert-success alert-dismissible fade show">
+                    <div class=" admin-notification max-w-7xl mx-auto sm:px-6 lg:px-8 alert alert-success alert-dismissible fade show">
                         {{ session('admin_notification') }}
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"><i class="bi bi-x-circle"></i></button>
                     </div>
