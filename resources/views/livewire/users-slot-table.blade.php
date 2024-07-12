@@ -115,7 +115,7 @@
                             <h2>RENDEZ VOUS</h2>
                             <div>
                                 @foreach($user->getAppointments() as $appointment)
-                                    {{ $appointment->start_time }}
+                                    <p>{{ $appointment->formatted_start_time }} - {{ $appointment->formatted_end_time }}</p>
                                 @endforeach
                             </div>
                         </div>

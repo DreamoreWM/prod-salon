@@ -9,7 +9,7 @@
     }
 </style>
 
-    <div class="content py-6">
+    <div class="content py-6 mt-10 pt-10">
         <div class="container mt-5">
             <section class="mt-10">
                 <div class="mx-auto max-w-screen-xl px-4 lg:px-12 m-2">
