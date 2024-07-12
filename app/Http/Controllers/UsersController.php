@@ -13,4 +13,13 @@ class UsersController extends Controller
         $users = User::all();
         return view('users.manage-users', compact('users'));
     }
+
+    public function updateRole(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+        $user->role = $request->role;
+        $user->save();
+
+        return response()->json(['message' => 'Role updated successfully']);
+    }
 }

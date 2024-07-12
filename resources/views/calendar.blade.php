@@ -7,7 +7,9 @@
 
 @section('content')
     <style>
-
+        .navbar {
+            position: absolute
+        }
         .content {
             background-color: {{ $background_color }};
         }
@@ -169,7 +171,7 @@
         }
     </style>
 
-    <div class="content">
+    <div class="content pt-10 mt-10">
         <div class="container-fluid pt-3">
             <input type="hidden" name="slotDuration" id="slotDuration" value="{{ $slotDuration }}">
             <input type="hidden" name="slotDurationInMinutes" id="slotDurationInMinutes" value="{{ $slotDurationInMinutes }}">

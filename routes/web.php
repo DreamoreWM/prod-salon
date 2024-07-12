@@ -7,6 +7,8 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SalonController;
 use App\Models\Review;
+use App\Models\SalonSetting;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SlotController;
 use App\Http\Controllers\UsersController;
@@ -37,6 +39,10 @@ Route::get('auth/google', [LoginController::class, 'redirectToGoogle'])->name('a
 // Route pour le callback de Google
 Route::get('auth/google/callback', [LoginController::class, 'handleGoogleCallback'])->name('auth.google.callback');
 
+Route::get('/navbar', function () {
+    $backgroundColor = SalonSetting::first()->background_color;
+    return view('navbar', ['backgroundColor' => $backgroundColor]);
+});
 
 Route::resource('/dashboard', DashboardController::class);
 
@@ -53,6 +59,8 @@ Route::middleware(['auth', 'role:user,admin'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 Route::middleware(['auth', 'role:admin'])->group(function () {
+
+    Route::post('/users/{id}/update-role', [UsersController::class, 'updateRole']);
     Route::get('/roles', [RoleController::class, 'index'])->name('roles.index');
     Route::get('/roles/create', [RoleController::class, 'create'])->name('roles.create');
     Route::post('/roles', [RoleController::class, 'store'])->name('roles.store');

@@ -75,7 +75,7 @@
         }
 
     </style>
-    <div class="content">
+    <div class="content mt-5">
         <div class="overlay"></div>
         <div class="content-inner">
             <!-- Affichage des prestations -->

@@ -16,7 +16,7 @@
         }
 
     </style>
-    <div class="content py-6">
+    <div class="content py-6 mt-10 pt-10">
         <livewire:employees-slots-table/>
     </div>
 @endsection
