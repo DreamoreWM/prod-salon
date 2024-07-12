@@ -751,6 +751,18 @@
         }
     }
 
+    .admin-notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background-color: #f8d7da;
+        color: #721c24;
+        padding: 10px 20px;
+        border: 1px solid #f5c6cb;
+        border-radius: 5px;
+        z-index: 1050;
+    }
+
 
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
@@ -772,6 +784,12 @@
 
 
             <div class="py-6">
+                @if(session()->has('admin_notification'))
+                    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 alert alert-success alert-dismissible fade show">
+                        {{ session('admin_notification') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"><i class="bi bi-x-circle"></i></button>
+                    </div>
+                @endif
                 @if(session()->has('success'))
                     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 alert alert-success alert-dismissible fade show" role="alert">
                         {{ session('success') }}

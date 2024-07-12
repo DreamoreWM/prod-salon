@@ -64,11 +64,6 @@ class User extends Authenticatable
         $query->where('name','like',"%{$value}%")->orWhere('email','like',"%{$value}%");
     }
 
-    public function getAppointments()
-    {
-        return $this->appointments()->with('slot')->get();
-    }
-
     // Dans User.php et TemporaryUser.php
     public function appointments(): \Illuminate\Database\Eloquent\Relations\MorphMany
     {
