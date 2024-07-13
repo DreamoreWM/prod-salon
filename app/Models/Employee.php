@@ -12,9 +12,9 @@ class Employee extends Model
 
     protected $fillable = ['name','surname','email'];
 
-    public function slots()
+    public function appointments()
     {
-        return $this->hasMany(Slot::class);
+        return $this->hasMany(Appointment::class, 'bookable_id')->where('bookable_type', self::class);
     }
 
     public function scopeSearch($query, $value)

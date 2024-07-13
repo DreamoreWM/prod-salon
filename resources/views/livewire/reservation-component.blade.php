@@ -337,14 +337,52 @@
             </div>
         </div>
 
+        <form id="reservation-form" method="POST" action="{{ route('confirmReservation') }}">
+            @csrf
+            <input type="hidden" name="date" id="date">
+            <input type="hidden" name="start" id="start">
+            <input type="hidden" name="end" id="end">
+            <input type="hidden" name="prestations" id="prestations">
+            <input type="hidden" name="employee_id" id="employee_id">
+        </form>
+
         @script
         <script>
-            $wire.on('show-confirmation-modal', () => {
-                $('#confirmationModal').modal('show');
-            });
+            Livewire.on('show-swal-confirmation', event => {
+                const { prestations, slot, employeeId } = event.detail || {};
+                if (!prestations || !slot) {
+                    console.error('Détails manquants dans l\'événement', event.detail);
+                    return;
+                }
 
-            $wire.on('hide-modal', () => {
-                $('#confirmationModal').modal('hide');
+                let prestationList = prestations.map(p => `<li>${p.name} (${p.temps} min) - ${p.prix} €</li>`).join('');
+
+                Swal.fire({
+                    title: 'Confirmation de réservation',
+                    html: `
+                <h6>Prestations sélectionnées :</h6>
+                <ul>${prestationList}</ul>
+                <h6>Date et heure :</h6>
+                <p>${slot.date} à ${slot.start} - ${slot.end}</p>
+            `,
+                    icon: 'info',
+                    showCancelButton: true,
+                    confirmButtonText: 'Confirmer',
+                    cancelButtonText: 'Annuler',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Récupérer le formulaire
+                        const form = document.getElementById('reservation-form');
+                        // Mettre à jour les champs cachés
+                        document.getElementById('date').value = slot.date;
+                        document.getElementById('start').value = slot.start;
+                        document.getElementById('end').value = slot.end;
+                        document.getElementById('prestations').value = JSON.stringify(prestations);
+                        document.getElementById('employee_id').value = employeeId;
+                        // Soumettre le formulaire
+                        form.submit();
+                    }
+                });
             });
         </script>
         @endscript

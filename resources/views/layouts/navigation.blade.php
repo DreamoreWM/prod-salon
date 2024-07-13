@@ -47,19 +47,44 @@
         }
 
         .menu-button {
-            margin: 0 5px 5px 0;
             display: flex;
             justify-content: center;
-            flex: 1;
-            font-size: 20px;
+            align-items: center;
+            font-size: 4vw; /* Utilisation de vw pour l'échelle des polices */
             background-color: #e74c3c;
             color: white;
-            padding: 10px 20px;
+            padding: 2vw; /* Utilisation de vw pour le padding */
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            max-width: 100px;
-            width: 100px;
+            max-width: 15vw; /* Limiter la largeur maximale */
+            width: 100%;
+            text-align: center;
+        }
+
+        /* Media Queries pour ajuster les tailles sur différents écrans */
+        @media (min-width: 768px) {
+            .menu-button {
+                font-size: 2vw;
+                padding: 1.5vw;
+                max-width: 10vw;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .menu-button {
+                font-size: 1.5vw;
+                padding: 1vw;
+                max-width: 8vw;
+            }
+        }
+
+        @media (min-width: 1200px) {
+            .menu-button {
+                font-size: 1.2vw;
+                padding: 0.8vw;
+                max-width: 6vw;
+            }
         }
 
         .overlay-menu {
@@ -90,9 +115,28 @@
 
         .overlay-menu a {
             margin: 15px 0;
-            font-size: 24px;
+            font-size: 4vw; /* Utilisation de vw pour l'échelle des polices */
             color: white;
             text-decoration: none;
+        }
+
+        /* Media Queries pour ajuster les tailles des liens sur différents écrans */
+        @media (min-width: 768px) {
+            .overlay-menu a {
+                font-size: 2vw;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .overlay-menu a {
+                font-size: 1.5vw;
+            }
+        }
+
+        @media (min-width: 1200px) {
+            .overlay-menu a {
+                font-size: 1.2vw;
+            }
         }
 
         .btn {
@@ -114,6 +158,7 @@
         .btn-red:hover {
             background-color: #c0392b;
         }
+
     </style>
 </head>
 <body>
@@ -141,6 +186,8 @@
             <a href="{{ route('absences.index') }}" class="btn btn-red">Absences</a>
             <a href="{{ route('photos.index') }}" class="btn btn-red">Photos</a>
         @endif
+            <a href="{{ route('appointments.index') }}" class="btn btn-red">Mes rendez-vous</a>
+            <a href="{{ route('appointments.create') }}" class="btn btn-red">Prendre rendez-vous</a>
         <form method="POST" action="{{ route('logout') }}">
             @csrf
             <button type="submit" class="text-white hover:text-gray-300">Déconnexion</button>

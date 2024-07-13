@@ -13,7 +13,7 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        session()->flash('admin_notification', 'Un compte administrateur de test existe : admin@admin.admin mot de passe : test123!');
+        session()->flash('admin_notification', 'Un compte administrateur de test existe -> e-mail: "admin@admin.admin" mot de passe : "test123!"');
 
         $photos = Photospres::all();
         $salonSetting = SalonSetting::first(); // Une seule requête pour SalonSetting

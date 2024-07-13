@@ -14,11 +14,14 @@ use Illuminate\Support\Facades\Log;
 
 class AbsenceController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        // Récupérer le nombre d'éléments par page depuis la requête, avec une valeur par défaut de 5
+        $perPage = $request->input('per_page', 3);
         $backgroundColor = SalonSetting::first()->background_color;
-        $absences = Absence::with('employee')->paginate(3); // Paginer à 10 absences par page
-        return view('absences.index', compact('absences', 'backgroundColor'));
+        $absences = Absence::with('employee')->paginate($perPage);
+
+        return view('absences.index', compact('absences', 'backgroundColor', 'perPage'));
     }
 
     public function create()

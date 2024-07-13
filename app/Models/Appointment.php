@@ -19,6 +19,16 @@ class Appointment extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function employee()
+    {
+        return $this->belongsTo(Employee::class);
+    }
+
+    public function getTotalPriceAttribute()
+    {
+        return $this->prestations->sum('prix');
+    }
+
     public function bookable()
     {
         return $this->morphTo();
