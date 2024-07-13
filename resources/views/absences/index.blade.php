@@ -37,7 +37,25 @@
                             </div>
                         </div>
                     @endforeach
-                    <!-- Liens de pagination -->
+                    <div class="py-4 px-3">
+                        <div class="flex ">
+                            <div class="flex space-x-4 items-center mb-3">
+                                <label class="w-32 text-sm font-medium text-gray-900">Per Page</label>
+                                <form id="perPageForm" method="GET" action="{{ route('absences.index') }}">
+                                    <select name="per_page" onchange="document.getElementById('perPageForm').submit()"
+                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                                        <option value="3" {{ $perPage == 3 ? 'selected' : '' }}>3</option>
+                                        <option value="5" {{ $perPage == 5 ? 'selected' : '' }}>5</option>
+                                        <option value="10" {{ $perPage == 10 ? 'selected' : '' }}>10</option>
+                                        <option value="20" {{ $perPage == 20 ? 'selected' : '' }}>20</option>
+                                        <option value="50" {{ $perPage == 50 ? 'selected' : '' }}>50</option>
+                                        <option value="100" {{ $perPage == 100 ? 'selected' : '' }}>100</option>
+                                    </select>
+                                </form>
+                            </div>
+                        </div>
+                        {{ $absences->links() }}
+                    </div>
                 </div>
             </div>
         </section>

@@ -3,6 +3,7 @@
 use App\Http\Controllers\AbsenceController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SalonController;
@@ -52,12 +53,16 @@ Route::get('/confidentiality', function () {
 
 
 Route::middleware(['auth', 'role:user,admin'])->group(function () {
+    Route::post('/confirm-reservation', [ReservationController::class, 'confirmReservation'])->name('confirmReservation');
     Route::get('/appointments/create', [AppointmentController::class, 'create'])->name('appointments.create');
     Route::post('/appointments', [AppointmentController::class, 'store'])->name('appointments.store');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/appointments', [AppointmentController::class, 'index'])->name('appointments.index');
+    Route::delete('/appointments/{appointment}', [AppointmentController::class, 'cancel'])->name('appointments.cancel');
 });
+
 Route::middleware(['auth', 'role:admin'])->group(function () {
 
     Route::post('/users/{id}/update-role', [UsersController::class, 'updateRole']);

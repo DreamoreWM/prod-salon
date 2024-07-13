@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\SalonSetting;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\Appointment;
 use App\Models\Employee;
@@ -39,5 +41,38 @@ class AppointmentController extends Controller
 
         return redirect()->route('appointments.index')->with('success', 'Rendez-vous pris avec succès.');
     }
+
+    public function index()
+    {
+        $user = auth()->user();
+        $backgroundColor = SalonSetting::first()->background_color;
+
+        $upcomingAppointments = Appointment::where('bookable_id', $user->id)
+            ->where('bookable_type', get_class($user))
+            ->where('start_time', '>', Carbon::now())
+            ->orderBy('start_time', 'asc')
+            ->get();
+
+        $pastAppointments = Appointment::where('bookable_id', $user->id)
+            ->where('bookable_type', get_class($user))
+            ->where('start_time', '<=', Carbon::now())
+            ->orderBy('start_time', 'desc')
+            ->get();
+
+        return view('appointments.index', compact('upcomingAppointments', 'pastAppointments', 'backgroundColor'));
+    }
+
+    public function cancel(Appointment $appointment)
+    {
+        $user = auth()->user();
+        $employee = Employee::find($appointment->employee_id);
+
+        $appointment->delete();
+
+        \Mail::to($employee->email)->send(new \App\Mail\AppointmentCancelledEmployee($appointment, $user, $employee));
+
+        return redirect()->route('appointments.index')->with('success', 'Rendez-vous annulé avec succès.');
+    }
+
 
 }

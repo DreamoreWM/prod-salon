@@ -764,15 +764,19 @@
 
     .admin-notification {
         position: fixed;
-        top: 20px;
-        right: 20px;
+        top: 15%; /* 1/4 de la hauteur de l'écran */
+        left: 1%; /* 5% de la largeur de l'écran */
         background-color: #f8d7da;
         color: #721c24;
         padding: 10px 20px;
         border: 1px solid #f5c6cb;
         border-radius: 5px;
         z-index: 1050;
+        transform: translateY(-50%);
+        max-width: 90%; /* Pour la réactivité */
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
+
 
 
 </style>

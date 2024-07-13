@@ -83,23 +83,18 @@ class ReservationComponent extends Component
             'end' => $endDatetime->format('H:i')
         ];
 
-        // Afficher le modal
-        $this->dispatch('show-confirmation-modal');
+        // Dispatch de l'événement avec les détails nécessaires
+        $this->dispatch('show-swal-confirmation', detail: [
+            'prestations' => $this->selectedPrestationsDetails,
+            'slot' => $this->selectedSlotDetails,
+            'employeeId' => $this->selectedEmployee
+        ]);
     }
 
     public function confirmFinalReservation()
     {
         // Appeler la méthode de confirmation de la réservation
         $this->confirmReservation($this->selectedSlotDetails['date'], $this->selectedSlotDetails['start']);
-
-        // Fermer le modal
-        $this->dispatch('hide-modal');
-    }
-
-    public function closeModal()
-    {
-        // Fermer le modal
-        $this->dispatch('hide-modal');
     }
 
     public function confirmReservation($date, $start)
@@ -146,12 +141,10 @@ class ReservationComponent extends Component
                 $appointment->prestations()->attach($prestationId);
             }
 
+            // Envoyer un email de confirmation
             $prestations = $appointment->prestations()->get();
-
             \Mail::to($user->email)->send(new \App\Mail\ReservationConfirmed($user, $appointment, $prestations));
-
-            $employee = Employee::where('id',$this->selectedEmployee)->first();
-
+            $employee = Employee::where('id', $this->selectedEmployee)->first();
             \Mail::to($employee->email)->send(new \App\Mail\SlotBookedForEmployee($user, $appointment, $prestations));
 
             // Réinitialiser les données
@@ -161,8 +154,11 @@ class ReservationComponent extends Component
             $this->availableSlots = [];
 
             return redirect('/dashboard')->with('success', 'Le créneau a été réservé avec succès.');
+        } else {
+            return redirect('/dashboard')->with('error', 'Le créneau est déjà réservé.');
         }
     }
+
 
     public function refreshGoogleToken($user)
     {
