@@ -29,7 +29,7 @@ class DashboardController extends Controller
         $slogan = $salonSetting->slogan;
         $background_color = $salonSetting->background_color;
 
-        return view('dashboard', compact('categories', 'reviews', 'isOpen', 'facebookPageUrl', 'openDays', 'photos', 'address', 'showNavigation', 'backgroundImage', 'background_color', 'slogan'));
+        return view('dashboard', compact('categories', 'reviews', 'isOpen', 'facebookPageUrl', 'openDays', 'photos', 'address', 'showNavigation', 'backgroundImage', 'background_color', 'slogan', 'salonSetting'));
     }
 
 
