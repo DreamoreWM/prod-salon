@@ -2,17 +2,12 @@
 <html lang="en">
 
 @php
-    // Supposons que vous avez une table 'settings' avec une colonne 'background_color'
     use App\Models\SalonSetting;
     $backgroundColor = SalonSetting::first()->background_color;
-
 @endphp
 
-
 <head>
-    <!-- Tes autres balises head -->
     <style>
-        /* Styles existants ici */
         .navbar {
             display: flex;
             justify-content: center;
@@ -27,7 +22,7 @@
 
         .navbar-content {
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
             width: 100%;
             max-width: 1200px;
@@ -42,7 +37,7 @@
         }
 
         .logo-nav img {
-            max-height: 50px; /* Limiter la taille du logo */
+            max-height: 50px;
             height: auto;
         }
 
@@ -50,41 +45,16 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 4vw; /* Utilisation de vw pour l'échelle des polices */
+            font-size: 1.5rem;
             background-color: #e74c3c;
             color: white;
-            padding: 2vw; /* Utilisation de vw pour le padding */
+            padding: 10px 20px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            max-width: 15vw; /* Limiter la largeur maximale */
-            width: 100%;
             text-align: center;
-        }
-
-        /* Media Queries pour ajuster les tailles sur différents écrans */
-        @media (min-width: 768px) {
-            .menu-button {
-                font-size: 2vw;
-                padding: 1.5vw;
-                max-width: 10vw;
-            }
-        }
-
-        @media (min-width: 1024px) {
-            .menu-button {
-                font-size: 1.5vw;
-                padding: 1vw;
-                max-width: 8vw;
-            }
-        }
-
-        @media (min-width: 1200px) {
-            .menu-button {
-                font-size: 1.2vw;
-                padding: 0.8vw;
-                max-width: 6vw;
-            }
+            max-width: 150px;
+            width: auto;
         }
 
         .overlay-menu {
@@ -97,46 +67,51 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.9); /* Fond sombre avec opacité */
+            background-color: rgba(0, 0, 0, 0.9);
             color: white;
             z-index: 1001;
-            overflow: hidden; /* Empêcher le défilement */
+            overflow: auto;
         }
 
         .overlay-menu .menu-button {
             position: absolute;
             top: 20px;
             right: 20px;
+            max-width: none;
+            width: auto;
         }
 
         .overlay-menu.active {
             display: flex;
         }
 
-        .overlay-menu a {
-            margin: 15px 0;
-            font-size: 4vw; /* Utilisation de vw pour l'échelle des polices */
+        .overlay-menu .menu-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            width: 90%;
+            max-width: 600px;
+        }
+
+        .overlay-menu a,
+        .overlay-menu form {
+            margin: 5px 0;
+            font-size: 1.2rem;
             color: white;
             text-decoration: none;
         }
 
-        /* Media Queries pour ajuster les tailles des liens sur différents écrans */
-        @media (min-width: 768px) {
-            .overlay-menu a {
-                font-size: 2vw;
-            }
-        }
-
-        @media (min-width: 1024px) {
-            .overlay-menu a {
-                font-size: 1.5vw;
-            }
-        }
-
-        @media (min-width: 1200px) {
-            .overlay-menu a {
-                font-size: 1.2vw;
-            }
+        .overlay-menu form button {
+            font-size: 1.2rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: white;
+            text-align: center;
+            display: inline-block;
+            padding: 0;
+            margin: 0;
         }
 
         .btn {
@@ -158,7 +133,6 @@
         .btn-red:hover {
             background-color: #c0392b;
         }
-
     </style>
 </head>
 <body>
@@ -175,29 +149,31 @@
 
 <div class="overlay-menu" id="overlayMenu">
     <button class="menu-button btn btn-red" id="closeButton">Fermer</button>
-    <a href="{{ route('dashboard.index') }}" class="btn btn-red">Accueil</a>
-    @if(Auth::check())
-        @if(Auth::user()->role == 'admin')
-            <a href="{{ route('users.index') }}" class="btn btn-red">Utilisateurs</a>
-            <a href="{{ route('employees.index') }}" class="btn btn-red">Coiffeurs</a>
-            <a href="{{ route('prestations.create') }}" class="btn btn-red">Prestations</a>
-            <a href="{{ route('calendar.index') }}" class="btn btn-red">Calendrier</a>
-            <a href="{{ route('salon.edit') }}" class="btn btn-red">Paramétres</a>
-            <a href="{{ route('absences.index') }}" class="btn btn-red">Absences</a>
-            <a href="{{ route('photos.index') }}" class="btn btn-red">Photos</a>
-        @endif
+    <div class="menu-content">
+        <a href="{{ route('dashboard.index') }}" class="btn btn-red">Accueil</a>
+        @if(Auth::check())
+            @if(Auth::user()->role == 'admin')
+                <a href="{{ route('users.index') }}" class="btn btn-red">Utilisateurs</a>
+                <a href="{{ route('employees.index') }}" class="btn btn-red">Coiffeurs</a>
+                <a href="{{ route('prestations.create') }}" class="btn btn-red">Prestations</a>
+                <a href="{{ route('calendar.index') }}" class="btn btn-red">Calendrier</a>
+                <a href="{{ route('salon.edit') }}" class="btn btn-red">Paramétres</a>
+                <a href="{{ route('absences.index') }}" class="btn btn-red">Absences</a>
+                <a href="{{ route('photos.index') }}" class="btn btn-red">Photos</a>
+            @endif
             <a href="{{ route('appointments.index') }}" class="btn btn-red">Mes rendez-vous</a>
             <a href="{{ route('appointments.create') }}" class="btn btn-red">Prendre rendez-vous</a>
-        <form method="POST" action="{{ route('logout') }}">
-            @csrf
-            <button type="submit" class="text-white hover:text-gray-300">Déconnexion</button>
-        </form>
-    @endif
-    @if(!Auth::check())
-        <a href="{{ route('appointments.create') }}" class="btn btn-red">Prenez rendez-vous</a>
-        <a href="{{ route('register') }}" class="btn btn-white">Créer un compte</a>
-        <a href="{{ route('login') }}" class="btn btn-white">Se connecter</a>
-    @endauth
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit" class="btn btn-red">Déconnexion</button>
+            </form>
+        @endif
+        @if(!Auth::check())
+            <a href="{{ route('appointments.create') }}" class="btn btn-red">Prenez rendez-vous</a>
+            <a href="{{ route('register') }}" class="btn btn-red">Créer un compte</a>
+            <a href="{{ route('login') }}" class="btn btn-red">Se connecter</a>
+        @endauth
+    </div>
 </div>
 
 <script>
@@ -206,16 +182,14 @@
         const closeButton = document.getElementById('closeButton');
         const overlayMenu = document.getElementById('overlayMenu');
 
-        // Gérer le clic du bouton menu
         menuButton.addEventListener('click', () => {
             overlayMenu.classList.add('active');
-            document.body.style.overflow = 'hidden'; // Désactiver le défilement
+            document.body.style.overflow = 'hidden';
         });
 
-        // Gérer le clic du bouton fermer
         closeButton.addEventListener('click', () => {
             overlayMenu.classList.remove('active');
-            document.body.style.overflow = 'auto'; // Réactiver le défilement
+            document.body.style.overflow = 'auto';
         });
     });
 </script>
