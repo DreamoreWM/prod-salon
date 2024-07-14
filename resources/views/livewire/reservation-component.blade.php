@@ -47,7 +47,7 @@
 
         .content {
             position: relative;
-            background-image: url('/images/background-home.webp');
+            background-color: {{ $backgroundColor }};
             background-size: cover;
             background-repeat: no-repeat;
             background-position: center center;
@@ -57,16 +57,7 @@
             overflow-y: auto;
         }
 
-        .overlay {
-            position: fixed;
-            top: 65px;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(10px);
-            z-index: 1;
-        }
+
 
         .content-inner {
             position: relative;
@@ -76,7 +67,6 @@
 
     </style>
     <div class="content mt-5">
-        <div class="overlay"></div>
         <div class="content-inner">
             <!-- Affichage des prestations -->
             <div class="m-3 mx-auto max-w-screen-lg px-4 lg:px-12" style="font-size: 30px">

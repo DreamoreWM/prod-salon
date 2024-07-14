@@ -25,6 +25,8 @@ class ReservationComponent extends Component
 {
     public $prestations;
     public $employees;
+
+    public $backgroundColor;
     public $openDays;
     public $selectedPrestations = [];
     public $selectedEmployee;
@@ -56,6 +58,7 @@ class ReservationComponent extends Component
         $this->employees = Employee::all();
         $this->setting = SalonSetting::first();
         $this->openDays = json_decode($this->setting->open_days, true);
+        $this->backgroundColor = $this->setting->background_color;
     }
 
     public function showConfirmationModal($date, $start)

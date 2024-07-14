@@ -777,6 +777,37 @@
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
 
+    .slogan {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .status {
+        margin-top: 20px;
+    }
+
+    .status-open, .status-closed {
+        font-size: 2rem;
+        font-weight: bold;
+        text-align: center;
+        margin: 0;
+    }
+
+    .status-open {
+        color: green;
+    }
+
+    .status-closed {
+        color: red;
+    }
+
+    .status-info {
+        font-size: 1.2rem;
+        text-align: center;
+        color: white;
+        margin-top: 10px;
+    }
+
 
 
 </style>
@@ -826,20 +857,24 @@
 
                                 <!-- Logo -->
 
-                                <div class="logo">
-                                    <a href="{{ route('dashboard.index') }}">
-                                        <img src="{{ asset('logo/logo.png') }}" alt="Logo" class="w-auto">
-                                    </a>
-                                </div>
 
 
                                 <span class="slogan">
                                     {{ $slogan }}
                                 </span>
+                                <div class="status">
+                                    @if ($isOpen)
+                                        <p class="status-open">OUVERT</p>
+                                        <p class="status-info">Horaires d'aujourd'hui : {{ $openingTime->format('H:i') }} - {{ $breakStart->format('H:i') }} et {{ $breakEnd->format('H:i') }} - {{ $closingTime->format('H:i') }}</p>
+                                    @else
+                                        <p class="status-closed">FERMÉ</p>
+                                        <p class="status-info">Prochaine ouverture : {{ $nextOpeningTime ? $nextOpeningDayFrench . ' ' . $nextOpeningTime->format('H:i') : 'N/A' }}</p>
+                                    @endif
+                                </div>
                             </div>
 
                             <!-- Section de droite pour l'image des avis -->
-                            <div class="right-section">
+                            <div class="right-section" id="right-section">
                                 <img src="{{ asset('images/home/' . $salonSetting->dashboard_image) }}" alt="Avis" class="main-image" style="max-width: 80%;">
                                 <div class="review-card-container">
                                     <div class="review-card">
@@ -1089,6 +1124,48 @@
                 header.classList.toggle('menu-opened');
             }
         }());
+    </script>
+
+    <script>
+        // Tableaux des chemins des images de fond et des images de la section de droite
+        const backgroundImages = [
+            @foreach (glob(public_path('background') . '/*') as $file)
+                "{{ asset('background/' . basename($file)) }}",
+            @endforeach
+        ];
+
+        const rightSectionImages = [
+            @foreach (glob(public_path('images/home') . '/*') as $file)
+                "{{ asset('images/home/' . basename($file)) }}",
+            @endforeach
+        ];
+
+        let currentBackgroundIndex = 0;
+        let currentRightSectionIndex = 0;
+
+        // Fonction pour changer l'image de fond
+        function changeBackgroundImage() {
+            const contentElement = document.getElementById('content');
+            contentElement.style.backgroundImage = `url('${backgroundImages[currentBackgroundIndex]}')`;
+            currentBackgroundIndex = (currentBackgroundIndex + 1) % backgroundImages.length;
+        }
+
+        // Fonction pour changer l'image de la section de droite
+        function changeRightSectionImage() {
+            const rightSectionElement = document.getElementById('right-section');
+            const mainImageElement = rightSectionElement.querySelector('.main-image');
+            mainImageElement.src = rightSectionImages[currentRightSectionIndex];
+            currentRightSectionIndex = (currentRightSectionIndex + 1) % rightSectionImages.length;
+        }
+
+        // Changer les images toutes les secondes
+        setInterval(changeBackgroundImage, 2000);
+        setInterval(changeRightSectionImage, 2000);
+
+        document.addEventListener('DOMContentLoaded', function() {
+            changeBackgroundImage();
+            changeRightSectionImage();
+        });
     </script>
 
 
