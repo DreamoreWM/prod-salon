@@ -840,7 +840,7 @@
 
                             <!-- Section de droite pour l'image des avis -->
                             <div class="right-section">
-                                <img src="/images/homme.png" alt="Avis" class="main-image" style="max-width: 80%;">
+                                <img src="{{ asset('images/home/' . $salonSetting->dashboard_image) }}" alt="Avis" class="main-image" style="max-width: 80%;">
                                 <div class="review-card-container">
                                     <div class="review-card">
                                         <!-- Contenu de la carte des avis -->

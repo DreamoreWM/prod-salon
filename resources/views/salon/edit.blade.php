@@ -1,13 +1,12 @@
 @extends('layouts.app')
 
 @section('header')
-    <h2 class="font-semibold text-xl text-gray-800  leading-tight">
+    <h2 class="font-semibold text-xl text-gray-800 leading-tight">
         {{ __('Gestion du salon') }}
     </h2>
 @endsection
 
 @section('content')
-
     <style>
         .content {
             background-color: {{ $background_color }};
@@ -51,6 +50,20 @@
                             @method('PUT')
 
                             <div class="row">
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="fas fa-image"></i> Image pour le Dashboard</label>
+                                    <div class="image-selector" id="dashboard-image-selector">
+                                        @foreach(File::files(public_path('images/home')) as $file)
+                                            @php
+                                                $filename = pathinfo($file)['basename'];
+                                            @endphp
+                                            <div data-filename="{{ $filename }}" class="{{ $filename == $setting->dashboard_image ? 'selected' : '' }}">
+                                                <img src="{{ asset('images/home/' . $filename) }}" alt="Image" style="width: 100px; height: 100px; object-fit: cover;">
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                    <input type="hidden" id="dashboard_image" name="dashboard_image" value="{{ old('dashboard_image', $setting->dashboard_image) }}">
+                                </div>
                                 <div class="col-md-6">
                                     <div class="mb-3">
                                         <label for="name" class="form-label"><i class="fas fa-store"></i> Nom du Salon</label>
@@ -119,6 +132,7 @@
                                         <input type="hidden" id="logo" name="logo" value="{{ old('logo', $setting->logo) }}">
                                     </div>
                                 </div>
+
                                 <div class="col-md-6">
                                     @php
                                         $openDays = $setting->open_days ? json_decode($setting->open_days, true) : [];
@@ -195,7 +209,6 @@
         });
 
         document.addEventListener('DOMContentLoaded', function() {
-
             var imageSelector = document.getElementById('image-selector');
             var backgroundImageInput = document.getElementById('background_image');
 
@@ -216,15 +229,34 @@
         });
 
         document.addEventListener('DOMContentLoaded', function() {
+            var imageSelector2 = document.getElementById('image-selector2');
+            var logoInput = document.getElementById('logo');
 
-            var imageSelector = document.getElementById('image-selector2');
-            var backgroundImageInput = document.getElementById('logo');
+            imageSelector2.addEventListener('click', function(event) {
+                if (event.target.tagName === 'IMG') {
+                    var selectedDiv = event.target.parentNode;
+                    var filename = selectedDiv.getAttribute('data-filename');
+                    logoInput.value = filename;
+
+                    var previouslySelectedDiv = imageSelector2.querySelector('.selected');
+                    if (previouslySelectedDiv) {
+                        previouslySelectedDiv.classList.remove('selected');
+                    }
+
+                    selectedDiv.classList.add('selected');
+                }
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var imageSelector = document.getElementById('dashboard-image-selector');
+            var dashboardImageInput = document.getElementById('dashboard_image');
 
             imageSelector.addEventListener('click', function(event) {
                 if (event.target.tagName === 'IMG') {
                     var selectedDiv = event.target.parentNode;
                     var filename = selectedDiv.getAttribute('data-filename');
-                    backgroundImageInput.value = filename;
+                    dashboardImageInput.value = filename;
 
                     var previouslySelectedDiv = imageSelector.querySelector('.selected');
                     if (previouslySelectedDiv) {
@@ -235,9 +267,7 @@
                 }
             });
         });
-    </script>
 
-    <script>
         document.addEventListener('DOMContentLoaded', function() {
             var addressInput = document.getElementById('address');
             var addressList = document.getElementById('address-list');
@@ -267,5 +297,4 @@
             });
         });
     </script>
-
 @endsection

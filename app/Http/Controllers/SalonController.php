@@ -24,28 +24,35 @@ class SalonController extends Controller
         $request->validate([
             'logo_upload' => 'nullable|image|mimes:jpg,png,jpeg,gif,svg|max:52048',
             'bg_upload' => 'nullable|image|mimes:jpg,png,jpeg,gif,svg|max:52048',
+            'dashboard_image' => 'nullable|string'
         ]);
 
         $setting = SalonSetting::firstOrNew([]);
 
         if ($request->hasFile('logo_upload')) {
             $logo = $request->file('logo_upload');
-            $filename = $logo->getClientOriginalName();
-            $logo->move(public_path('logo'), $filename);
-            $setting->logo = $filename;
+            $logoFilename = $logo->getClientOriginalName();
+            $logo->move(public_path('logo'), $logoFilename);
+            $setting->logo = $logoFilename;
         }
 
         if ($request->hasFile('bg_upload')) {
             $background = $request->file('bg_upload');
-            $filename = $background->getClientOriginalName();
-            $background->move(public_path('background'), $filename);
-            $setting->background_image = $filename;
+            $backgroundFilename = $background->getClientOriginalName();
+            $background->move(public_path('background'), $backgroundFilename);
+            $setting->background_image = $backgroundFilename;
         }
 
-        $data = $request->except('logo_upload','bg_upload'); // Get all the other data
-        $data['open_days'] = json_encode($data['open_days']);
+        $data = $request->except(['logo_upload', 'bg_upload']); // Get all the other data
 
-        $setting->fill($data)->save();
+        // Encode open_days to JSON if it is present
+        if (isset($data['open_days'])) {
+            $data['open_days'] = json_encode($data['open_days']);
+        }
+
+        // Fill the remaining data
+        $setting->fill($data);
+        $setting->save();
 
         return redirect()->route('salon.edit')->with('success', 'Les paramètres ont été mis à jour avec succès.');
     }
