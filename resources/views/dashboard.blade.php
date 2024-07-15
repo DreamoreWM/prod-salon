@@ -786,7 +786,7 @@
         margin-top: 20px;
     }
 
-    .status-open, .status-closed {
+    .status-open, .status-closed, .status-break {
         font-size: 2rem;
         font-weight: bold;
         text-align: center;
@@ -799,6 +799,10 @@
 
     .status-closed {
         color: red;
+    }
+
+    .status-break {
+        color: yellow;
     }
 
     .status-info {
@@ -882,10 +886,14 @@
                                     @if ($isOpen)
                                         <p class="status-open">OUVERT</p>
                                         <p class="status-info">Horaires d'aujourd'hui : {{ $openingTime->format('H:i') }} - {{ $breakStart->format('H:i') }} et {{ $breakEnd->format('H:i') }} - {{ $closingTime->format('H:i') }}</p>
+                                    @elseif($isOnBreak)
+                                        <p class="status-break">PAUSE</p>
+                                        <p class="status-info">Reprise aujourd'hui à : <?= $breakEnd->format('H:i') ?></p>
                                     @else
                                         <p class="status-closed">FERMÉ</p>
                                         <p class="status-info">Prochaine ouverture : {{ $nextOpeningTime ? $nextOpeningDayFrench . ' ' . $nextOpeningTime->format('H:i') : 'N/A' }}</p>
                                     @endif
+
                                 </div>
                             </div>
 

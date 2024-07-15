@@ -53,6 +53,7 @@ class DashboardController extends Controller
         $todaySchedule = $openDays[$currentDay] ?? [];
 
         $isOpen = false;
+        $isOnBreak = false;
         $openingTime = null;
         $closingTime = null;
         $breakStart = null;
@@ -66,12 +67,14 @@ class DashboardController extends Controller
 
             if ($currentTime->between($openingTime, $breakStart) || $currentTime->between($breakEnd, $closingTime)) {
                 $isOpen = true;
+            } elseif ($currentTime->between($breakStart, $breakEnd)) {
+                $isOnBreak = true;
             }
         }
 
         // Trouver la prochaine ouverture
         $nextOpeningTime = null;
-        if (!$isOpen) {
+        if (!$isOpen && !$isOnBreak) {
             $daysOfWeek = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
             $found = false;
             for ($i = 0; $i < 7; $i++) {
@@ -90,8 +93,7 @@ class DashboardController extends Controller
         $currentDayFrench = $joursFrancais[$currentDay];
         $nextOpeningDayFrench = $nextOpeningTime ? $joursFrancais[strtolower($nextOpeningTime->format('l'))] : null;
 
-
-        return view('dashboard', compact('categories', 'reviews', 'facebookPageUrl', 'openDays', 'photos', 'address', 'showNavigation', 'backgroundImage', 'background_color', 'slogan', 'salonSetting', 'isOpen', 'openingTime', 'closingTime', 'breakStart', 'breakEnd', 'nextOpeningTime', 'currentDayFrench', 'nextOpeningDayFrench'));
+        return view('dashboard', compact('categories', 'reviews', 'facebookPageUrl', 'openDays', 'photos', 'address', 'showNavigation', 'backgroundImage', 'background_color', 'slogan', 'salonSetting', 'isOpen', 'openingTime', 'closingTime', 'breakStart', 'breakEnd', 'nextOpeningTime', 'currentDayFrench', 'nextOpeningDayFrench', 'isOnBreak'));
     }
 
 

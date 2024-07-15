@@ -132,7 +132,7 @@
                                         @endfor
                                     </div>
                                     <div class="date-create">
-                                        {{ $review->created_at->format('d M Y') }}
+                                        {{ $review->created_at->translatedFormat('d M Y') }}
                                     </div>
                                 </div>
                                 <p style="margin-top: 5px">{{ $review->comment }}</p>

@@ -59,11 +59,6 @@
 
 
 
-        .content-inner {
-            position: relative;
-            z-index: 2;
-            /* Votre contenu ici */
-        }
 
     </style>
     <div class="content mt-5">
@@ -97,16 +92,23 @@
                                                     @foreach ($categorie->prestations as $prestation)
                                                         @if (!in_array($prestation->id, $selectedPrestations))
                                                             <div class="card m-3">
-                                                                <div class="card-body d-flex justify-content-between">
-                                                                    <h5 class="card-title">{{ $prestation->nom }}</h5>
-                                                                    <div class="d-flex" style="color: gray">
-                                                                        <p>{{ $prestation->temps }} min</p>
-                                                                        <p class="ml-2 mr-2"> • </p>
-                                                                        <p style="font-weight: bold;">{{ $prestation->prix }} €</p>
-                                                                        <button wire:click="togglePrestation({{ $prestation->id }})" class="btn btn-primary ml-5">Sélectionner</button>
+                                                                <div class="card-body">
+                                                                    <div class="row">
+                                                                        <div class="col-12 col-md-6">
+                                                                            <h5 class="card-title">{{ $prestation->nom }}</h5>
+                                                                        </div>
+                                                                        <div class="col-12 col-md-3 d-flex align-items-center" style="color: gray">
+                                                                            <p class="mb-0">{{ $prestation->temps }} min</p>
+                                                                            <p class="mx-2 mb-0"> • </p>
+                                                                            <p class="mb-0 font-weight-bold">{{ $prestation->prix }} €</p>
+                                                                        </div>
+                                                                        <div class="col-12 col-md-3 d-flex align-items-center justify-content-end mt-2 mt-md-0">
+                                                                            <button wire:click="togglePrestation({{ $prestation->id }})" class="btn btn-primary">Sélectionner</button>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
                                                             </div>
+
                                                         @endif
                                                     @endforeach
                                                 </div>
@@ -345,15 +347,20 @@
                     return;
                 }
 
-                let prestationList = prestations.map(p => `<li>${p.name} (${p.temps} min) - ${p.prix} €</li>`).join('');
+                // Convertir la date au format souhaité
+                const options = { year: 'numeric', month: 'long', day: 'numeric' };
+                const formattedDate = new Date(slot.date).toLocaleDateString('fr-FR', options);
+
+                let prestationList = prestations.map(p => `<li style="list-style-type: disc;">${p.name} (${p.temps} min) - ${p.prix} €</li>`).join('');
 
                 Swal.fire({
                     title: 'Confirmation de réservation',
                     html: `
                 <h6>Prestations sélectionnées :</h6>
                 <ul>${prestationList}</ul>
+                <br>
                 <h6>Date et heure :</h6>
-                <p>${slot.date} à ${slot.start} - ${slot.end}</p>
+                <p>Le ${formattedDate} de ${slot.start} à ${slot.end}</p>
             `,
                     icon: 'info',
                     showCancelButton: true,
@@ -375,6 +382,8 @@
                 });
             });
         </script>
+
+
         @endscript
 </div>
 

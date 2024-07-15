@@ -34,7 +34,7 @@ class SlotBookedForEmployee extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Slot Booked For Employee',
+            subject: 'Une reservation a été effectuée',
         );
     }
 

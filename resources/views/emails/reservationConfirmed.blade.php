@@ -4,6 +4,10 @@
     $backgroundColor = SalonSetting::first()->background_color;
     $salonName = SalonSetting::first()->name;
     $address = SalonSetting::first()->address;
+
+    $startTime = \Carbon\Carbon::parse($appointment->start_time)->translatedFormat('d F Y \de H:i');
+    $endTime = \Carbon\Carbon::parse($appointment->end_time)->translatedFormat('H:i');
+
 @endphp
 
     <!DOCTYPE html>
@@ -72,7 +76,7 @@
         <p>Nous avons le plaisir de vous informer que votre réservation a été confirmée. Voici les détails de votre rendez-vous :</p>
 
         <h3>Détails de la Réservation</h3>
-        <p><strong>Date et Heure :</strong> {{ $appointment->start_time }} - {{ $appointment->end_time }}</p>
+        <p><strong>Date et Heure :</strong> {{ $startTime }} à {{ $endTime }}</p>
         <p><strong>Adresse :</strong> {{ $address }}</p>
 
         <h3>Prestations Réservées :</h3>

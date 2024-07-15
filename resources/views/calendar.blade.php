@@ -326,7 +326,7 @@
     <!-- Modal Structure (exemple avec Bootstrap) -->
     <div class="modal" id="appointmentModal" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
-            <form action="{{ route('calendar.assign') }}" method="POST">
+            <form  id="assignForm"  action="{{ route('calendar.assign') }}" method="POST">
                 @csrf
                 @method('POST')
                 <div class="modal-content">
@@ -381,8 +381,9 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                        <button type="submit" class="btn btn-primary">Attribuer</button>
+                        <button type="button" class="btn btn-primary assign-button">Attribuer</button>
                     </div>
+
                 </div>
             </form>
         </div>
@@ -745,5 +746,93 @@
             });
 
         });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Écoute de l'événement show-swal-confirmation de Livewire
+            Livewire.on('show-swal-confirmation', event => {
+                const { prestations, slot, employeeId } = event.detail || {};
+                if (!prestations || !slot) {
+                    console.error('Détails manquants dans l\'événement', event.detail);
+                    return;
+                }
+
+                // Convertir la date au format souhaité
+                const options = { year: 'numeric', month: 'long', day: 'numeric' };
+                const formattedDate = new Date(slot.date).toLocaleDateString('fr-FR', options);
+
+                let prestationList = prestations.map(p => `<li style="list-style-type: disc;">${p.name} (${p.temps} min) - ${p.prix} €</li>`).join('');
+
+                Swal.fire({
+                    title: 'Confirmation de réservation',
+                    html: `
+                <h6>Prestations sélectionnées :</h6>
+                <ul>${prestationList}</ul>
+                <br>
+                <h6>Date et heure :</h6>
+                <p>Le ${formattedDate} de ${slot.start} à ${slot.end}</p>
+            `,
+                    icon: 'info',
+                    showCancelButton: true,
+                    confirmButtonText: 'Confirmer',
+                    cancelButtonText: 'Annuler',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Récupérer le formulaire
+                        const form = document.getElementById('reservation-form');
+                        // Mettre à jour les champs cachés
+                        document.getElementById('date').value = slot.date;
+                        document.getElementById('start').value = slot.start;
+                        document.getElementById('end').value = slot.end;
+                        document.getElementById('prestations').value = JSON.stringify(prestations);
+                        document.getElementById('employee_id').value = employeeId;
+                        // Soumettre le formulaire
+                        form.submit();
+                    }
+                });
+            });
+
+            // Gestionnaire de clic pour le bouton "Attribuer" dans le modal
+            document.querySelector('.assign-button').addEventListener('click', function(event) {
+                event.preventDefault();
+
+                const selectedEmployee = document.getElementById('selectedEmployee').value;
+                const selectedClient = document.getElementById('userId').options[document.getElementById('userId').selectedIndex].text;
+                const prestationList = document.getElementById('prestationList').innerHTML;
+
+                // Convertir la date au format souhaité
+                const options = { year: 'numeric', month: 'long', day: 'numeric' };
+                const date = new Date(document.getElementById('eventStart').value).toLocaleDateString('fr-FR', options);
+
+                Swal.fire({
+                    title: 'Confirmation de réservation',
+                    html: `
+                <h6>Employé sélectionné :</h6>
+                <p>${selectedEmployee}</p>
+                <br>
+                <h6>Client sélectionné :</h6>
+                <p>${selectedClient}</p>
+                <br>
+                <h6>Prestations à effectuer :</h6>
+                <ul>${prestationList}</ul>
+                <br>
+                <h6>Date et heure :</h6>
+                <p>Le ${date}</p>
+            `,
+                    icon: 'info',
+                    showCancelButton: true,
+                    confirmButtonText: 'Confirmer',
+                    cancelButtonText: 'Annuler',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Récupérer le formulaire
+                        const form = document.getElementById('assignForm');
+                        // Soumettre le formulaire
+                        form.submit();
+                    }
+                });
+            });
+        });
+
     </script>
 @endpush
