@@ -45,7 +45,7 @@
                 <div class="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden">
                     <div class="container">
                         <h1 class="text-3xl mb-4">Paramètres du Salon</h1>
-                        <form method="POST" action="{{ route('salon.update') }}" enctype="multipart/form-data">
+                        <form method="POST" action="{{ route('salon.update') }}" enctype="multipart/form-data" id="salonForm">
                             @csrf
                             @method('PUT')
 
@@ -159,7 +159,7 @@
                                 </div>
                             </div>
 
-                            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Enregistrer</button>
+                            <button type="submit" class="btn btn-primary" id="submitSalonForm"><i class="fas fa-save"></i> Enregistrer</button>
                         </form>
                     </div>
                 </div>
@@ -167,6 +167,7 @@
         </section>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.getElementById('uploadLogoButton').addEventListener('click', function() {
             document.getElementById('logoUpload').click();
@@ -293,6 +294,24 @@
                                 addressList.appendChild(div);
                             });
                         });
+                }
+            });
+        });
+
+        document.getElementById('submitSalonForm').addEventListener('click', function(event) {
+            event.preventDefault();
+            Swal.fire({
+                title: 'Êtes-vous sûr ?',
+                text: "Vous allez sauvegarder les modifications apportées aux paramètres du salon.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Oui, sauvegarder !',
+                cancelButtonText: 'Annuler'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('salonForm').submit();
                 }
             });
         });

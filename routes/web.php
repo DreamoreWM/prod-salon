@@ -82,8 +82,11 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/employees/{employee}/slots', [SlotController::class, 'index'])->name('employees.slots.index');
     Route::get('/salon/settings', [SalonController::class, 'edit'])->name('salon.edit');
     Route::put('/salon/settings', [SalonController::class, 'update'])->name('salon.update');
-    Route::get('/calendar', [CalendarController::class, 'index'])->name('calendar.index');
-    Route::get('/calendar/events', [CalendarController::class, 'event'])->name('calendar.event');
+
+    Route::get('/calendar', [CalendarController::class, 'index']);
+    Route::get('/calendar/availability', [CalendarController::class, 'getAvailability']);
+    Route::get('/calendar/slots', [CalendarController::class, 'getSlots']);
+
     Route::get('/employees/{employee}/schedule', [EmployeeScheduleController::class, 'edit'])->name('employees.schedule.edit');
     Route::post('/employees/{employee}/schedule', [EmployeeScheduleController::class, 'store'])->name('employees.schedule.store');
     Route::post('/calendar', [CalendarController::class, 'assign'])->name('calendar.assign');
