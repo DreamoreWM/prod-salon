@@ -206,14 +206,6 @@
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
 
-{{--@foreach ($reviews as $review)--}}
-{{--    <div>--}}
-{{--        <p>Note : {{ $review->rating }}</p>--}}
-{{--        <p>Commentaire : {{ $review->comment }}</p>--}}
-{{--    </div>--}}
-{{--@endforeach--}}
-
-<!-- TESTIMONIALS -->
 
                 <div id="customers-testimonials" class="owl-carousel">
                     @foreach ($reviews as $review)

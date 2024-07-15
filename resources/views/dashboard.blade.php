@@ -808,6 +808,22 @@
         margin-top: 10px;
     }
 
+    .styled-link {
+        display: inline-block;
+        color: #e74c3c;
+        padding: 10px 20px;
+        border-radius: 5px;
+        text-decoration: none;
+        font-weight: bold;
+        border: 2px solid #e74c3c;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .styled-link:hover {
+        background-color: #e74c3c;
+        color: white;
+    }
+
 
 
 </style>
@@ -880,7 +896,13 @@
                                     <div class="review-card">
                                         <!-- Contenu de la carte des avis -->
                                         @include('reviews.index', ['reviews' => $reviews])
+                                        <div class="d-flex justify-content-center">
+                                            <a href="{{ route('reviews.list') }}" class="styled-link">Voir tout les avis</a>
+                                        </div>
+
                                     </div>
+
+
                                 </div>
                                 <div class="boutton-home">
                                     @if(Auth::check())
@@ -944,11 +966,7 @@
                                 @foreach($photos as $photo)
                                     <div class="swiper-slide">
                                         <figure class="effect-ming tm-video-item">
-                                            <img src="{{ asset('storage/app/public/' . $photo->path) }}" alt="Image" class="img-fluid" style="width: 100%; height: 260px; object-fit: cover;">
-                                            <figcaption class="d-flex align-items-center justify-content-center">
-                                                <h2>Image</h2>
-                                                <a href="photo-detail.html">View more</a>
-                                            </figcaption>
+                                            <img src="{{ asset('storage/app/public/' . $photo->path) }}" onclick="showImage(this)" alt="Image" class="img-fluid" style="width: 100%; height: 260px; object-fit: cover;">
                                         </figure>
                                     </div>
                                 @endforeach
@@ -1050,6 +1068,7 @@
 
 
 
+
     <script type="text/javascript">
         const buttons = document.querySelectorAll('.btn-booking');
         buttons.forEach(button => {
@@ -1126,47 +1145,7 @@
         }());
     </script>
 
-    <script>
-        // Tableaux des chemins des images de fond et des images de la section de droite
-        const backgroundImages = [
-            @foreach (glob(public_path('background') . '/*') as $file)
-                "{{ asset('background/' . basename($file)) }}",
-            @endforeach
-        ];
 
-        const rightSectionImages = [
-            @foreach (glob(public_path('images/home') . '/*') as $file)
-                "{{ asset('images/home/' . basename($file)) }}",
-            @endforeach
-        ];
-
-        let currentBackgroundIndex = 0;
-        let currentRightSectionIndex = 0;
-
-        // Fonction pour changer l'image de fond
-        function changeBackgroundImage() {
-            const contentElement = document.getElementById('content');
-            contentElement.style.backgroundImage = `url('${backgroundImages[currentBackgroundIndex]}')`;
-            currentBackgroundIndex = (currentBackgroundIndex + 1) % backgroundImages.length;
-        }
-
-        // Fonction pour changer l'image de la section de droite
-        function changeRightSectionImage() {
-            const rightSectionElement = document.getElementById('right-section');
-            const mainImageElement = rightSectionElement.querySelector('.main-image');
-            mainImageElement.src = rightSectionImages[currentRightSectionIndex];
-            currentRightSectionIndex = (currentRightSectionIndex + 1) % rightSectionImages.length;
-        }
-
-        // Changer les images toutes les secondes
-        setInterval(changeBackgroundImage, 2000);
-        setInterval(changeRightSectionImage, 2000);
-
-        document.addEventListener('DOMContentLoaded', function() {
-            changeBackgroundImage();
-            changeRightSectionImage();
-        });
-    </script>
 
 
 

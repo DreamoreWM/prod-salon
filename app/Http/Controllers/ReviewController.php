@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Appointment;
 use App\Models\Photo;
 use App\Models\Review;
+use App\Models\SalonSetting;
 use Illuminate\Http\Request;
 
 class ReviewController extends Controller
@@ -55,5 +56,21 @@ class ReviewController extends Controller
     {
         $reviews = Review::with('photo')->get();
         return view('reviews.index', ['reviews' => $reviews]);
+    }
+
+    public function list(Request $request)
+    {
+        $sort = $request->query('sort', 'date');
+        $background_color = SalonSetting::first()->background_color;
+
+        if ($sort == 'rating') {
+            $reviews = Review::with('photo', 'appointment.bookable')->orderBy('rating', 'desc')->get();
+        } elseif ($sort == 'service') {
+            $reviews = Review::with('photo', 'appointment.bookable')->orderBy('appointment.bookable.name')->get();
+        } else {
+            $reviews = Review::with('photo', 'appointment.bookable')->orderBy('created_at', 'desc')->get();
+        }
+
+        return view('reviews.list', ['reviews' => $reviews, 'background_color' => $background_color]);
     }
 }

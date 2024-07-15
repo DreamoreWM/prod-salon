@@ -162,6 +162,7 @@
                 <a href="{{ route('photos.index') }}" class="btn btn-red">Photos</a>
             @endif
             <a href="{{ route('appointments.index') }}" class="btn btn-red">Mes rendez-vous</a>
+                <a href="{{ route('reviews.list') }}" class="btn btn-red">Avis</a>
             <a href="{{ route('appointments.create') }}" class="btn btn-red">Prendre rendez-vous</a>
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
@@ -171,6 +172,7 @@
         @if(!Auth::check())
             <a href="{{ route('appointments.create') }}" class="btn btn-red">Prenez rendez-vous</a>
             <a href="{{ route('register') }}" class="btn btn-red">Créer un compte</a>
+            <a href="{{ route('reviews.list') }}" class="btn btn-red">Avis</a>
             <a href="{{ route('login') }}" class="btn btn-red">Se connecter</a>
         @endauth
     </div>

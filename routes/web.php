@@ -51,6 +51,8 @@ Route::get('/confidentiality', function () {
     return view('confidentiality');
 })->name('confidentiality');
 
+Route::get('/reviews/list', [ReviewController::class, 'list'])->name('reviews.list');
+
 
 Route::middleware(['auth', 'role:user,admin'])->group(function () {
     Route::post('/confirm-reservation', [ReservationController::class, 'confirmReservation'])->name('confirmReservation');
