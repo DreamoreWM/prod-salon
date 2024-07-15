@@ -73,20 +73,23 @@ const loadAvailableSlots = async () => {
     if (!selectedDate) return;
 
     const employeeIds = Array.from(document.querySelectorAll('.btn-check:checked')).map(btn => btn.dataset.id);
+    const prestationIds = Array.from(document.querySelectorAll('.prestation-select .btn-check:checked')).map(btn => btn.dataset.id);
 
-    if (employeeIds.length === 0) {
-        document.getElementById('slots-container').innerHTML = ''; // Clear slots if no employees are selected
+    if (employeeIds.length === 0 || prestationIds.length === 0) {
+        document.getElementById('slots-container').innerHTML = ''; // Clear slots if no employees or prestations are selected
         return;
     }
 
     try {
-        let response = await fetch(`/calendar/slots?date=${selectedDate.toISOString().split('T')[0]}&employees=${employeeIds.join(',')}`);
+        let response = await fetch(`/calendar/slots?date=${selectedDate.toISOString().split('T')[0]}&employees=${employeeIds.join(',')}&prestations=${prestationIds.join(',')}`);
+        if (!response.ok) {
+            throw new Error('Server response was not ok');
+        }
         let slots = await response.json();
 
         let slotsContainer = document.getElementById('slots-container');
         slotsContainer.innerHTML = '';
 
-        // Affichage des créneaux combinés pour plusieurs employés
         slots.forEach(slot => {
             let slotElement = document.createElement('div');
             slotElement.className = 'badge badge-success m-1';
@@ -98,7 +101,15 @@ const loadAvailableSlots = async () => {
     }
 };
 
+// Ajouter des écouteurs d'événements pour mettre à jour les créneaux disponibles lors de la sélection des prestations
+document.querySelectorAll('.prestation-select .btn-check').forEach(checkbox => {
+    checkbox.addEventListener('change', loadAvailableSlots);
+});
 
+// Ajouter des écouteurs d'événements pour mettre à jour les créneaux disponibles lors de la sélection des employés
+document.querySelectorAll('.employee-select .btn-check').forEach(checkbox => {
+    checkbox.addEventListener('change', loadAvailableSlots);
+});
 
 renderCalendar();
 
@@ -122,3 +133,4 @@ employeeButtons.forEach(button => {
         loadAvailableSlots();
     });
 });
+

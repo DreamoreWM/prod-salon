@@ -41,6 +41,15 @@
             @endforeach
         </div>
     </div>
+    <div class="prestation-select">
+        <h3>Select Prestations:</h3>
+        <div id="prestation-buttons" class="btn-group" role="group">
+            @foreach(App\Models\Prestation::all() as $prestation)
+                <input type="checkbox" class="btn-check" id="prestation-{{ $prestation->id }}" data-id="{{ $prestation->id }}" data-duration="{{ $prestation->temps }}" autocomplete="off">
+                <label class="btn btn-outline-secondary" for="prestation-{{ $prestation->id }}">{{ $prestation->nom }} ({{ $prestation->temps }} min)</label>
+            @endforeach
+        </div>
+    </div>
     <div id="available-slots" class="mt-3">
         <h3>Available Slots</h3>
         <div id="slots-container"></div>
