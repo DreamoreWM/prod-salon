@@ -65,7 +65,7 @@
                                             <button type="button" class="px-3 py-1 bg-blue-500 text-white rounded mr-2" data-toggle="modal" data-target="#userInfoModal{{ $user->id }}">
                                                 Info
                                             </button>
-                                            <button wire:click="delete({{ $user->id }})" class="px-3 py-1 bg-red-500 text-white rounded">X</button>
+                                            <button type="button" class="px-3 py-1 bg-red-500 text-white rounded" onclick="confirmDeletion({{ $user->id }})">X</button>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -120,7 +120,7 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-primary" onclick="showConfirmationModal({{ $user->id }})">Save Changes</button>
+                            <button type="button" class="btn btn-primary" onclick="showRoleConfirmationModal({{ $user->id }})">Save Changes</button>
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         </div>
                     </div>
@@ -128,42 +128,47 @@
             </div>
         @endforeach
 
-        <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="confirmationModalLabel">Confirm Role Change</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        Are you sure you want to change the role of this user?
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-primary" id="confirmButton">Confirm</button>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 
-
-
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         let selectedUserId = null;
 
-        function showConfirmationModal(userId) {
-            selectedUserId = userId;
-            $('#confirmationModal').modal('show');
+        function confirmDeletion(userId) {
+            Swal.fire({
+                title: 'Êtes-vous sûr ?',
+                text: "Vous allez supprimer cet utilisateur.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Oui, supprimer !',
+                cancelButtonText: 'Annuler'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Appeler la méthode Livewire pour supprimer l'utilisateur
+                @this.call('delete', userId);
+                }
+            });
         }
 
-        document.getElementById('confirmButton').addEventListener('click', function() {
-            if (selectedUserId !== null) {
-                updateUserRole(selectedUserId);
-            }
-        });
+        function showRoleConfirmationModal(userId) {
+            selectedUserId = userId;
+            Swal.fire({
+                title: 'Êtes-vous sûr ?',
+                text: "Vous allez changer le rôle de cet utilisateur.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Oui, changer !',
+                cancelButtonText: 'Annuler'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    updateUserRole(selectedUserId);
+                }
+            });
+        }
 
         function updateUserRole(userId) {
             var role = document.getElementById('role' + userId).value;
@@ -181,26 +186,28 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.message === 'Role updated successfully') {
-                        $('#confirmationModal').modal('hide');
+                        Swal.fire(
+                            'Success!',
+                            'Le rôle a été mis à jour avec succès.',
+                            'success'
+                        );
                         $('#userInfoModal' + userId).modal('hide');
-                        alert('Role updated successfully');
                         location.reload();
                     } else {
-                        alert('Failed to update role');
+                        Swal.fire(
+                            'Error!',
+                            'Échec de la mise à jour du rôle.',
+                            'error'
+                        );
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('Failed to update role');
+                    Swal.fire(
+                        'Error!',
+                        'Échec de la mise à jour du rôle.',
+                        'error'
+                    );
                 });
         }
-
-        $(document).ready(function() {
-            $('.close, .btn-secondary').on('click', function() {
-                $('#confirmationModal').modal('hide');
-            });
-        });
     </script>
-</div>
-
-

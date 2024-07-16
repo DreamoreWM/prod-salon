@@ -156,7 +156,7 @@
                 <a href="{{ route('users.index') }}" class="btn btn-red">Utilisateurs</a>
                 <a href="{{ route('employees.index') }}" class="btn btn-red">Coiffeurs</a>
                 <a href="{{ route('prestations.create') }}" class="btn btn-red">Prestations</a>
-                <a href="{{ route('calendar.index') }}" class="btn btn-red">Calendrier</a>
+
                 <a href="{{ route('salon.edit') }}" class="btn btn-red">Paramétres</a>
                 <a href="{{ route('absences.index') }}" class="btn btn-red">Absences</a>
                 <a href="{{ route('photos.index') }}" class="btn btn-red">Photos</a>

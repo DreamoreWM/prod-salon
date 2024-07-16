@@ -8,9 +8,9 @@
         "test:cypress": "cypress run"
     },
     "devDependencies": {
-        "@fullcalendar/core": "^6.1.11",
-        "@fullcalendar/daygrid": "^6.1.11",
-        "@fullcalendar/interaction": "^6.1.11",
+        "@fullcalendar/core": "^6.1.15",
+        "@fullcalendar/daygrid": "^6.1.15",
+        "@fullcalendar/interaction": "^6.1.15",
         "@popperjs/core": "^2.11.6",
         "@tailwindcss/forms": "^0.5.2",
         "alpinejs": "^3.4.2",
@@ -28,6 +28,7 @@
     },
     "dependencies": {
         "bootstrap": "^5.3.3",
+        "fullcalendar": "^6.1.15",
         "swiper": "^11.0.7"
     }
 }
