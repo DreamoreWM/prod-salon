@@ -163,11 +163,199 @@ class CalendarController extends Controller
 
                 $appointment->prestations()->attach($prestationIds);
             }
+            $user = User::find($userId);
+
+            $prestations = $appointment->prestations()->get();
+            \Mail::to($user->email)->send(new \App\Mail\ReservationConfirmed($user, $appointment, $prestations));
+            $employee = Employee::where('id',  $employeeIds)->first();
+            \Mail::to($employee->email)->send(new \App\Mail\SlotBookedForEmployee($user, $appointment, $prestations));
 
             return response()->json(['message' => 'Appointment booked successfully!'], 200);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Internal Server Error'], 500);
         }
     }
+
+    public function getEmployeeAvailability(Request $request)
+    {
+        $year = $request->query('year');
+        $month = $request->query('month');
+        $employeeIds = explode(',', $request->query('employees'));
+
+        $startDate = Carbon::createFromDate($year, $month, 1);
+        $endDate = $startDate->copy()->endOfMonth();
+
+        $availability = [];
+
+        foreach (range(1, $endDate->day) as $day) {
+            $date = Carbon::createFromDate($year, $month, $day);
+            $dayOfWeek = $date->dayOfWeek;
+            $dateString = $date->format('Y-m-d');
+
+            $employeesAvailable = EmployeeSchedule::whereIn('employee_id', $employeeIds)
+                ->where('day_of_week', $dayOfWeek)
+                ->exists();
+
+            if ($employeesAvailable) {
+                $availableSlots = [];
+
+                foreach ($employeeIds as $employeeId) {
+                    $employeeSchedule = EmployeeSchedule::where('employee_id', $employeeId)
+                        ->where('day_of_week', $dayOfWeek)
+                        ->first();
+
+                    if ($employeeSchedule) {
+                        $salonSetting = SalonSetting::first();
+                        $slotDuration = $salonSetting->slot_duration;
+                        $openDays = json_decode($salonSetting->open_days, true);
+                        $salonDaySchedule = $openDays[strtolower($date->format('l'))];
+
+                        $salonOpenTime = Carbon::parse($dateString . ' ' . $salonDaySchedule['open']);
+                        $salonBreakStart = Carbon::parse($dateString . ' ' . $salonDaySchedule['break_start']);
+                        $salonBreakEnd = Carbon::parse($dateString . ' ' . $salonDaySchedule['break_end']);
+                        $salonCloseTime = Carbon::parse($dateString . ' ' . $salonDaySchedule['close']);
+
+                        $employeeOpenTime = Carbon::parse($dateString . ' ' . $employeeSchedule->start_time);
+                        $employeeCloseTime = Carbon::parse($dateString . ' ' . $employeeSchedule->end_time);
+
+                        $currentTime = max($salonOpenTime, $employeeOpenTime);
+                        while ($currentTime->lt(min($salonCloseTime, $employeeCloseTime))) {
+                            $slotEndTime = $currentTime->copy()->addMinutes($slotDuration);
+                            if ($slotEndTime->gt($salonBreakStart) && $currentTime->lt($salonBreakEnd)) {
+                                $currentTime = $salonBreakEnd;
+                                continue;
+                            }
+
+                            if ($slotEndTime->gt(min($salonCloseTime, $employeeCloseTime))) {
+                                break;
+                            }
+
+                            $appointments = Appointment::where('employee_id', $employeeId)
+                                ->whereDate('start_time', $dateString)
+                                ->get();
+
+                            $isAvailable = true;
+                            foreach ($appointments as $appointment) {
+                                $appointmentStart = Carbon::parse($appointment->start_time);
+                                $appointmentEnd = Carbon::parse($appointment->end_time);
+
+                                if (($currentTime->gte($appointmentStart) && $currentTime->lt($appointmentEnd)) ||
+                                    ($slotEndTime->gt($appointmentStart) && $slotEndTime->lte($appointmentEnd)) ||
+                                    ($currentTime->lt($appointmentStart) && $slotEndTime->gt($appointmentEnd))) {
+                                    $isAvailable = false;
+                                    break;
+                                }
+                            }
+
+                            if ($isAvailable) {
+                                $availableSlots[] = $currentTime->format('H:i');
+                            }
+
+                            $currentTime->addMinutes($slotDuration);
+                        }
+                    }
+                }
+
+                $availability[$day] = !empty($availableSlots);
+            } else {
+                $availability[$day] = false;
+            }
+        }
+
+        return response()->json($availability);
+    }
+
+    public function getInitialAvailability(Request $request)
+    {
+        $year = $request->query('year');
+        $month = $request->query('month');
+
+        $startDate = Carbon::createFromDate($year, $month, 1);
+        $endDate = $startDate->copy()->endOfMonth();
+
+        $employeeIds = Employee::pluck('id')->toArray();
+
+        $availability = [];
+
+        foreach (range(1, $endDate->day) as $day) {
+            $date = Carbon::createFromDate($year, $month, $day);
+            $dayOfWeek = $date->dayOfWeek;
+            $dateString = $date->format('Y-m-d');
+
+            $employeesAvailable = EmployeeSchedule::whereIn('employee_id', $employeeIds)
+                ->where('day_of_week', $dayOfWeek)
+                ->exists();
+
+            if ($employeesAvailable) {
+                $availableSlots = [];
+
+                foreach ($employeeIds as $employeeId) {
+                    $employeeSchedule = EmployeeSchedule::where('employee_id', $employeeId)
+                        ->where('day_of_week', $dayOfWeek)
+                        ->first();
+
+                    if ($employeeSchedule) {
+                        $salonSetting = SalonSetting::first();
+                        $slotDuration = $salonSetting->slot_duration;
+                        $openDays = json_decode($salonSetting->open_days, true);
+                        $salonDaySchedule = $openDays[strtolower($date->format('l'))];
+
+                        $salonOpenTime = Carbon::parse($dateString . ' ' . $salonDaySchedule['open']);
+                        $salonBreakStart = Carbon::parse($dateString . ' ' . $salonDaySchedule['break_start']);
+                        $salonBreakEnd = Carbon::parse($dateString . ' ' . $salonDaySchedule['break_end']);
+                        $salonCloseTime = Carbon::parse($dateString . ' ' . $salonDaySchedule['close']);
+
+                        $employeeOpenTime = Carbon::parse($dateString . ' ' . $employeeSchedule->start_time);
+                        $employeeCloseTime = Carbon::parse($dateString . ' ' . $employeeSchedule->end_time);
+
+                        $currentTime = max($salonOpenTime, $employeeOpenTime);
+                        while ($currentTime->lt(min($salonCloseTime, $employeeCloseTime))) {
+                            $slotEndTime = $currentTime->copy()->addMinutes($slotDuration);
+                            if ($slotEndTime->gt($salonBreakStart) && $currentTime->lt($salonBreakEnd)) {
+                                $currentTime = $salonBreakEnd;
+                                continue;
+                            }
+
+                            if ($slotEndTime->gt(min($salonCloseTime, $employeeCloseTime))) {
+                                break;
+                            }
+
+                            $appointments = Appointment::where('employee_id', $employeeId)
+                                ->whereDate('start_time', $dateString)
+                                ->get();
+
+                            $isAvailable = true;
+                            foreach ($appointments as $appointment) {
+                                $appointmentStart = Carbon::parse($appointment->start_time);
+                                $appointmentEnd = Carbon::parse($appointment->end_time);
+
+                                if (($currentTime->gte($appointmentStart) && $currentTime->lt($appointmentEnd)) ||
+                                    ($slotEndTime->gt($appointmentStart) && $slotEndTime->lte($appointmentEnd)) ||
+                                    ($currentTime->lt($appointmentStart) && $slotEndTime->gt($appointmentEnd))) {
+                                    $isAvailable = false;
+                                    break;
+                                }
+                            }
+
+                            if ($isAvailable) {
+                                $availableSlots[] = $currentTime->format('H:i');
+                            }
+
+                            $currentTime->addMinutes($slotDuration);
+                        }
+                    }
+                }
+
+                $availability[$day] = !empty($availableSlots);
+            } else {
+                $availability[$day] = false;
+            }
+        }
+
+        return response()->json($availability);
+    }
+
+
+
 }
 
