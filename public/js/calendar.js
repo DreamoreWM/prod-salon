@@ -5,40 +5,53 @@ const daysTag = document.querySelector(".days"),
 
 let selectedDate = new Date(); // Initialise à la date actuelle
 
-// getting new date, current year and month
 let date = new Date(),
     currYear = date.getFullYear(),
     currMonth = date.getMonth();
 
-// storing full name of all months in array
 const months = ["January", "February", "March", "April", "May", "June", "July",
     "August", "September", "October", "November", "December"];
 
-const fetchAvailability = async (year, month) => {
+const fetchInitialAvailability = async (year, month) => {
     try {
-        let response = await fetch(`/calendar/availability?year=${year}&month=${month + 1}`);
+        let response = await fetch(`/calendar/initial-availability?year=${year}&month=${month + 1}`);
         let data = await response.json();
         return data;
     } catch (error) {
-        console.error('Error fetching availability data:', error);
+        console.error('Error fetching initial availability data:', error);
+        return {};
+    }
+};
+
+const fetchEmployeeAvailability = async (year, month, employeeIds) => {
+    try {
+        let response = await fetch(`/calendar/employee-availability?year=${year}&month=${month + 1}&employees=${employeeIds.join(',')}`);
+        let data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error fetching employee availability data:', error);
         return {};
     }
 };
 
 const renderCalendar = async () => {
-    let firstDayofMonth = new Date(currYear, currMonth, 1).getDay(), // getting first day of month
-        lastDateofMonth = new Date(currYear, currMonth + 1, 0).getDate(), // getting last date of month
-        lastDayofMonth = new Date(currYear, currMonth, lastDateofMonth).getDay(), // getting last day of month
-        lastDateofLastMonth = new Date(currYear, currMonth, 0).getDate(); // getting last date of previous month
+    let firstDayofMonth = new Date(currYear, currMonth, 1).getDay(),
+        lastDateofMonth = new Date(currYear, currMonth + 1, 0).getDate(),
+        lastDayofMonth = new Date(currYear, currMonth, lastDateofMonth).getDay(),
+        lastDateofLastMonth = new Date(currYear, currMonth, 0).getDate();
     let liTag = "";
 
-    const availability = await fetchAvailability(currYear, currMonth);
+    const employeeIds = Array.from(document.querySelectorAll('.employee-select .btn-check:checked')).map(btn => btn.dataset.id);
 
-    for (let i = firstDayofMonth; i > 0; i--) { // creating li of previous month last days
+    const availability = employeeIds.length > 0 ?
+        await fetchEmployeeAvailability(currYear, currMonth, employeeIds) :
+        await fetchInitialAvailability(currYear, currMonth);
+
+    for (let i = firstDayofMonth; i > 0; i--) {
         liTag += `<li class="inactive">${lastDateofLastMonth - i + 1}</li>`;
     }
 
-    for (let i = 1; i <= lastDateofMonth; i++) { // creating li of all days of current month
+    for (let i = 1; i <= lastDateofMonth; i++) {
         let isToday = i === date.getDate() && currMonth === new Date().getMonth()
         && currYear === new Date().getFullYear() ? "active" : "";
 
@@ -50,13 +63,12 @@ const renderCalendar = async () => {
         liTag += `<li class="${isToday} ${dayClass} ${selected}" data-date="${currYear}-${String(currMonth + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}"><div class="number">${i}</div></li>`;
     }
 
-    for (let i = lastDayofMonth; i < 6; i++) { // creating li of next month first days
-        liTag += `<li class="inactive">${i - lastDayofMonth + 1}</li>`
+    for (let i = lastDayofMonth; i < 6; i++) {
+        liTag += `<li class="inactive">${i - lastDayofMonth + 1}</li>`;
     }
-    currentDate.innerText = `${months[currMonth]} ${currYear}`; // passing current mon and yr as currentDate text
+    currentDate.innerText = `${months[currMonth]} ${currYear}`;
     daysTag.innerHTML = liTag;
 
-    // Attach click event to day elements
     document.querySelectorAll('.days li').forEach(day => {
         day.addEventListener('click', function() {
             selectedDate = new Date(this.dataset.date);
@@ -66,18 +78,18 @@ const renderCalendar = async () => {
         });
     });
 
-    loadAvailableSlots(); // Load slots for the initial selected date
+    loadAvailableSlots();
 };
 
 const loadAvailableSlots = async () => {
     if (!selectedDate) return;
 
-    const userId = document.querySelector('input[name="user"]:checked')?.dataset.id;
+    const userId = document.querySelector('#user-select').value;
     const employeeIds = Array.from(document.querySelectorAll('.employee-select .btn-check:checked')).map(btn => btn.dataset.id);
     const prestationIds = Array.from(document.querySelectorAll('.prestation-select .btn-check:checked')).map(btn => btn.dataset.id);
 
     if (!userId || employeeIds.length === 0 || prestationIds.length === 0) {
-        document.getElementById('slots-container').innerHTML = ''; // Clear slots if no user, employees or prestations are selected
+        document.getElementById('slots-container').innerHTML = '';
         return;
     }
 
@@ -93,9 +105,9 @@ const loadAvailableSlots = async () => {
 
         slots.forEach(slot => {
             let slotElement = document.createElement('div');
-            slotElement.className = 'badge badge-success m-1';
+            slotElement.className = 'btn btn-success m-1';
             slotElement.innerText = `${slot.time} - ${slot.employee}`;
-            slotElement.addEventListener('click', () => bookAppointment(slot));
+            slotElement.addEventListener('click', () => confirmAppointment(slot));
             slotsContainer.appendChild(slotElement);
         });
     } catch (error) {
@@ -103,8 +115,37 @@ const loadAvailableSlots = async () => {
     }
 };
 
+const confirmAppointment = async (slot) => {
+    const userId = document.querySelector('#user-select').value;
+    const employeeNames = Array.from(document.querySelectorAll('.employee-select .btn-check:checked')).map(btn => btn.nextElementSibling.innerText);
+    const prestationNames = Array.from(document.querySelectorAll('.prestation-select .btn-check:checked')).map(btn => btn.nextElementSibling.innerText);
+
+    const userName = document.querySelector(`#user-select option[value="${userId}"]`).text;
+
+    const confirmationHtml = `
+        <p><strong>User:</strong> ${userName}</p>
+        <p><strong>Employees:</strong> ${employeeNames.join(', ')}</p>
+        <p><strong>Prestations:</strong> ${prestationNames.join(', ')}</p>
+        <p><strong>Date:</strong> ${selectedDate.toISOString().split('T')[0]}</p>
+        <p><strong>Time:</strong> ${slot.time}</p>
+    `;
+
+    Swal.fire({
+        title: 'Confirm Appointment',
+        html: confirmationHtml,
+        icon: 'info',
+        showCancelButton: true,
+        confirmButtonText: 'Confirm',
+        cancelButtonText: 'Cancel'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            bookAppointment(slot);
+        }
+    });
+};
+
 const bookAppointment = async (slot) => {
-    const userId = document.querySelector('input[name="user"]:checked')?.dataset.id;
+    const userId = document.querySelector('#user-select').value;
     const employeeIds = Array.from(document.querySelectorAll('.employee-select .btn-check:checked')).map(btn => btn.dataset.id);
     const prestationIds = Array.from(document.querySelectorAll('.prestation-select .btn-check:checked')).map(btn => btn.dataset.id);
 
@@ -126,21 +167,23 @@ const bookAppointment = async (slot) => {
         if (!response.ok) {
             throw new Error('Failed to book appointment');
         }
-        alert('Appointment booked successfully!');
-        loadAvailableSlots(); // Refresh slots after booking
+        Swal.fire('Success!', 'Appointment booked successfully!', 'success');
+        loadAvailableSlots();
     } catch (error) {
         console.error('Error booking appointment:', error);
-        alert('Failed to book appointment');
+        Swal.fire('Error', 'Failed to book appointment', 'error');
     }
 };
-
 
 document.querySelectorAll('.prestation-select .btn-check').forEach(checkbox => {
     checkbox.addEventListener('change', loadAvailableSlots);
 });
 
 document.querySelectorAll('.employee-select .btn-check').forEach(checkbox => {
-    checkbox.addEventListener('change', loadAvailableSlots);
+    checkbox.addEventListener('change', () => {
+        renderCalendar();
+        loadAvailableSlots();
+    });
 });
 
 document.querySelectorAll('.user-select .btn-check').forEach(checkbox => {
@@ -149,18 +192,18 @@ document.querySelectorAll('.user-select .btn-check').forEach(checkbox => {
 
 renderCalendar();
 
-prevNextIcon.forEach(icon => { // getting prev and next icons
-    icon.addEventListener("click", () => { // adding click event on both icons
+prevNextIcon.forEach(icon => {
+    icon.addEventListener("click", () => {
         currMonth = icon.id === "prev" ? currMonth - 1 : currMonth + 1;
 
-        if (currMonth < 0 || currMonth > 11) { // if current month is less than 0 or greater than 11
+        if (currMonth < 0 || currMonth > 11) {
             date = new Date(currYear, currMonth, new Date().getDate());
-            currYear = date.getFullYear(); // updating current year with new date year
-            currMonth = date.getMonth(); // updating current month with new date month
+            currYear = date.getFullYear();
+            currMonth = date.getMonth();
         } else {
-            date = new Date(); // pass the current date as date value
+            date = new Date();
         }
-        renderCalendar(); // calling renderCalendar function
+        renderCalendar();
     });
 });
 

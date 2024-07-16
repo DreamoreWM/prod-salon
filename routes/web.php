@@ -89,6 +89,9 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/calendar/availability', [CalendarController::class, 'getAvailability']);
     Route::get('/calendar/slots', [CalendarController::class, 'getSlots']);
     Route::post('/calendar/book', [CalendarController::class, 'bookAppointment'])->name('calendar.book');
+    Route::get('/calendar/employee-availability', [CalendarController::class, 'getEmployeeAvailability'])->name('calendar.employee-availability');
+    Route::get('/calendar/initial-availability', [CalendarController::class, 'getInitialAvailability'])->name('calendar.initial-availability');
+
 
     Route::get('/employees/{employee}/schedule', [EmployeeScheduleController::class, 'edit'])->name('employees.schedule.edit');
     Route::post('/employees/{employee}/schedule', [EmployeeScheduleController::class, 'store'])->name('employees.schedule.store');
