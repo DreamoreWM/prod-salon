@@ -63,6 +63,8 @@ Route::middleware(['auth', 'role:user,admin'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('/appointments', [AppointmentController::class, 'index'])->name('appointments.index');
     Route::delete('/appointments/{appointment}', [AppointmentController::class, 'cancel'])->name('appointments.cancel');
+
+
 });
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
@@ -86,6 +88,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/calendar', [CalendarController::class, 'index']);
     Route::get('/calendar/availability', [CalendarController::class, 'getAvailability']);
     Route::get('/calendar/slots', [CalendarController::class, 'getSlots']);
+    Route::post('/calendar/book', [CalendarController::class, 'bookAppointment'])->name('calendar.book');
 
     Route::get('/employees/{employee}/schedule', [EmployeeScheduleController::class, 'edit'])->name('employees.schedule.edit');
     Route::post('/employees/{employee}/schedule', [EmployeeScheduleController::class, 'store'])->name('employees.schedule.store');

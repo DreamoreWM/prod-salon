@@ -72,16 +72,17 @@ const renderCalendar = async () => {
 const loadAvailableSlots = async () => {
     if (!selectedDate) return;
 
-    const employeeIds = Array.from(document.querySelectorAll('.btn-check:checked')).map(btn => btn.dataset.id);
+    const userId = document.querySelector('input[name="user"]:checked')?.dataset.id;
+    const employeeIds = Array.from(document.querySelectorAll('.employee-select .btn-check:checked')).map(btn => btn.dataset.id);
     const prestationIds = Array.from(document.querySelectorAll('.prestation-select .btn-check:checked')).map(btn => btn.dataset.id);
 
-    if (employeeIds.length === 0 || prestationIds.length === 0) {
-        document.getElementById('slots-container').innerHTML = ''; // Clear slots if no employees or prestations are selected
+    if (!userId || employeeIds.length === 0 || prestationIds.length === 0) {
+        document.getElementById('slots-container').innerHTML = ''; // Clear slots if no user, employees or prestations are selected
         return;
     }
 
     try {
-        let response = await fetch(`/calendar/slots?date=${selectedDate.toISOString().split('T')[0]}&employees=${employeeIds.join(',')}&prestations=${prestationIds.join(',')}`);
+        let response = await fetch(`/calendar/slots?date=${selectedDate.toISOString().split('T')[0]}&user=${userId}&employees=${employeeIds.join(',')}&prestations=${prestationIds.join(',')}`);
         if (!response.ok) {
             throw new Error('Server response was not ok');
         }
@@ -94,6 +95,7 @@ const loadAvailableSlots = async () => {
             let slotElement = document.createElement('div');
             slotElement.className = 'badge badge-success m-1';
             slotElement.innerText = `${slot.time} - ${slot.employee}`;
+            slotElement.addEventListener('click', () => bookAppointment(slot));
             slotsContainer.appendChild(slotElement);
         });
     } catch (error) {
@@ -101,13 +103,47 @@ const loadAvailableSlots = async () => {
     }
 };
 
-// Ajouter des écouteurs d'événements pour mettre à jour les créneaux disponibles lors de la sélection des prestations
+const bookAppointment = async (slot) => {
+    const userId = document.querySelector('input[name="user"]:checked')?.dataset.id;
+    const employeeIds = Array.from(document.querySelectorAll('.employee-select .btn-check:checked')).map(btn => btn.dataset.id);
+    const prestationIds = Array.from(document.querySelectorAll('.prestation-select .btn-check:checked')).map(btn => btn.dataset.id);
+
+    try {
+        let response = await fetch(`/calendar/book`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify({
+                date: selectedDate.toISOString().split('T')[0],
+                time: slot.time,
+                user: userId,
+                employees: employeeIds,
+                prestations: prestationIds
+            })
+        });
+        if (!response.ok) {
+            throw new Error('Failed to book appointment');
+        }
+        alert('Appointment booked successfully!');
+        loadAvailableSlots(); // Refresh slots after booking
+    } catch (error) {
+        console.error('Error booking appointment:', error);
+        alert('Failed to book appointment');
+    }
+};
+
+
 document.querySelectorAll('.prestation-select .btn-check').forEach(checkbox => {
     checkbox.addEventListener('change', loadAvailableSlots);
 });
 
-// Ajouter des écouteurs d'événements pour mettre à jour les créneaux disponibles lors de la sélection des employés
 document.querySelectorAll('.employee-select .btn-check').forEach(checkbox => {
+    checkbox.addEventListener('change', loadAvailableSlots);
+});
+
+document.querySelectorAll('.user-select .btn-check').forEach(checkbox => {
     checkbox.addEventListener('change', loadAvailableSlots);
 });
 
@@ -133,4 +169,3 @@ employeeButtons.forEach(button => {
         loadAvailableSlots();
     });
 });
-

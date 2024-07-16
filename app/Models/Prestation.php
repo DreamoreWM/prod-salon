@@ -20,11 +20,6 @@ class Prestation extends Model
      * Relation avec le modèle Slot (si vous avez un modèle Slot pour les créneaux horaires).
      * Cela suppose que vous avez un modèle Slot qui a une clé étrangère 'prestation_id'.
      */
-    public function slots()
-    {
-        return $this->hasMany(Slot::class);
-    }
-
     public function appointments()
     {
         return $this->belongsToMany(Appointment::class, 'appointment_prestation');

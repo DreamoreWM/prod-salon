@@ -2,19 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Prestation;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Models\Appointment;
 use App\Models\SalonSetting;
 use App\Models\Employee;
 use App\Models\EmployeeSchedule;
+use App\Models\Prestation;
+use App\Models\User;
 use Carbon\Carbon;
 
 class CalendarController extends Controller
 {
     public function index()
     {
-        return view('calendar');
+        $categories = Category::with('prestations')->get();
+        return view('calendar', compact('categories'));
     }
 
     public function getAvailability(Request $request)
@@ -34,7 +37,6 @@ class CalendarController extends Controller
                 return Carbon::parse($appointment->start_time)->format('Y-m-d') == $date;
             });
 
-            // Check if there are any appointments on that day
             $availability[$day] = $dayAppointments->isEmpty();
         }
 
@@ -49,26 +51,15 @@ class CalendarController extends Controller
             $prestationIds = explode(',', $request->query('prestations'));
 
             if (empty($employeeIds) || empty($prestationIds)) {
-                \Log::error('No employees or prestations selected.');
                 return response()->json([]);
             }
 
-            \Log::info('Selected date: ' . $date);
-            \Log::info('Selected employees: ' . implode(', ', $employeeIds));
-            \Log::info('Selected prestations: ' . implode(', ', $prestationIds));
-
             $salonSetting = SalonSetting::first();
-            if (!$salonSetting) {
-                \Log::error('No salon settings found.');
-                return response()->json(['error' => 'No salon settings found'], 500);
-            }
-
             $slotDuration = $salonSetting->slot_duration;
             $openDays = json_decode($salonSetting->open_days, true);
 
             $dayOfWeek = Carbon::parse($date)->format('l');
             if (!isset($openDays[strtolower($dayOfWeek)])) {
-                \Log::error('Salon closed on this day: ' . $dayOfWeek);
                 return response()->json([]);
             }
 
@@ -79,18 +70,7 @@ class CalendarController extends Controller
             $salonBreakEnd = Carbon::parse($date . ' ' . $salonDaySchedule['break_end']);
             $salonCloseTime = Carbon::parse($date . ' ' . $salonDaySchedule['close']);
 
-            // Calculate the total duration required for the selected prestations
-            $totalDuration = 0;
-            foreach ($prestationIds as $prestationId) {
-                $prestation = Prestation::find($prestationId);
-                if (!$prestation) {
-                    \Log::error('Prestation not found: ' . $prestationId);
-                    continue;
-                }
-                $totalDuration += $prestation->temps;
-            }
-
-            \Log::info('Total duration required: ' . $totalDuration);
+            $totalDuration = array_sum(Prestation::whereIn('id', $prestationIds)->pluck('temps')->toArray());
 
             $allSlots = [];
 
@@ -108,17 +88,11 @@ class CalendarController extends Controller
 
                 foreach ($employeeIds as $employeeId) {
                     $employee = Employee::find($employeeId);
-                    if (!$employee) {
-                        \Log::error('Employee not found: ' . $employeeId);
-                        continue;
-                    }
-
                     $employeeSchedule = EmployeeSchedule::where('employee_id', $employeeId)
                         ->where('day_of_week', Carbon::parse($date)->dayOfWeek)
                         ->first();
 
                     if (!$employeeSchedule) {
-                        \Log::info('No schedule for employee: ' . $employeeId . ' on ' . $dayOfWeek);
                         continue;
                     }
 
@@ -160,10 +134,40 @@ class CalendarController extends Controller
 
             return response()->json(array_values($allSlots));
         } catch (\Exception $e) {
-            \Log::error('Error in getSlots: ' . $e->getMessage());
             return response()->json(['error' => 'Internal Server Error'], 500);
         }
     }
 
+    public function bookAppointment(Request $request)
+    {
+        try {
+            $date = $request->input('date');
+            $time = $request->input('time');
+            $userId = $request->input('user');
+            $employeeIds = $request->input('employees');
+            $prestationIds = $request->input('prestations');
 
+            $start_time = Carbon::parse("$date $time");
+            $totalDuration = array_sum(Prestation::whereIn('id', $prestationIds)->pluck('temps')->toArray());
+            $end_time = $start_time->copy()->addMinutes($totalDuration);
+
+            foreach ($employeeIds as $employeeId) {
+                $appointment = new Appointment([
+                    'employee_id' => $employeeId,
+                    'start_time' => $start_time,
+                    'end_time' => $end_time,
+                    'bookable_id' => $userId,
+                    'bookable_type' => User::class
+                ]);
+                $appointment->save();
+
+                $appointment->prestations()->attach($prestationIds);
+            }
+
+            return response()->json(['message' => 'Appointment booked successfully!'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Internal Server Error'], 500);
+        }
+    }
 }
+

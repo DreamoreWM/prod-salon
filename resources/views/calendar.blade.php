@@ -1,3 +1,7 @@
+@extends('layouts.app')
+
+@section('no-tailwind')
+@endsection
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
@@ -12,7 +16,13 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 <body>
-<div class="wrapper">
+<style>
+
+    .collapse {
+        visibility: visible;
+    }
+</style>
+<div id="calendar-page" class="wrapper">
     <header>
         <p class="current-date"></p>
         <div class="icons">
@@ -32,7 +42,18 @@
         </ul>
         <ul class="days"></ul>
     </div>
-    <div class="employee-select">
+
+    <div class="user-select">
+        <h3>Select User:</h3>
+        <div id="user-buttons" class="btn-group" role="group">
+            @foreach(App\Models\User::all() as $user)
+                <input type="radio" class="btn-check" name="user" id="user-{{ $user->id }}" data-id="{{ $user->id }}" autocomplete="off">
+                <label class="btn btn-outline-primary" for="user-{{ $user->id }}">{{ $user->name }}</label>
+            @endforeach
+        </div>
+    </div>
+
+    <div class="employee-select mt-3">
         <h3>Select Employees:</h3>
         <div id="employee-buttons" class="btn-group" role="group">
             @foreach(App\Models\Employee::all() as $employee)
@@ -41,15 +62,37 @@
             @endforeach
         </div>
     </div>
-    <div class="prestation-select">
+
+    <div class="prestation-select mt-3">
         <h3>Select Prestations:</h3>
-        <div id="prestation-buttons" class="btn-group" role="group">
-            @foreach(App\Models\Prestation::all() as $prestation)
-                <input type="checkbox" class="btn-check" id="prestation-{{ $prestation->id }}" data-id="{{ $prestation->id }}" data-duration="{{ $prestation->temps }}" autocomplete="off">
-                <label class="btn btn-outline-secondary" for="prestation-{{ $prestation->id }}">{{ $prestation->nom }} ({{ $prestation->temps }} min)</label>
-            @endforeach
+        <div class="accordion accordion-flush" id="prestationAccordion">
+            @foreach($categories as $category)
+                @php
+                    $accordionId = 'prestationAccordion-' . $category->id;
+                    $headingId = 'heading-' . $category->id;
+                    $collapseId = 'collapse-' . $category->id;
+                @endphp
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="{{ $headingId }}">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#{{ $collapseId }}" aria-expanded="false" aria-controls="{{ $collapseId }}">
+                            {{ $category->name }}
+                        </button>
+                    </h2>
+                    <div id="{{ $collapseId }}" class="accordion-collapse collapse" aria-labelledby="{{ $headingId }}" data-bs-parent="#prestationAccordion">
+                        <div class="accordion-body">
+                            <div id="prestation-buttons-{{ $category->id }}" class="btn-group" role="group">
+                                @foreach($category->prestations as $prestation)
+                                    <input type="checkbox" class="btn-check" id="prestation-{{ $prestation->id }}" data-id="{{ $prestation->id }}" data-duration="{{ $prestation->temps }}" autocomplete="off">
+                                    <label class="btn btn-outline-secondary" for="prestation-{{ $prestation->id }}">{{ $prestation->nom }} ({{ $prestation->temps }} min)</label>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
         </div>
     </div>
+
     <div id="available-slots" class="mt-3">
         <h3>Available Slots</h3>
         <div id="slots-container"></div>
