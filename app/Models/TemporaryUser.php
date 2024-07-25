@@ -28,9 +28,6 @@ class TemporaryUser extends Model
         'email',
     ];
 
-    // Ici, vous pouvez ajouter d'autres méthodes de modèle ou des relations si nécessaire
-
-    // Dans User.php et TemporaryUser.php
     public function appointments()
     {
         return $this->morphMany(Appointment::class, 'bookable');

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Appointment;
+use App\Models\TemporaryUser;
 use App\Models\User;
 use App\Models\Employee;
 use Illuminate\Http\Request;
@@ -21,8 +22,8 @@ class ReservationController extends Controller
 
         $prestations = json_decode($data['prestations'], true);
 
-        $userId = auth()->id();
-        $user = User::find($userId);
+        $user = auth()->check() ? auth()->user() : TemporaryUser::firstOrCreate(['email' => $this->temporaryUser->email, 'name' => $this->name ?? ""]);
+
 
         // Créer la nouvelle réservation
         $appointment = Appointment::create([

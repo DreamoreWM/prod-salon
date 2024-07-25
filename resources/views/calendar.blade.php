@@ -62,45 +62,78 @@
                                     </header>
                                     <div class="calendar">
                                         <ul class="weeks">
-                                            <li>Sun</li>
-                                            <li>Mon</li>
-                                            <li>Tue</li>
-                                            <li>Wed</li>
-                                            <li>Thu</li>
-                                            <li>Fri</li>
-                                            <li>Sat</li>
+                                            <li>Dim</li>
+                                            <li>Lun</li>
+                                            <li>Mar</li>
+                                            <li>Mer</li>
+                                            <li>Jeu</li>
+                                            <li>Ven</li>
+                                            <li>Sam</li>
                                         </ul>
                                         <ul class="days"></ul>
                                     </div>
                                     <div id="available-slots" class="mt-3">
-                                        <h3>Available Slots</h3>
+                                        <h3>Créneaux Disponibles</h3>
                                         <div id="slots-container"></div>
                                     </div>
                                 </div>
                             </div>
+
                             <div class="col-md-6">
+                                <!-- Bouton pour ajouter un nouvel utilisateur -->
                                 <div class="user-select mt-3">
-                                    <h3>Select User:</h3>
-                                    <select class="user-select-dropdown form-control" name="user" id="user-select">
-                                        <option value="" disabled selected>Select a user</option>
-                                        @foreach(App\Models\User::all() as $user)
-                                            <option value="{{ $user->id }}">{{ $user->name }}</option>
-                                        @endforeach
-                                    </select>
+                                    <h3>Sélectionner un Utilisateur:</h3>
+                                    <div class="d-flex align-items-center">
+                                        <select class="user-select-dropdown form-control" name="user" id="user-select">
+                                            <option value="" disabled selected>Sélectionner un utilisateur</option>
+                                            @foreach(App\Models\User::all() as $user)
+                                                <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                            @endforeach
+                                        </select>
+                                        <button id="add-user-btn" class="btn btn-primary ml-3" type="button">Ajouter Utilisateur</button>
+                                    </div>
                                 </div>
 
+                                <!-- Modal pour créer un nouvel utilisateur -->
+                                <div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="addUserModalLabel">Ajouter un Nouvel Utilisateur</h5>
+                                                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Fermer">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form id="add-user-form">
+                                                    <div class="form-group">
+                                                        <label for="user-name">Nom</label>
+                                                        <input type="text" class="form-control" id="user-name" required>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="user-email">Email</label>
+                                                        <input type="email" class="form-control" id="user-email" required>
+                                                    </div>
+                                                    <button type="submit" class="btn btn-primary">Ajouter Utilisateur</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
                                 <div class="employee-select mt-3">
-                                    <h3>Select Employees:</h3>
+                                    <h3>Sélectionner des Employés:</h3>
                                     <div id="employee-buttons" class="btn-group" role="group">
                                         @foreach(App\Models\Employee::all() as $employee)
-                                            <input type="checkbox" class="btn-check" id="employee-{{ $employee->id }}" data-id="{{ $employee->id }}" autocomplete="off">
+                                            <input type="checkbox" class="btn-check" id="employee-{{ $employee->id }}" data-id="{{ $employee->id }}" autocomplete="off" checked>
                                             <label class="btn btn-outline-secondary" for="employee-{{ $employee->id }}">{{ $employee->name }}</label>
                                         @endforeach
                                     </div>
                                 </div>
 
                                 <div class="prestation-select mt-3">
-                                    <h3>Select Prestations:</h3>
+                                    <h3>Sélectionner des Prestations:</h3>
                                     <div class="accordion accordion-flush" id="prestationAccordion">
                                         @foreach($categories as $category)
                                             @php
