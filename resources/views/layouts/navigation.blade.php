@@ -171,7 +171,6 @@
         @endif
         @if(!Auth::check())
             <a href="{{ route('appointments.create') }}" class="btn btn-red">Prenez rendez-vous</a>
-            <a href="{{ route('register') }}" class="btn btn-red">Créer un compte</a>
             <a href="{{ route('reviews.list') }}" class="btn btn-red">Avis</a>
             <a href="{{ route('login') }}" class="btn btn-red">Se connecter</a>
         @endauth
