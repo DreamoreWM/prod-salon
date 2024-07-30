@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AbsenceController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ReservationController;
@@ -31,6 +32,13 @@ use App\Http\Controllers\EmployeeScheduleController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+use Illuminate\Http\Request;  // Importez la bonne classe Request
+
+Route::get('/debug-session', function (Request $request) {
+    return response()->json([
+        'session' => $request->session()->all()
+    ]);
+});
 
 Route::get('/', [DashboardController::class, 'index'])->name('dashboard.index');
 
@@ -54,7 +62,7 @@ Route::get('/confidentiality', function () {
 Route::get('/reviews/list', [ReviewController::class, 'list'])->name('reviews.list');
 
 
-Route::middleware(['auth', 'role:user,admin'])->group(function () {
+Route::middleware(['jwt', 'role:user,admin'])->group(function () {
     Route::post('/confirm-reservation', [ReservationController::class, 'confirmReservation'])->name('confirmReservation');
     Route::get('/appointments/create', [AppointmentController::class, 'create'])->name('appointments.create');
     Route::post('/appointments', [AppointmentController::class, 'store'])->name('appointments.store');

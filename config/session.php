@@ -35,6 +35,8 @@ return [
 
     'expire_on_close' => false,
 
+    'cookie' => env('SESSION_COOKIE', 'laravel_session'),
+
     /*
     |--------------------------------------------------------------------------
     | Session Encryption
@@ -126,11 +128,6 @@ return [
     |
     */
 
-    'cookie' => env(
-        'SESSION_COOKIE',
-        Str::slug(env('APP_NAME', 'laravel'), '_').'_session'
-    ),
-
     /*
     |--------------------------------------------------------------------------
     | Session Cookie Path
@@ -168,7 +165,8 @@ return [
     |
     */
 
-    'secure' => env('SESSION_SECURE_COOKIE'),
+    'secure' => env('SESSION_SECURE_COOKIE', false),
+    'same_site' => 'lax',
 
     /*
     |--------------------------------------------------------------------------
@@ -196,7 +194,6 @@ return [
     |
     */
 
-    'same_site' => 'lax',
 
     /*
     |--------------------------------------------------------------------------

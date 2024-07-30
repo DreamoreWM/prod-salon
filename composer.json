@@ -19,6 +19,7 @@
         "opcodesio/log-viewer": "^3.10",
         "rappasoft/laravel-livewire-tables": "^3.2",
         "spatie/laravel-permission": "^6.7",
+        "tymon/jwt-auth": "^2.1",
         "wire-elements/modal": "^2.0",
         "yajra/laravel-datatables": "^10.0"
     },

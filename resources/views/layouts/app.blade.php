@@ -7,6 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
+    @if (session('jwt_token'))
+        <meta name="jwt-token" content="{{ session('jwt_token') }}">
+    @endif
     <title>{{ config('app.name', 'Un-rendez-vous.fr') }}</title>
 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
