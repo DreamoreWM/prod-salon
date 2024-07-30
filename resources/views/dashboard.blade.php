@@ -850,12 +850,6 @@
 
 
             <div class="py-6">
-                @if(session()->has('admin_notification'))
-                    <div class=" admin-notification max-w-7xl mx-auto sm:px-6 lg:px-8 alert alert-success alert-dismissible fade show">
-                        {{ session('admin_notification') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"><i class="bi bi-x-circle"></i></button>
-                    </div>
-                @endif
                 @if(session()->has('success'))
                     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 alert alert-success alert-dismissible fade show" role="alert">
                         {{ session('success') }}
@@ -1025,43 +1019,33 @@
             </section>
         </div>
         <!-- Structure de la modal -->
-        <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Connexion</h5>
-                        <button class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <!-- Formulaire de Connexion -->
-                        <form method="POST" action="{{ route('login') }}">
-                            @csrf
-                            <div class="form-group">
-                                <label for="email">Adresse Email</label>
-                                <input type="email" class="form-control" id="email" name="email" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="password">Mot de passe</label>
-                                <input type="password" class="form-control" id="password" name="password" required>
-                            </div>
-                            <div class="form-group form-check">
-                                <input type="checkbox" class="form-check-input" id="remember" name="remember">
-                                <label class="form-check-label" for="remember">Se souvenir de moi</label>
-                            </div>
-                            <div class="buttons-container d-flex justify-content-between">
-                                <button class="btn btn-primary">Se connecter</button>
-                            </div>
-                        </form>
-                        <button class="btn btn-primary" onclick="location.href='{{ route('register') }}'">S'incrire</button>
-                    </div>
+    <!-- Structure de la modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Connexion</h5>
+                    <button class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- Formulaire pour entrer l'adresse e-mail -->
+                    <form method="POST" action="{{ route('sendLoginLink') }}">
+                        @csrf
+                        <div class="form-group">
+                            <label for="email">Adresse Email</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Envoyer le lien de connexion</button>
+                    </form>
                 </div>
             </div>
         </div>
+    </div>
+    <!-- Structure de la modal -->
 
-        <footer style="background-color: #767473; padding: 10px; text-align: center; border-top: 1px solid #e7e7e7;">
+    <footer style="background-color: #767473; padding: 10px; text-align: center; border-top: 1px solid #e7e7e7;">
             <div style="margin-bottom: 20px;">
                 <a href="/about" style="margin-right: 15px; text-decoration: none; color: #FFFFFF;">À propos</a>
                 <a href="/services" style="margin-right: 15px; text-decoration: none; color: #FFFFFF;">Services</a>
@@ -1154,6 +1138,11 @@
     </script>
 
 
+    @if(session()->has('authenticated'))
+        <script>
+            window.location.href = "{{ url('/ok') }}";
+        </script>
+    @endif
 
 
 

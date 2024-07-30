@@ -17,7 +17,8 @@ class CalendarController extends Controller
     public function index()
     {
         $categories = Category::with('prestations')->get();
-        return view('calendar', compact('categories'));
+        $background_color = SalonSetting::first()->background_color;
+        return view('calendar', compact('categories', 'background_color'));
     }
 
     public function getAvailability(Request $request)
@@ -124,7 +125,8 @@ class CalendarController extends Controller
                         $slotKey = $currentTime->format('H:i') . '-' . $employee->name;
                         $allSlots[$slotKey] = [
                             'time' => $currentTime->format('H:i'),
-                            'employee' => $employee->name
+                            'employee' => $employee->name,
+                            'employee_id' => $employeeId
                         ];
                     }
                 }

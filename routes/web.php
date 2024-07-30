@@ -1,17 +1,19 @@
 <?php
 
 use App\Http\Controllers\AbsenceController;
+use App\Http\Controllers\Auth\EmailLoginController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SalonController;
+use App\Http\Controllers\TemporaryUserController;
 use App\Models\Review;
 use App\Models\SalonSetting;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\SlotController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\EmployeeController;
@@ -31,6 +33,17 @@ use App\Http\Controllers\EmployeeScheduleController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+Route::post('logout', function () {
+    Auth::logout();
+    return redirect('/'); // Redirige vers la page d'accueil après déconnexion
+})->name('logout');
+
+Route::get('/login', [EmailLoginController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [EmailLoginController::class, 'sendLoginLink'])->name('sendLoginLink');
+Route::get('/login/confirm/{token}', [EmailLoginController::class, 'confirmLogin'])->name('confirmLogin');
+Route::get('/email-confirmed', [EmailLoginController::class, 'emailConfirmed'])->name('email.confirmed');
+Route::get('/check-email-verified', [EmailLoginController::class, 'checkEmailVerified'])->name('checkEmailVerified');
+
 
 Route::get('/', [DashboardController::class, 'index'])->name('dashboard.index');
 
@@ -68,7 +81,7 @@ Route::middleware(['auth', 'role:user,admin'])->group(function () {
 });
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
-
+    Route::post('/temporary-users/create', [TemporaryUserController::class, 'create']);
     Route::post('/users/{id}/update-role', [UsersController::class, 'updateRole']);
     Route::get('/roles', [RoleController::class, 'index'])->name('roles.index');
     Route::get('/roles/create', [RoleController::class, 'create'])->name('roles.create');
@@ -81,7 +94,6 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::resource('/prestations', PrestationController::class);
     Route::resource('/employees', EmployeeController::class);
     Route::resource('/users', UsersController::class);
-    Route::get('/employees/{employee}/slots', [SlotController::class, 'index'])->name('employees.slots.index');
     Route::get('/salon/settings', [SalonController::class, 'edit'])->name('salon.edit');
     Route::put('/salon/settings', [SalonController::class, 'update'])->name('salon.update');
 
@@ -102,4 +114,3 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::resource('/photos', PhotoPresController::class);
 });
 
-require __DIR__.'/auth.php';
