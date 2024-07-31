@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\TemporaryUser;
+use App\Models\User;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 
 class TemporaryUserController extends Controller
@@ -20,14 +22,30 @@ class TemporaryUserController extends Controller
      */
     public function create(Request $request)
     {
-        $validatedData = $request->validate([
+        // Valider les données d'entrée
+        $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:temporary_users',
+            'email' => 'required|string|email|max:255',
         ]);
 
-        $temporaryUser = TemporaryUser::create($validatedData);
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()->first()], 400);
+        }
 
-        return response()->json($temporaryUser);
+        // Vérifier si l'email existe déjà dans la table des utilisateurs ou des utilisateurs temporaires
+        $emailExists = User::where('email', $request->email)->exists() || TemporaryUser::where('email', $request->email)->exists();
+
+        if ($emailExists) {
+            return response()->json(['error' => 'Cet email existe déjà dans le système'], 400);
+        }
+
+        // Créer un nouvel utilisateur temporaire
+        $temporaryUser = TemporaryUser::create([
+            'name' => $request->name,
+            'email' => $request->email,
+        ]);
+
+        return response()->json($temporaryUser, 201);
     }
 
     /**

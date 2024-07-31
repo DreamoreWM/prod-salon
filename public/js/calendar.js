@@ -80,7 +80,8 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             if (!response.ok) {
-                throw new Error('Échec de la création de l\'utilisateur');
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Échec de la création de l\'utilisateur');
             }
 
             let newUser = await response.json();
@@ -93,10 +94,12 @@ document.addEventListener('DOMContentLoaded', () => {
             userSelect.add(option);
             userSelect.value = `temporary-${newUser.id}`;
 
+            Swal.fire('Succès', 'Utilisateur créé avec succès', 'success');
+
             $('#addUserModal').modal('hide');
         } catch (error) {
             console.error('Erreur lors de la création de l\'utilisateur:', error);
-            Swal.fire('Erreur', 'Échec de la création de l\'utilisateur', 'error');
+            Swal.fire('Erreur', error.message, 'error');
         }
     });
 

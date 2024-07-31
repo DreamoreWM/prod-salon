@@ -87,7 +87,10 @@
                                         <select class="user-select-dropdown form-control" name="user" id="user-select">
                                             <option value="" disabled selected>Sélectionner un utilisateur</option>
                                             @foreach(App\Models\User::all() as $user)
-                                                <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                                <option value="{{ $user->id }}">{{ $user->name }} - {{ $user->email }}</option>
+                                            @endforeach
+                                            @foreach(App\Models\TemporaryUser::all() as $temporaryUser)
+                                                <option value="temporary-{{ $temporaryUser->id }}">{{ $temporaryUser->name }} - {{ $temporaryUser->email }}</option>
                                             @endforeach
                                         </select>
                                         <button id="add-user-btn" class="btn btn-primary ml-3" type="button">Ajouter Utilisateur</button>
