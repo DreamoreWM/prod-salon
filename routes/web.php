@@ -8,6 +8,7 @@ use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SalonController;
+use App\Http\Controllers\TemporaryUserController;
 use App\Models\Review;
 use App\Models\SalonSetting;
 use Illuminate\Support\Facades\DB;
@@ -74,8 +75,20 @@ Route::middleware(['jwt', 'role:user,admin'])->group(function () {
 
 
 });
+Route::middleware(['jwt', 'role:admin'])->group(function () {
+    Route::get('/calendar', [CalendarController::class, 'index'])->name('calendar.index');
+    Route::get('/calendar/availability', [CalendarController::class, 'getAvailability']);
+    Route::get('/calendar/slots', [CalendarController::class, 'getSlots']);
+    Route::post('/calendar/book', [CalendarController::class, 'bookAppointment'])->name('calendar.book');
+    Route::get('/calendar/employee-availability', [CalendarController::class, 'getEmployeeAvailability'])->name('calendar.employee-availability');
+    Route::get('/calendar/initial-availability', [CalendarController::class, 'getInitialAvailability'])->name('calendar.initial-availability');
+    Route::post('/calendar', [CalendarController::class, 'assign'])->name('calendar.assign');
+    Route::post('/calendar/delete', [CalendarController::class, 'delete']);
+    Route::post('/temporary-users/create', [TemporaryUserController::class, 'create'])->name('temporary-users.create');
+});
 
-Route::middleware(['auth', 'role:admin'])->group(function () {
+
+Route::middleware(['jwt', 'role:admin'])->group(function () {
 
     Route::post('/users/{id}/update-role', [UsersController::class, 'updateRole']);
     Route::get('/roles', [RoleController::class, 'index'])->name('roles.index');
@@ -93,18 +106,11 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/salon/settings', [SalonController::class, 'edit'])->name('salon.edit');
     Route::put('/salon/settings', [SalonController::class, 'update'])->name('salon.update');
 
-    Route::get('/calendar', [CalendarController::class, 'index']);
-    Route::get('/calendar/availability', [CalendarController::class, 'getAvailability']);
-    Route::get('/calendar/slots', [CalendarController::class, 'getSlots']);
-    Route::post('/calendar/book', [CalendarController::class, 'bookAppointment'])->name('calendar.book');
-    Route::get('/calendar/employee-availability', [CalendarController::class, 'getEmployeeAvailability'])->name('calendar.employee-availability');
-    Route::get('/calendar/initial-availability', [CalendarController::class, 'getInitialAvailability'])->name('calendar.initial-availability');
 
 
     Route::get('/employees/{employee}/schedule', [EmployeeScheduleController::class, 'edit'])->name('employees.schedule.edit');
     Route::post('/employees/{employee}/schedule', [EmployeeScheduleController::class, 'store'])->name('employees.schedule.store');
-    Route::post('/calendar', [CalendarController::class, 'assign'])->name('calendar.assign');
-    Route::post('/calendar/delete', [CalendarController::class, 'delete']);
+
     Route::resource('/absences',AbsenceController::class);
     Route::resource('/reviews', ReviewController::class);
     Route::resource('/photos', PhotoPresController::class);

@@ -46,7 +46,7 @@ class AuthenticatedSessionController extends Controller
         $token = JWTAuth::attempt($request->only('email', 'password'));
 
         // Stocker le token dans un cookie HTTP-only
-        $cookie = cookie('jwt_token', $token, 60 * 12);
+        $cookie = cookie('jwt_token', $token, 60 * 12, null, null, false, false);
 
         Log::info('Token généré avec succès:', ['token' => $token]);
 

@@ -11,6 +11,7 @@ use App\Models\EmployeeSchedule;
 use App\Models\Prestation;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class CalendarController extends Controller
 {
@@ -141,15 +142,20 @@ class CalendarController extends Controller
     public function bookAppointment(Request $request)
     {
         try {
+            Log::info('Booking appointment started.');
+
             $date = $request->input('date');
             $time = $request->input('time');
-            $userId = $request->input('user');
+            $userId = $request->input('user_id');
             $employeeIds = $request->input('employees');
             $prestationIds = $request->input('prestations');
+
 
             $start_time = Carbon::parse("$date $time");
             $totalDuration = array_sum(Prestation::whereIn('id', $prestationIds)->pluck('temps')->toArray());
             $end_time = $start_time->copy()->addMinutes($totalDuration);
+
+            Log::info('Calculated times:', compact('start_time', 'end_time'));
 
             foreach ($employeeIds as $employeeId) {
                 $appointment = new Appointment([
@@ -160,8 +166,9 @@ class CalendarController extends Controller
                     'bookable_type' => User::class
                 ]);
                 $appointment->save();
-
                 $appointment->prestations()->attach($prestationIds);
+
+                Log::info('Appointment created:', $appointment->toArray());
             }
             $user = User::find($userId);
 
@@ -172,9 +179,11 @@ class CalendarController extends Controller
 
             return response()->json(['message' => 'Appointment booked successfully!'], 200);
         } catch (\Exception $e) {
+            Log::error('Booking Error', ['exception' => $e]);
             return response()->json(['error' => 'Internal Server Error'], 500);
         }
     }
+
 
     public function getEmployeeAvailability(Request $request)
     {

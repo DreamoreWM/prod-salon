@@ -27,7 +27,9 @@ class JWTMiddleware
                 return $this->redirectWithLogout($request, 'User not authenticated');
             }
 
-            $request->merge(['user' => $user]);
+            Auth::setUser($user); // Assurez-vous que l'utilisateur est authentifié dans le système d'authentification Laravel
+            $request->merge(['user_id' => $user->id]); // Ajouter uniquement l'ID de l'utilisateur à la requête
+
 
         } catch (Exception $e) {
             if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenInvalidException) {

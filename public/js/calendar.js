@@ -18,7 +18,7 @@ const fetchInitialAvailability = async (year, month) => {
         let data = await response.json();
         return data;
     } catch (error) {
-        console.error('Error fetching initial availability data:', error);
+        console.error('Erreur lors de la récupération des données de disponibilité initiale:', error);
         return {};
     }
 };
@@ -29,10 +29,80 @@ const fetchEmployeeAvailability = async (year, month, employeeIds) => {
         let data = await response.json();
         return data;
     } catch (error) {
-        console.error('Error fetching employee availability data:', error);
+        console.error('Erreur lors de la récupération des données de disponibilité des employés:', error);
         return {};
     }
 };
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.prestation-select .btn-check').forEach(checkbox => {
+        checkbox.addEventListener('change', loadAvailableSlots);
+    });
+
+    document.querySelectorAll('.employee-select .btn-check').forEach(checkbox => {
+        checkbox.addEventListener('change', () => {
+            renderCalendar();
+            loadAvailableSlots();
+        });
+    });
+
+    document.querySelectorAll('.user-select .btn-check').forEach(checkbox => {
+        checkbox.addEventListener('change', loadAvailableSlots);
+    });
+
+    // Bouton pour ouvrir la modal de création de nouvel utilisateur
+    document.getElementById('add-user-btn').addEventListener('click', () => {
+        $('#addUserModal').modal('show');
+    });
+
+    // Soumission du formulaire de création de nouvel utilisateur
+    document.getElementById('add-user-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const userName = document.getElementById('user-name').value;
+        const userEmail = document.getElementById('user-email').value;
+
+        const jwtToken = document.cookie.split('; ').find(row => row.startsWith('jwt_token=')).split('=')[1];
+
+
+        try {
+            let response = await fetch('/temporary-users/create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Authorization': `Bearer ${jwtToken}` // Ajouter le token JWT dans les en-têtes
+                },
+                body: JSON.stringify({
+                    name: userName,
+                    email: userEmail
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error('Échec de la création de l\'utilisateur');
+            }
+
+            let newUser = await response.json();
+
+            // Ajouter le nouvel utilisateur temporaire à la liste déroulante
+            let userSelect = document.getElementById('user-select');
+            let option = document.createElement('option');
+            option.value = `temporary-${newUser.id}`;
+            option.text = newUser.name;
+            userSelect.add(option);
+            userSelect.value = `temporary-${newUser.id}`;
+
+            $('#addUserModal').modal('hide');
+        } catch (error) {
+            console.error('Erreur lors de la création de l\'utilisateur:', error);
+            Swal.fire('Erreur', 'Échec de la création de l\'utilisateur', 'error');
+        }
+    });
+
+    renderCalendar();
+    loadAvailableSlots(); // Charger les créneaux disponibles directement
+});
 
 const renderCalendar = async () => {
     let firstDayofMonth = new Date(currYear, currMonth, 1).getDay(),
@@ -88,7 +158,7 @@ const loadAvailableSlots = async () => {
     const employeeIds = Array.from(document.querySelectorAll('.employee-select .btn-check:checked')).map(btn => btn.dataset.id);
     const prestationIds = Array.from(document.querySelectorAll('.prestation-select .btn-check:checked')).map(btn => btn.dataset.id);
 
-    if (!userId || employeeIds.length === 0 || prestationIds.length === 0) {
+    if (employeeIds.length === 0) {
         document.getElementById('slots-container').innerHTML = '';
         return;
     }
@@ -96,7 +166,7 @@ const loadAvailableSlots = async () => {
     try {
         let response = await fetch(`/calendar/slots?date=${selectedDate.toISOString().split('T')[0]}&user=${userId}&employees=${employeeIds.join(',')}&prestations=${prestationIds.join(',')}`);
         if (!response.ok) {
-            throw new Error('Server response was not ok');
+            throw new Error('La réponse du serveur n\'était pas correcte');
         }
         let slots = await response.json();
 
@@ -111,32 +181,42 @@ const loadAvailableSlots = async () => {
             slotsContainer.appendChild(slotElement);
         });
     } catch (error) {
-        console.error('Error fetching available slots:', error);
+        console.error('Erreur lors de la récupération des créneaux disponibles:', error);
     }
 };
 
 const confirmAppointment = async (slot) => {
     const userId = document.querySelector('#user-select').value;
-    const employeeNames = Array.from(document.querySelectorAll('.employee-select .btn-check:checked')).map(btn => btn.nextElementSibling.innerText);
+    const employeeName  = slot.employee;
     const prestationNames = Array.from(document.querySelectorAll('.prestation-select .btn-check:checked')).map(btn => btn.nextElementSibling.innerText);
 
-    const userName = document.querySelector(`#user-select option[value="${userId}"]`).text;
+    const userName = userId ? document.querySelector(`#user-select option[value="${userId}"]`).text : 'Non sélectionné';
+
+    if (!userId || prestationNames.length === 0) {
+        Swal.fire({
+            title: 'Erreur',
+            text: 'Veuillez sélectionner un utilisateur et une prestation avant de prendre rendez-vous.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
 
     const confirmationHtml = `
-        <p><strong>User:</strong> ${userName}</p>
-        <p><strong>Employees:</strong> ${employeeNames.join(', ')}</p>
-        <p><strong>Prestations:</strong> ${prestationNames.join(', ')}</p>
-        <p><strong>Date:</strong> ${selectedDate.toISOString().split('T')[0]}</p>
-        <p><strong>Time:</strong> ${slot.time}</p>
+        <p><strong>Utilisateur :</strong> ${userName}</p>
+        <p><strong>Employés :</strong> ${employeeName}</p>
+        <p><strong>Prestations :</strong> ${prestationNames.join(', ')}</p>
+        <p><strong>Date :</strong> ${selectedDate.toISOString().split('T')[0]}</p>
+        <p><strong>Heure :</strong> ${slot.time}</p>
     `;
 
     Swal.fire({
-        title: 'Confirm Appointment',
+        title: 'Confirmer le Rendez-vous',
         html: confirmationHtml,
         icon: 'info',
         showCancelButton: true,
-        confirmButtonText: 'Confirm',
-        cancelButtonText: 'Cancel'
+        confirmButtonText: 'Confirmer',
+        cancelButtonText: 'Annuler'
     }).then((result) => {
         if (result.isConfirmed) {
             bookAppointment(slot);
@@ -149,12 +229,16 @@ const bookAppointment = async (slot) => {
     const employeeIds = Array.from(document.querySelectorAll('.employee-select .btn-check:checked')).map(btn => btn.dataset.id);
     const prestationIds = Array.from(document.querySelectorAll('.prestation-select .btn-check:checked')).map(btn => btn.dataset.id);
 
+    // Récupérer le token JWT depuis le cookie
+    const jwtToken = document.cookie.split('; ').find(row => row.startsWith('jwt_token=')).split('=')[1];
+
     try {
         let response = await fetch(`/calendar/book`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Authorization': `Bearer ${jwtToken}` // Ajouter le token JWT dans les en-têtes
             },
             body: JSON.stringify({
                 date: selectedDate.toISOString().split('T')[0],
@@ -165,13 +249,15 @@ const bookAppointment = async (slot) => {
             })
         });
         if (!response.ok) {
-            throw new Error('Failed to book appointment');
+            // Lire la réponse JSON pour obtenir des détails sur l'erreur
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Failed to book appointment');
         }
         Swal.fire('Success!', 'Appointment booked successfully!', 'success');
         loadAvailableSlots();
     } catch (error) {
         console.error('Error booking appointment:', error);
-        Swal.fire('Error', 'Failed to book appointment', 'error');
+        Swal.fire('Error', error.message || 'Failed to book appointment', 'error');
     }
 };
 

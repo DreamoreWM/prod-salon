@@ -2,18 +2,6 @@
 <link rel="stylesheet" href="css/templatemo-style.css">
 
 <style>
-
-    .admin-notification {
-        position: fixed;
-        top: 300px;
-        left: 50%;
-        transform: translateX(-50%);
-        z-index: 9999; /* Assurez-vous que le z-index est suffisamment élevé pour passer devant tout */
-        width: 90%;
-        max-width: 1200px;
-        text-align: center;
-    }
-
     .contact-details p {
         margin: 0;
         padding: 10px 0;
@@ -762,21 +750,6 @@
         }
     }
 
-    .admin-notification {
-        position: fixed;
-        top: 15%; /* 1/4 de la hauteur de l'écran */
-        left: 1%; /* 5% de la largeur de l'écran */
-        background-color: #f8d7da;
-        color: #721c24;
-        padding: 10px 20px;
-        border: 1px solid #f5c6cb;
-        border-radius: 5px;
-        z-index: 1050;
-        transform: translateY(-50%);
-        max-width: 90%; /* Pour la réactivité */
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-
     .slogan {
         text-align: center;
         margin-top: 20px;
@@ -850,12 +823,6 @@
 
 
             <div class="py-6">
-                @if(session()->has('admin_notification'))
-                    <div class=" admin-notification max-w-7xl mx-auto sm:px-6 lg:px-8 alert alert-success alert-dismissible fade show">
-                        {{ session('admin_notification') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"><i class="bi bi-x-circle"></i></button>
-                    </div>
-                @endif
                 @if(session()->has('success'))
                     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 alert alert-success alert-dismissible fade show" role="alert">
                         {{ session('success') }}
