@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\TemporaryUser;
 use Illuminate\Http\Request;
 use App\Models\Appointment;
 use App\Models\SalonSetting;
@@ -18,8 +19,19 @@ class CalendarController extends Controller
     public function index()
     {
         $categories = Category::with('prestations')->get();
-        return view('calendar', compact('categories'));
+        $employees = Employee::all();
+        $users = User::all();
+        $temporaryUsers = TemporaryUser::all(); // Récupérer les utilisateurs temporaires
+        return view('calendar', compact('categories', 'employees', 'users', 'temporaryUsers'));
     }
+
+    public function getAppointmentsByDate(Request $request)
+    {
+        $date = Carbon::parse($request->input('date'))->format('Y-m-d');
+        $appointments = Appointment::whereDate('start_time', $date)->with('employee', 'prestations')->get();
+        return response()->json($appointments);
+    }
+
 
     public function getAvailability(Request $request)
     {
@@ -125,7 +137,8 @@ class CalendarController extends Controller
                         $slotKey = $currentTime->format('H:i') . '-' . $employee->name;
                         $allSlots[$slotKey] = [
                             'time' => $currentTime->format('H:i'),
-                            'employee' => $employee->name
+                            'employee' => $employee->name,
+                            'employee_id' => $employee->id,
                         ];
                     }
                 }

@@ -19,32 +19,29 @@
 
         <script src="{{ asset('js/calendar.js') }}" defer></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    </head>
-    <body>
-    <style>
-        .collapse {
-            visibility: visible;
-        }
-        .calendar {
-            margin-bottom: 20px;
-        }
-        .accordion-button {
-            background-color: transparent !important;
-        }
-        @media (max-width: 768px) {
-            .responsive-calendar {
+        <style>
+            .employee-column {
                 display: flex;
                 flex-direction: column;
+                flex-wrap: wrap;
+                width: 200px;
+                margin-right: 10px;
             }
-        }
-        @media (min-width: 769px) {
-            .responsive-calendar {
-                display: flex;
-                flex-direction: row;
+            .card {
+                margin-bottom: 10px;
             }
-        }
-    </style>
-
+            .collapse {
+                visibility: visible;
+            }
+            .calendar {
+                margin-bottom: 20px;
+            }
+            .accordion-button {
+                background-color: transparent !important;
+            }
+        </style>
+    </head>
+    <body>
     <div class="content py-6 mt-10 pt-10">
         <section class="mt-10">
             <div class="mx-auto max-w-screen-xl lg:px-12">
@@ -86,11 +83,11 @@
                                     <div class="d-flex align-items-center">
                                         <select class="user-select-dropdown form-control" name="user" id="user-select">
                                             <option value="" disabled selected>Sélectionner un utilisateur</option>
-                                            @foreach(App\Models\User::all() as $user)
-                                                <option value="{{ $user->id }}">{{ $user->name }} - {{ $user->email }}</option>
+                                            @foreach($users as $user)
+                                                <option value="{{ $user->id }}">{{ $user->name }}</option>
                                             @endforeach
-                                            @foreach(App\Models\TemporaryUser::all() as $temporaryUser)
-                                                <option value="temporary-{{ $temporaryUser->id }}">{{ $temporaryUser->name }} - {{ $temporaryUser->email }}</option>
+                                            @foreach($temporaryUsers as $temporaryUser)
+                                                <option value="temporary-{{ $temporaryUser->id }}">{{ $temporaryUser->name }}</option>
                                             @endforeach
                                         </select>
                                         <button id="add-user-btn" class="btn btn-primary ml-3" type="button">Ajouter Utilisateur</button>
@@ -124,6 +121,10 @@
                                     </div>
                                 </div>
 
+                                <div class="appointments mt-3">
+                                    <h3>Rendez-vous</h3>
+                                    <div id="appointments-container" class="d-flex"></div>
+                                </div>
 
                                 <div class="employee-select mt-3">
                                     <h3>Sélectionner des Employés:</h3>
@@ -165,6 +166,11 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="appointments-table mt-3">
+                                <h3>Tableau des Rendez-vous</h3>
+                                <div id="appointments-table-container" class="table-responsive"></div>
+                            </div>
+
                         </div>
                     </div>
                 </div>

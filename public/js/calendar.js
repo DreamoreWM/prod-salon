@@ -64,7 +64,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const jwtToken = document.cookie.split('; ').find(row => row.startsWith('jwt_token=')).split('=')[1];
 
-
         try {
             let response = await fetch('/temporary-users/create', {
                 method: 'POST',
@@ -105,7 +104,169 @@ document.addEventListener('DOMContentLoaded', () => {
 
     renderCalendar();
     loadAvailableSlots(); // Charger les créneaux disponibles directement
+    loadAppointments(); // Charger les rendez-vous pour la date sélectionnée
 });
+
+// Couleurs pour les cartes des employés
+const employeeColors = [
+    'bg-primary', 'bg-secondary', 'bg-success', 'bg-danger', 'bg-warning', 'bg-info', 'bg-light', 'bg-dark'
+];
+
+// Charger les rendez-vous en fonction de la date sélectionnée
+const loadAppointments = async () => {
+    if (!selectedDate) return;
+
+    try {
+        let response = await fetch(`/calendar/appointments?date=${selectedDate.toISOString().split('T')[0]}`);
+        if (!response.ok) {
+            throw new Error('La réponse du serveur n\'était pas correcte');
+        }
+        let appointments = await response.json();
+
+        let appointmentsContainer = document.getElementById('appointments-container');
+        if (!appointmentsContainer) {
+            throw new Error('Element appointments-container non trouvé');
+        }
+
+        appointmentsContainer.innerHTML = '';
+
+        // Filtrer les rendez-vous par les employés sélectionnés
+        const employeeIds = Array.from(document.querySelectorAll('.employee-select .btn-check:checked')).map(btn => parseInt(btn.dataset.id));
+        if (employeeIds.length > 0) {
+            appointments = appointments.filter(appointment => employeeIds.includes(appointment.employee.id));
+        }
+
+        // Trier les rendez-vous par heure
+        appointments.sort((a, b) => new Date(a.start_time) - new Date(b.start_time));
+
+        // Organiser les rendez-vous par employé
+        let appointmentsByEmployee = {};
+        appointments.forEach(appointment => {
+            if (!appointmentsByEmployee[appointment.employee.id]) {
+                appointmentsByEmployee[appointment.employee.id] = [];
+            }
+            appointmentsByEmployee[appointment.employee.id].push(appointment);
+        });
+
+        // Afficher les rendez-vous par employé
+        Object.keys(appointmentsByEmployee).forEach((employeeId, index) => {
+            let employeeColumn = document.createElement('div');
+            employeeColumn.className = 'employee-column';
+            employeeColumn.innerHTML = `<h5>${appointmentsByEmployee[employeeId][0].employee.name}</h5>`;
+            appointmentsByEmployee[employeeId].forEach(appointment => {
+                let startTime = new Date(appointment.start_time);
+                let endTime = new Date(appointment.end_time);
+
+                let formattedDate = startTime.toLocaleDateString('fr-FR', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+
+                let formattedStartTime = startTime.toLocaleTimeString('fr-FR', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+
+                let formattedEndTime = endTime.toLocaleTimeString('fr-FR', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+
+                let prestationsList = appointment.prestations.map(p => `<li>${p.nom}</li>`).join('');
+
+                let card = document.createElement('div');
+                card.className = `${employeeColors[index % employeeColors.length]} text-white`;
+                card.innerHTML = `
+                    <span class="badge badge-primary">${formattedStartTime} à ${formattedEndTime}</span>
+                    <span class="badge badge-primary">Client : Mr test</span>
+                `;
+                employeeColumn.appendChild(card);
+            });
+            appointmentsContainer.appendChild(employeeColumn);
+        });
+
+        // Générer le tableau des rendez-vous
+        generateAppointmentsTable(appointmentsByEmployee);
+
+    } catch (error) {
+        console.error('Erreur lors de la récupération des rendez-vous:', error);
+    }
+};
+
+const generateAppointmentsTable = (appointmentsByEmployee) => {
+    let tableContainer = document.getElementById('appointments-table-container');
+    if (!tableContainer) {
+        console.error('Element appointments-table-container non trouvé');
+        return;
+    }
+
+    let table = document.createElement('table');
+    table.className = 'table table-bordered';
+
+    // Ajouter l'en-tête du tableau
+    let thead = document.createElement('thead');
+    let headerRow = document.createElement('tr');
+
+    Object.keys(appointmentsByEmployee).forEach(employeeId => {
+        let th = document.createElement('th');
+        th.textContent = appointmentsByEmployee[employeeId][0].employee.name;
+        headerRow.appendChild(th);
+    });
+
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
+
+    // Ajouter le corps du tableau
+    let tbody = document.createElement('tbody');
+
+    // Trouver le nombre maximum de rendez-vous par employé
+    let maxAppointments = Math.max(...Object.values(appointmentsByEmployee).map(a => a.length));
+
+    for (let i = 0; i < maxAppointments; i++) {
+        let row = document.createElement('tr');
+
+        Object.keys(appointmentsByEmployee).forEach(employeeId => {
+            let td = document.createElement('td');
+
+            if (appointmentsByEmployee[employeeId][i]) {
+                let appointment = appointmentsByEmployee[employeeId][i];
+                let startTime = new Date(appointment.start_time);
+                let endTime = new Date(appointment.end_time);
+
+                let formattedStartTime = startTime.toLocaleTimeString('fr-FR', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+
+                let formattedEndTime = endTime.toLocaleTimeString('fr-FR', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+
+                td.innerHTML = `
+                    <div class="card ${employeeColors[Object.keys(appointmentsByEmployee).indexOf(employeeId) % employeeColors.length]} text-white">
+                        <div class="card-body">
+                            <span class="badge badge-primary">${formattedStartTime} à ${formattedEndTime}</span>
+                            <span class="badge badge-primary">Client : Mr test</span>
+                        </div>
+                    </div>
+                `;
+            }
+
+            row.appendChild(td);
+        });
+
+        tbody.appendChild(row);
+    }
+
+    table.appendChild(tbody);
+    tableContainer.innerHTML = '';
+    tableContainer.appendChild(table);
+};
+
+
 
 const renderCalendar = async () => {
     let firstDayofMonth = new Date(currYear, currMonth, 1).getDay(),
@@ -148,10 +309,12 @@ const renderCalendar = async () => {
             document.querySelectorAll('.days li').forEach(d => d.classList.remove('selected'));
             this.classList.add('selected');
             loadAvailableSlots();
+            loadAppointments(); // Charger les rendez-vous pour la date sélectionnée
         });
     });
 
     loadAvailableSlots();
+    loadAppointments();
 };
 
 const loadAvailableSlots = async () => {
@@ -247,7 +410,7 @@ const bookAppointment = async (slot) => {
                 date: selectedDate.toISOString().split('T')[0],
                 time: slot.time,
                 user: userId,
-                employees: employeeIds,
+                employees:  [slot.employee_id.toString()],
                 prestations: prestationIds
             })
         });
@@ -258,6 +421,7 @@ const bookAppointment = async (slot) => {
         }
         Swal.fire('Success!', 'Appointment booked successfully!', 'success');
         loadAvailableSlots();
+        loadAppointments(); // Recharger les rendez-vous après la réservation
     } catch (error) {
         console.error('Error booking appointment:', error);
         Swal.fire('Error', error.message || 'Failed to book appointment', 'error');
