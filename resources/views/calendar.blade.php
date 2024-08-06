@@ -121,6 +121,11 @@
                                     </div>
                                 </div>
 
+                                <div class="appointments mt-3">
+                                    <h3>Rendez-vous</h3>
+                                    <div id="appointments-container" class="d-flex"></div>
+                                </div>
+
                                 <div class="employee-select mt-3">
                                     <h3>Sélectionner des Employés:</h3>
                                     <div id="employee-buttons" class="btn-group" role="group">
