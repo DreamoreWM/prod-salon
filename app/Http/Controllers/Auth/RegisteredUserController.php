@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Appointment;
 use App\Models\TemporaryUser;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
@@ -46,8 +47,12 @@ class RegisteredUserController extends Controller
         $temporaryUser = TemporaryUser::where('email', $user->email)->first();
 
         if ($temporaryUser) {
-            // Ici, vous pouvez transférer les données de 'temporary_users' vers 'users' ou effectuer d'autres actions nécessaires
-            // Par exemple, attribuer des rendez-vous temporairement réservés à cet utilisateur
+            Appointment::where('bookable_type', 'App\\Models\\TemporaryUser')
+                ->where('bookable_id', $temporaryUser->id)
+                ->update([
+                    'bookable_type' => 'App\\Models\\User',
+                    'bookable_id' => $user->id,
+                ]);
 
             // Supprimer l'utilisateur temporaire après avoir transféré les données nécessaires
             $temporaryUser->delete();

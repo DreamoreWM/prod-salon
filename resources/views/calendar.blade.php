@@ -45,7 +45,7 @@
         <section class="mt-10">
             <div class="container-fluid">
                 <div class="row">
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <div class="calendar-container">
                             <div id="calendar-page" class="wrapper">
                                 <header>
@@ -66,10 +66,6 @@
                                         <li>Sam</li>
                                     </ul>
                                     <ul class="days"></ul>
-                                </div>
-                                <div id="available-slots" class="mt-3">
-                                    <h3>Créneaux Disponibles</h3>
-                                    <div id="slots-container"></div>
                                 </div>
                             </div>
 
@@ -103,21 +99,7 @@
                                 </div>
                             </div>
 
-                            <div class="user-select mt-3">
-                                <h3>Sélectionner un Utilisateur:</h3>
-                                <div class="d-flex align-items-center">
-                                    <select class="user-select-dropdown form-control" name="user" id="user-select">
-                                        <option value="" disabled selected>Sélectionner un utilisateur</option>
-                                        @foreach($users as $user)
-                                            <option value="{{ $user->id }}">{{ $user->name }}</option>
-                                        @endforeach
-                                        @foreach($temporaryUsers as $temporaryUser)
-                                            <option value="temporary-{{ $temporaryUser->id }}">{{ $temporaryUser->name }}</option>
-                                        @endforeach
-                                    </select>
-                                    <button id="add-user-btn" class="btn btn-primary ml-3" type="button">Ajouter Utilisateur</button>
-                                </div>
-                            </div>
+
 
                             <!-- Modal pour créer un nouvel utilisateur -->
                             <div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
@@ -148,21 +130,42 @@
                         </div> <!-- Fin de la première colonne -->
                     </div>
 
-                    <div class="col-md-9">
+                    <div class="col-md-8">
                         <div class="appointments-table mt-3">
-                            <h3>Tableau des Rendez-vous</h3>
-                            <div class="employee-select mt-3">
-                                <h3>Sélectionner des Employés:</h3>
-                                <div id="employee-buttons" class="btn-group" role="group">
-                                    @foreach(App\Models\Employee::all() as $employee)
-                                        <input type="checkbox" class="btn-check" id="employee-{{ $employee->id }}" data-id="{{ $employee->id }}" autocomplete="off" checked>
-                                        <label class="btn btn-outline-secondary" for="employee-{{ $employee->id }}">{{ $employee->name }}</label>
-                                    @endforeach
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="employee-select mt-3">
+                                        <h3>Sélectionner des Employés:</h3>
+                                        <div id="employee-buttons" class="btn-group" role="group">
+                                            @foreach(App\Models\Employee::all() as $employee)
+                                                <input type="checkbox" class="btn-check" id="employee-{{ $employee->id }}" data-id="{{ $employee->id }}" autocomplete="off" checked>
+                                                <label class="btn btn-outline-secondary" for="employee-{{ $employee->id }}">{{ $employee->name }}</label>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="user-select mt-3">
+                                        <h3>Sélectionner un Utilisateur:</h3>
+                                        <div class="d-flex align-items-center">
+                                            <select class="user-select-dropdown form-control" name="user" id="user-select">
+                                                <option value="" disabled selected>Sélectionner un utilisateur</option>
+                                                @foreach($users as $user)
+                                                    <option data-type="User" value="{{ $user->id }}">{{ $user->name }} - {{ $user->email }}</option>
+                                                @endforeach
+                                                @foreach($temporaryUsers as $temporaryUser)
+                                                    <option data-type="TemporaryUser" value="{{ $temporaryUser->id }}">{{ $temporaryUser->name }} - {{ $temporaryUser->email }}</option>
+                                                @endforeach
+                                            </select>
+                                            <button id="add-user-btn" class="btn btn-primary ml-3" type="button">Ajouter Utilisateur</button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <div id="appointments-table-container" class="table-responsive"></div>
+                            <div id="appointments-table-container" class="table-responsive mt-3"></div>
                         </div>
-                    </div> <!-- Fin de la deuxième colonne -->
+                    </div>
+                    <!-- Fin de la deuxième colonne -->
                 </div>
             </div>
         </section>

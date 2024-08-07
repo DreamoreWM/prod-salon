@@ -69,10 +69,5 @@
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
 
 <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
-<script>
-    $(document).ready(function() {
-        $('.user-select-dropdown').select2();
-    });
-</script>
 </body>
 </html>

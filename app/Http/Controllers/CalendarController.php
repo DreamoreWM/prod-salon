@@ -28,7 +28,7 @@ class CalendarController extends Controller
     public function getAppointmentsByDate(Request $request)
     {
         $date = Carbon::parse($request->input('date'))->format('Y-m-d');
-        $appointments = Appointment::whereDate('start_time', $date)->with('employee', 'prestations')->get();
+        $appointments = Appointment::whereDate('start_time', $date)->with('employee', 'prestations', 'bookable')->get();
         return response()->json($appointments);
     }
 
@@ -118,6 +118,7 @@ class CalendarController extends Controller
 
                     $appointments = Appointment::where('employee_id', $employeeId)
                         ->whereDate('start_time', $date)
+                        ->with('bookable')
                         ->get();
 
                     $isAvailable = true;
@@ -160,9 +161,10 @@ class CalendarController extends Controller
 
             $date = $request->input('date');
             $time = $request->input('time');
-            $userId = $request->input('user_id');
+            $userId = $request->input('user');
             $employeeIds = $request->input('employees');
             $prestationIds = $request->input('prestations');
+            $bookableType = $request->input('type');
 
 
             $start_time = Carbon::parse("$date $time");
@@ -177,7 +179,7 @@ class CalendarController extends Controller
                     'start_time' => $start_time,
                     'end_time' => $end_time,
                     'bookable_id' => $userId,
-                    'bookable_type' => User::class
+                    'bookable_type' => 'App\Models\\'.$bookableType
                 ]);
                 $appointment->save();
                 $appointment->prestations()->attach($prestationIds);
@@ -187,6 +189,11 @@ class CalendarController extends Controller
             $user = User::find($userId);
 
             $prestations = $appointment->prestations()->get();
+            if ($bookableType === 'TemporaryUser') {
+                $user = TemporaryUser::find($userId);
+            }else{
+                $user = User::find($userId);
+            }
             \Mail::to($user->email)->send(new \App\Mail\ReservationConfirmed($user, $appointment, $prestations));
             $employee = Employee::where('id',  $employeeIds)->first();
             \Mail::to($employee->email)->send(new \App\Mail\SlotBookedForEmployee($user, $appointment, $prestations));
@@ -345,6 +352,7 @@ class CalendarController extends Controller
 
                             $appointments = Appointment::where('employee_id', $employeeId)
                                 ->whereDate('start_time', $dateString)
+                                ->with('bookable')
                                 ->get();
 
                             $isAvailable = true;
