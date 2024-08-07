@@ -181,7 +181,6 @@ const fetchAvailableSlots = async () => {
     }
 };
 
-
 const generateAppointmentsTable = (appointmentsByEmployee) => {
     let tableContainer = document.getElementById('appointments-table-container');
     if (!tableContainer) {
@@ -230,14 +229,26 @@ const generateAppointmentsTable = (appointmentsByEmployee) => {
                 });
 
                 let isAvailable = appointment.client === 'Libre';
-                td.innerHTML = `
-                    <div class="card ${isAvailable ? 'bg-success' : employeeColors[Object.keys(appointmentsByEmployee).indexOf(employeeId) % employeeColors.length]} text-dark">
-                        <div class="card-body">
-                            <span class="badge badge-primary">${formattedStartTime} à ${formattedEndTime}</span>
-                            <span class="badge ${isAvailable ? 'badge-secondary' : 'badge-primary'}">Client : ${appointment.client}</span>
-                        </div>
+                let cardClass = isAvailable ? 'bg-success' : employeeColors[Object.keys(appointmentsByEmployee).indexOf(employeeId) % employeeColors.length];
+
+                let card = document.createElement('div');
+                card.className = `card ${cardClass} text-dark`;
+                card.innerHTML = `
+                    <div class="card-body">
+                        <span class="badge badge-primary">${formattedStartTime} à ${formattedEndTime}</span>
+                        <span class="badge ${isAvailable ? 'badge-secondary' : 'badge-primary'}">Client : ${appointment.client}</span>
                     </div>
                 `;
+
+                if (isAvailable) {
+                    card.addEventListener('click', () => confirmAppointment({
+                        employee_id: employeeId,
+                        start_time: startTime.toISOString(),
+                        employee: appointment.employee.name
+                    }));
+                }
+
+                td.appendChild(card);
             }
 
             row.appendChild(td);
@@ -250,9 +261,6 @@ const generateAppointmentsTable = (appointmentsByEmployee) => {
     tableContainer.innerHTML = '';
     tableContainer.appendChild(table);
 };
-
-
-
 
 const renderCalendar = async () => {
     let firstDayofMonth = new Date(currYear, currMonth, 1).getDay(),
@@ -344,8 +352,10 @@ const loadAvailableSlots = async () => {
 
 const confirmAppointment = async (slot) => {
     const userId = document.querySelector('#user-select').value;
-    const employeeName  = slot.employee;
-    const prestationNames = Array.from(document.querySelectorAll('.prestation-select .btn-check:checked')).map(btn => btn.nextElementSibling.innerText);
+    const employeeName = slot.employee;
+    const prestationElements = Array.from(document.querySelectorAll('.prestation-select .btn-check:checked'));
+    const prestationNames = prestationElements.map(btn => btn.nextElementSibling.innerText);
+    const prestationDurations = prestationElements.map(btn => parseInt(btn.dataset.duration));
 
     const userName = userId ? document.querySelector(`#user-select option[value="${userId}"]`).text : 'Non sélectionné';
 
@@ -359,12 +369,18 @@ const confirmAppointment = async (slot) => {
         return;
     }
 
+    const totalDuration = prestationDurations.reduce((total, duration) => total + duration, 0);
+    const startTime = new Date(slot.start_time);
+    const endTime = new Date(startTime.getTime() + totalDuration * 60000);
+
+    const formattedStartTime = startTime.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+
     const confirmationHtml = `
         <p><strong>Utilisateur :</strong> ${userName}</p>
-        <p><strong>Employés :</strong> ${employeeName}</p>
+        <p><strong>Employé :</strong> ${employeeName}</p>
         <p><strong>Prestations :</strong> ${prestationNames.join(', ')}</p>
         <p><strong>Date :</strong> ${selectedDate.toISOString().split('T')[0]}</p>
-        <p><strong>Heure :</strong> ${slot.time}</p>
+        <p><strong>Heure :</strong> ${formattedStartTime} à ${endTime.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</p>
     `;
 
     Swal.fire({
@@ -376,14 +392,14 @@ const confirmAppointment = async (slot) => {
         cancelButtonText: 'Annuler'
     }).then((result) => {
         if (result.isConfirmed) {
-            bookAppointment(slot);
+            bookAppointment(slot, endTime, formattedStartTime);
         }
     });
 };
 
-const bookAppointment = async (slot) => {
+
+const bookAppointment = async (slot, endTime, formattedStartTime) => {
     const userId = document.querySelector('#user-select').value;
-    const employeeIds = Array.from(document.querySelectorAll('.employee-select .btn-check:checked')).map(btn => btn.dataset.id);
     const prestationIds = Array.from(document.querySelectorAll('.prestation-select .btn-check:checked')).map(btn => btn.dataset.id);
 
     // Récupérer le token JWT depuis le cookie
@@ -399,25 +415,25 @@ const bookAppointment = async (slot) => {
             },
             body: JSON.stringify({
                 date: selectedDate.toISOString().split('T')[0],
-                time: slot.time,
+                time: formattedStartTime, // Utiliser l'heure formatée ici
                 user: userId,
-                employees:  [slot.employee_id.toString()],
+                employees: [slot.employee_id.toString()],
                 prestations: prestationIds
             })
         });
         if (!response.ok) {
-            // Lire la réponse JSON pour obtenir des détails sur l'erreur
             const errorData = await response.json();
-            throw new Error(errorData.message || 'Failed to book appointment');
+            throw new Error(errorData.message || 'Échec de la réservation du rendez-vous');
         }
-        Swal.fire('Success!', 'Appointment booked successfully!', 'success');
+        Swal.fire('Succès', 'Rendez-vous réservé avec succès', 'success');
         loadAvailableSlots();
         loadAppointments(); // Recharger les rendez-vous après la réservation
     } catch (error) {
-        console.error('Error booking appointment:', error);
-        Swal.fire('Error', error.message || 'Failed to book appointment', 'error');
+        console.error('Erreur lors de la réservation du rendez-vous:', error);
+        Swal.fire('Erreur', error.message, 'error');
     }
 };
+
 
 document.querySelectorAll('.prestation-select .btn-check').forEach(checkbox => {
     checkbox.addEventListener('change', loadAvailableSlots);
