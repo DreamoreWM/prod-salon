@@ -63,7 +63,7 @@ class CalendarController extends Controller
             $employeeIds = explode(',', $request->query('employees'));
             $prestationIds = explode(',', $request->query('prestations'));
 
-            if (empty($employeeIds) || empty($prestationIds)) {
+            if (empty($employeeIds)) {
                 return response()->json([]);
             }
 
@@ -83,13 +83,13 @@ class CalendarController extends Controller
             $salonBreakEnd = Carbon::parse($date . ' ' . $salonDaySchedule['break_end']);
             $salonCloseTime = Carbon::parse($date . ' ' . $salonDaySchedule['close']);
 
-            $totalDuration = array_sum(Prestation::whereIn('id', $prestationIds)->pluck('temps')->toArray());
+            $totalDuration = empty($prestationIds) ? 0 : array_sum(Prestation::whereIn('id', $prestationIds)->pluck('temps')->toArray());
 
             $allSlots = [];
 
             $currentTime = $salonOpenTime->copy();
             while ($currentTime->lt($salonCloseTime)) {
-                $slotEndTime = $currentTime->copy()->addMinutes($totalDuration);
+                $slotEndTime = $currentTime->copy()->addMinutes($totalDuration > 0 ? $totalDuration : $slotDuration);
                 if ($slotEndTime->gt($salonBreakStart) && $currentTime->lt($salonBreakEnd)) {
                     $currentTime = $salonBreakEnd;
                     continue;
@@ -151,6 +151,7 @@ class CalendarController extends Controller
             return response()->json(['error' => 'Internal Server Error'], 500);
         }
     }
+
 
     public function bookAppointment(Request $request)
     {

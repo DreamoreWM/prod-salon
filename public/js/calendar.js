@@ -36,18 +36,17 @@ const fetchEmployeeAvailability = async (year, month, employeeIds) => {
 
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.prestation-select .btn-check').forEach(checkbox => {
-        checkbox.addEventListener('change', loadAvailableSlots);
+        checkbox.addEventListener('change', loadAppointments);
     });
 
     document.querySelectorAll('.employee-select .btn-check').forEach(checkbox => {
         checkbox.addEventListener('change', () => {
             renderCalendar();
-            loadAvailableSlots();
         });
     });
 
     document.querySelectorAll('.user-select .btn-check').forEach(checkbox => {
-        checkbox.addEventListener('change', loadAvailableSlots);
+        checkbox.addEventListener('change', loadAppointments);
     });
 
     // Bouton pour ouvrir la modal de création de nouvel utilisateur
@@ -103,7 +102,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     renderCalendar();
-    loadAvailableSlots(); // Charger les créneaux disponibles directement
     loadAppointments(); // Charger les rendez-vous pour la date sélectionnée
 });
 
@@ -233,12 +231,18 @@ const generateAppointmentsTable = (appointmentsByEmployee) => {
 
                 let card = document.createElement('div');
                 card.className = `card ${cardClass} text-dark`;
-                card.innerHTML = `
+
+                if(!isAvailable){card.innerHTML = `
                     <div class="card-body">
                         <span class="badge badge-primary">${formattedStartTime} à ${formattedEndTime}</span>
                         <span class="badge ${isAvailable ? 'badge-secondary' : 'badge-primary'}">Client : ${appointment.client}</span>
                     </div>
-                `;
+                `;}else{card.innerHTML = `
+                    <div class="card-body">
+                        <span class="badge badge-primary">${formattedStartTime} </span>
+                        <span class="badge ${isAvailable ? 'badge-secondary' : 'badge-primary'}">Libre </span>
+                    </div>
+                `;}
 
                 if (isAvailable) {
                     card.addEventListener('click', () => confirmAppointment({
@@ -302,53 +306,12 @@ const renderCalendar = async () => {
             selectedDate = new Date(this.dataset.date);
             document.querySelectorAll('.days li').forEach(d => d.classList.remove('selected'));
             this.classList.add('selected');
-            loadAvailableSlots();
             loadAppointments(); // Charger les rendez-vous pour la date sélectionnée
         });
     });
-
-    loadAvailableSlots();
     loadAppointments();
 };
 
-const loadAvailableSlots = async () => {
-    if (!selectedDate) return;
-
-    const userId = document.querySelector('#user-select').value;
-    const employeeIds = Array.from(document.querySelectorAll('.employee-select .btn-check:checked')).map(btn => btn.dataset.id);
-    const prestationIds = Array.from(document.querySelectorAll('.prestation-select .btn-check:checked')).map(btn => btn.dataset.id);
-
-    if (employeeIds.length === 0) {
-        document.getElementById('slots-container').innerHTML = '';
-        return;
-    }
-
-    try {
-        let response = await fetch(`/calendar/slots?date=${selectedDate.toISOString().split('T')[0]}&user=${userId}&employees=${employeeIds.join(',')}&prestations=${prestationIds.join(',')}`);
-        if (!response.ok) {
-            throw new Error('La réponse du serveur n\'était pas correcte');
-        }
-        let slots = await response.json();
-
-        let slotsContainer = document.getElementById('slots-container');
-        slotsContainer.innerHTML = '';
-
-        slots.forEach(slot => {
-            let slotElement = document.createElement('div');
-            slotElement.className = 'btn btn-success m-1';
-            slotElement.innerHTML = `
-                    <div class="card bg-success text-dark">
-                        <div class="card-body">
-                            <span class="badge badge-primary">${slot.time} - ${slot.employee}</span>
-                        </div>
-                    </div>`;
-            slotElement.addEventListener('click', () => confirmAppointment(slot));
-            slotsContainer.appendChild(slotElement);
-        });
-    } catch (error) {
-        console.error('Erreur lors de la récupération des créneaux disponibles:', error);
-    }
-};
 
 const confirmAppointment = async (slot) => {
     const userId = document.querySelector('#user-select').value;
@@ -426,7 +389,6 @@ const bookAppointment = async (slot, endTime, formattedStartTime) => {
             throw new Error(errorData.message || 'Échec de la réservation du rendez-vous');
         }
         Swal.fire('Succès', 'Rendez-vous réservé avec succès', 'success');
-        loadAvailableSlots();
         loadAppointments(); // Recharger les rendez-vous après la réservation
     } catch (error) {
         console.error('Erreur lors de la réservation du rendez-vous:', error);
@@ -436,18 +398,18 @@ const bookAppointment = async (slot, endTime, formattedStartTime) => {
 
 
 document.querySelectorAll('.prestation-select .btn-check').forEach(checkbox => {
-    checkbox.addEventListener('change', loadAvailableSlots);
+    checkbox.addEventListener('change', loadAppointments);
 });
 
 document.querySelectorAll('.employee-select .btn-check').forEach(checkbox => {
     checkbox.addEventListener('change', () => {
         renderCalendar();
-        loadAvailableSlots();
+        loadAppointments();
     });
 });
 
 document.querySelectorAll('.user-select .btn-check').forEach(checkbox => {
-    checkbox.addEventListener('change', loadAvailableSlots);
+    checkbox.addEventListener('change', loadAppointments);
 });
 
 renderCalendar();
@@ -469,6 +431,6 @@ prevNextIcon.forEach(icon => {
 
 employeeButtons.forEach(button => {
     button.addEventListener('change', function() {
-        loadAvailableSlots();
+        loadAppointments();
     });
 });
