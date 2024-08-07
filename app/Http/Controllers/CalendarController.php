@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\TemporaryUser;
 use Illuminate\Http\Request;
 use App\Models\Appointment;
 use App\Models\SalonSetting;
@@ -11,14 +12,26 @@ use App\Models\EmployeeSchedule;
 use App\Models\Prestation;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class CalendarController extends Controller
 {
     public function index()
     {
         $categories = Category::with('prestations')->get();
-        return view('calendar', compact('categories'));
+        $employees = Employee::all();
+        $users = User::all();
+        $temporaryUsers = TemporaryUser::all(); // Récupérer les utilisateurs temporaires
+        return view('calendar', compact('categories', 'employees', 'users', 'temporaryUsers'));
     }
+
+    public function getAppointmentsByDate(Request $request)
+    {
+        $date = Carbon::parse($request->input('date'))->format('Y-m-d');
+        $appointments = Appointment::whereDate('start_time', $date)->with('employee', 'prestations', 'bookable')->get();
+        return response()->json($appointments);
+    }
+
 
     public function getAvailability(Request $request)
     {
@@ -50,7 +63,7 @@ class CalendarController extends Controller
             $employeeIds = explode(',', $request->query('employees'));
             $prestationIds = explode(',', $request->query('prestations'));
 
-            if (empty($employeeIds) || empty($prestationIds)) {
+            if (empty($employeeIds)) {
                 return response()->json([]);
             }
 
@@ -70,13 +83,13 @@ class CalendarController extends Controller
             $salonBreakEnd = Carbon::parse($date . ' ' . $salonDaySchedule['break_end']);
             $salonCloseTime = Carbon::parse($date . ' ' . $salonDaySchedule['close']);
 
-            $totalDuration = array_sum(Prestation::whereIn('id', $prestationIds)->pluck('temps')->toArray());
+            $totalDuration = empty($prestationIds) ? 0 : array_sum(Prestation::whereIn('id', $prestationIds)->pluck('temps')->toArray());
 
             $allSlots = [];
 
             $currentTime = $salonOpenTime->copy();
             while ($currentTime->lt($salonCloseTime)) {
-                $slotEndTime = $currentTime->copy()->addMinutes($totalDuration);
+                $slotEndTime = $currentTime->copy()->addMinutes($totalDuration > 0 ? $totalDuration : $slotDuration);
                 if ($slotEndTime->gt($salonBreakStart) && $currentTime->lt($salonBreakEnd)) {
                     $currentTime = $salonBreakEnd;
                     continue;
@@ -105,6 +118,7 @@ class CalendarController extends Controller
 
                     $appointments = Appointment::where('employee_id', $employeeId)
                         ->whereDate('start_time', $date)
+                        ->with('bookable')
                         ->get();
 
                     $isAvailable = true;
@@ -124,7 +138,8 @@ class CalendarController extends Controller
                         $slotKey = $currentTime->format('H:i') . '-' . $employee->name;
                         $allSlots[$slotKey] = [
                             'time' => $currentTime->format('H:i'),
-                            'employee' => $employee->name
+                            'employee' => $employee->name,
+                            'employee_id' => $employee->id,
                         ];
                     }
                 }
@@ -138,18 +153,25 @@ class CalendarController extends Controller
         }
     }
 
+
     public function bookAppointment(Request $request)
     {
         try {
+            Log::info('Booking appointment started.');
+
             $date = $request->input('date');
             $time = $request->input('time');
             $userId = $request->input('user');
             $employeeIds = $request->input('employees');
             $prestationIds = $request->input('prestations');
+            $bookableType = $request->input('type');
+
 
             $start_time = Carbon::parse("$date $time");
             $totalDuration = array_sum(Prestation::whereIn('id', $prestationIds)->pluck('temps')->toArray());
             $end_time = $start_time->copy()->addMinutes($totalDuration);
+
+            Log::info('Calculated times:', compact('start_time', 'end_time'));
 
             foreach ($employeeIds as $employeeId) {
                 $appointment = new Appointment([
@@ -157,24 +179,32 @@ class CalendarController extends Controller
                     'start_time' => $start_time,
                     'end_time' => $end_time,
                     'bookable_id' => $userId,
-                    'bookable_type' => User::class
+                    'bookable_type' => 'App\Models\\'.$bookableType
                 ]);
                 $appointment->save();
-
                 $appointment->prestations()->attach($prestationIds);
+
+                Log::info('Appointment created:', $appointment->toArray());
             }
             $user = User::find($userId);
 
             $prestations = $appointment->prestations()->get();
+            if ($bookableType === 'TemporaryUser') {
+                $user = TemporaryUser::find($userId);
+            }else{
+                $user = User::find($userId);
+            }
             \Mail::to($user->email)->send(new \App\Mail\ReservationConfirmed($user, $appointment, $prestations));
             $employee = Employee::where('id',  $employeeIds)->first();
             \Mail::to($employee->email)->send(new \App\Mail\SlotBookedForEmployee($user, $appointment, $prestations));
 
             return response()->json(['message' => 'Appointment booked successfully!'], 200);
         } catch (\Exception $e) {
+            Log::error('Booking Error', ['exception' => $e]);
             return response()->json(['error' => 'Internal Server Error'], 500);
         }
     }
+
 
     public function getEmployeeAvailability(Request $request)
     {
@@ -322,6 +352,7 @@ class CalendarController extends Controller
 
                             $appointments = Appointment::where('employee_id', $employeeId)
                                 ->whereDate('start_time', $dateString)
+                                ->with('bookable')
                                 ->get();
 
                             $isAvailable = true;

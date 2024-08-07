@@ -10,6 +10,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Laravel\Socialite\Facades\Socialite;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -46,7 +47,7 @@ class AuthenticatedSessionController extends Controller
         $token = JWTAuth::attempt($request->only('email', 'password'));
 
         // Stocker le token dans un cookie HTTP-only
-        $cookie = cookie('jwt_token', $token, 60 * 12);
+        $cookie = cookie('jwt_token', $token, 60 * 12, null, null, false, false);
 
         Log::info('Token généré avec succès:', ['token' => $token]);
 

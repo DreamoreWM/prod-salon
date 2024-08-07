@@ -18,7 +18,7 @@ const fetchInitialAvailability = async (year, month) => {
         let data = await response.json();
         return data;
     } catch (error) {
-        console.error('Error fetching initial availability data:', error);
+        console.error('Erreur lors de la récupération des données de disponibilité initiale:', error);
         return {};
     }
 };
@@ -29,10 +29,267 @@ const fetchEmployeeAvailability = async (year, month, employeeIds) => {
         let data = await response.json();
         return data;
     } catch (error) {
-        console.error('Error fetching employee availability data:', error);
+        console.error('Erreur lors de la récupération des données de disponibilité des employés:', error);
         return {};
     }
 };
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.prestation-select .btn-check').forEach(checkbox => {
+        checkbox.addEventListener('change', loadAppointments);
+    });
+
+    document.querySelectorAll('.employee-select .btn-check').forEach(checkbox => {
+        checkbox.addEventListener('change', () => {
+            renderCalendar();
+        });
+    });
+
+    document.querySelectorAll('.user-select .btn-check').forEach(checkbox => {
+        checkbox.addEventListener('change', loadAppointments);
+    });
+
+    // Bouton pour ouvrir la modal de création de nouvel utilisateur
+    document.getElementById('add-user-btn').addEventListener('click', () => {
+        $('#addUserModal').modal('show');
+    });
+
+    // Soumission du formulaire de création de nouvel utilisateur
+    document.getElementById('add-user-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const userName = document.getElementById('user-name').value;
+        const userEmail = document.getElementById('user-email').value;
+
+        const jwtToken = document.cookie.split('; ').find(row => row.startsWith('jwt_token=')).split('=')[1];
+
+        try {
+            let response = await fetch('/temporary-users/create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Authorization': `Bearer ${jwtToken}` // Ajouter le token JWT dans les en-têtes
+                },
+                body: JSON.stringify({
+                    name: userName,
+                    email: userEmail
+                })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Échec de la création de l\'utilisateur');
+            }
+
+            let newUser = await response.json();
+
+            // Ajouter le nouvel utilisateur temporaire à la liste déroulante
+            let userSelect = document.getElementById('user-select');
+            let option = document.createElement('option');
+            option.value = `${newUser.id}`;
+            option.text = newUser.name;
+            userSelect.add(option);
+            userSelect.value = `${newUser.id}`;
+
+            Swal.fire('Succès', 'Utilisateur créé avec succès', 'success');
+
+            $('#addUserModal').modal('hide');
+        } catch (error) {
+            console.error('Erreur lors de la création de l\'utilisateur:', error);
+            Swal.fire('Erreur', error.message, 'error');
+        }
+    });
+
+    renderCalendar();
+    loadAppointments(); // Charger les rendez-vous pour la date sélectionnée
+});
+
+// Couleurs pour les cartes des employés
+const employeeColors = [
+    'bg-primary', 'bg-secondary', 'bg-success', 'bg-danger', 'bg-warning', 'bg-info', 'bg-light', 'bg-dark'
+];
+
+// Charger les rendez-vous en fonction de la date sélectionnée
+const loadAppointments = async () => {
+    if (!selectedDate) return;
+
+    try {
+        let response = await fetch(`/calendar/appointments?date=${selectedDate.toISOString().split('T')[0]}`);
+        if (!response.ok) {
+            throw new Error('La réponse du serveur n\'était pas correcte');
+        }
+        let appointments = await response.json();
+
+        const employeeIds = Array.from(document.querySelectorAll('.employee-select .btn-check:checked')).map(btn => parseInt(btn.dataset.id));
+
+        let appointmentsByEmployee = {};
+
+        // Ajouter tous les employés sélectionnés dans appointmentsByEmployee même s'ils n'ont pas de rendez-vous
+        employeeIds.forEach(id => {
+            appointmentsByEmployee[id] = [];
+        });
+
+        appointments = appointments.filter(appointment => employeeIds.includes(appointment.employee.id));
+        appointments.sort((a, b) => new Date(a.start_time) - new Date(b.start_time));
+
+        appointments.forEach(appointment => {
+            if (!appointmentsByEmployee[appointment.employee.id]) {
+                appointmentsByEmployee[appointment.employee.id] = [];
+            }
+            appointmentsByEmployee[appointment.employee.id].push(appointment);
+        });
+
+        const availableSlots = await fetchAvailableSlots();
+        availableSlots.forEach(slot => {
+            const employeeId = slot.employee_id;
+            if (!appointmentsByEmployee[employeeId]) {
+                appointmentsByEmployee[employeeId] = [];
+            }
+            appointmentsByEmployee[employeeId].push({
+                start_time: selectedDate.toISOString().split('T')[0] + ' ' + slot.time,
+                end_time: selectedDate.toISOString().split('T')[0] + ' ' + slot.time,
+                employee: { id: employeeId, name: slot.employee },
+                prestations: [],
+                client: 'Libre'
+            });
+        });
+
+        Object.keys(appointmentsByEmployee).forEach(employeeId => {
+            appointmentsByEmployee[employeeId].sort((a, b) => new Date(a.start_time) - new Date(b.start_time));
+        });
+
+        generateAppointmentsTable(appointmentsByEmployee);
+
+    } catch (error) {
+        console.error('Erreur lors de la récupération des rendez-vous:', error);
+    }
+};
+
+const fetchAvailableSlots = async () => {
+    const userId = document.querySelector('#user-select').value;
+    const employeeIds = Array.from(document.querySelectorAll('.employee-select .btn-check:checked')).map(btn => btn.dataset.id);
+    const prestationIds = Array.from(document.querySelectorAll('.prestation-select .btn-check:checked')).map(btn => btn.dataset.id);
+
+    try {
+        let response = await fetch(`/calendar/slots?date=${selectedDate.toISOString().split('T')[0]}&user=${userId}&employees=${employeeIds.join(',')}&prestations=${prestationIds.join(',')}`);
+        if (!response.ok) {
+            throw new Error('La réponse du serveur n\'était pas correcte');
+        }
+        return await response.json();
+    } catch (error) {
+        console.error('Erreur lors de la récupération des créneaux disponibles:', error);
+        return [];
+    }
+};
+
+const generateAppointmentsTable = (appointmentsByEmployee) => {
+    let tableContainer = document.getElementById('appointments-table-container');
+    if (!tableContainer) {
+        console.error('Element appointments-table-container non trouvé');
+        return;
+    }
+
+    let table = document.createElement('table');
+    table.className = 'table table-bordered';
+
+    let thead = document.createElement('thead');
+    let headerRow = document.createElement('tr');
+
+    // Ajout des en-têtes pour chaque employé
+    Object.keys(appointmentsByEmployee).forEach(employeeId => {
+        let employeeButton = document.querySelector(`.employee-select .btn-check[data-id="${employeeId}"]`);
+        let employeeName = employeeButton ? employeeButton.nextElementSibling.textContent : `Employé ${employeeId}`;
+
+        let th = document.createElement('th');
+        th.textContent = employeeName;
+        headerRow.appendChild(th);
+    });
+
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
+
+    let tbody = document.createElement('tbody');
+
+    let maxAppointments = Math.max(...Object.values(appointmentsByEmployee).map(a => a.length), 1);
+
+    for (let i = 0; i < maxAppointments; i++) {
+        let row = document.createElement('tr');
+
+        Object.keys(appointmentsByEmployee).forEach(employeeId => {
+            let td = document.createElement('td');
+
+            if (appointmentsByEmployee[employeeId][i]) {
+                let appointment = appointmentsByEmployee[employeeId][i];
+                let startTime = new Date(appointment.start_time);
+                let endTime = new Date(appointment.end_time);
+
+                let formattedStartTime = startTime.toLocaleTimeString('fr-FR', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+
+                let formattedEndTime = endTime.toLocaleTimeString('fr-FR', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+
+                let isAvailable = appointment.client === 'Libre';
+                let cardClass = isAvailable ? 'bg-success' : employeeColors[Object.keys(appointmentsByEmployee).indexOf(employeeId) % employeeColors.length];
+
+                let card = document.createElement('div');
+                card.className = `card ${cardClass} text-dark`;
+
+                if (!isAvailable) {
+                    card.innerHTML = `
+                        <div class="card-body">
+                            <span class="badge badge-primary">${formattedStartTime} à ${formattedEndTime}</span>
+                            <span class="badge ${isAvailable ? 'badge-secondary' : 'badge-primary'}">Client : ${appointment.bookable.name} </span>
+                        </div>
+                    `;
+                } else {
+                    card.innerHTML = `
+                        <div class="card-body">
+                            <span class="badge badge-primary">${formattedStartTime} </span>
+                            <span class="badge ${isAvailable ? 'badge-secondary' : 'badge-primary'}">Libre </span>
+                        </div>
+                    `;
+                }
+
+                if (isAvailable) {
+                    card.addEventListener('click', () => confirmAppointment({
+                        employee_id: employeeId,
+                        start_time: startTime.toISOString(),
+                        employee: appointment.employee.name
+                    }));
+                }
+
+                td.appendChild(card);
+            } else if (i === 0) {
+                // Ajouter une carte "Aucun créneau disponible" pour le premier index si aucun créneau n'est disponible
+                let card = document.createElement('div');
+                card.className = 'card bg-secondary text-dark';
+                card.innerHTML = `
+                    <div class="card-body">
+                        <span class="badge badge-secondary">Aucun créneau disponible</span>
+                    </div>
+                `;
+                td.appendChild(card);
+            }
+
+            row.appendChild(td);
+        });
+
+        tbody.appendChild(row);
+    }
+
+    table.appendChild(tbody);
+    tableContainer.innerHTML = '';
+    tableContainer.appendChild(table);
+};
+
+
+
 
 const renderCalendar = async () => {
     let firstDayofMonth = new Date(currYear, currMonth, 1).getDay(),
@@ -74,120 +331,145 @@ const renderCalendar = async () => {
             selectedDate = new Date(this.dataset.date);
             document.querySelectorAll('.days li').forEach(d => d.classList.remove('selected'));
             this.classList.add('selected');
-            loadAvailableSlots();
+            loadAppointments(); // Charger les rendez-vous pour la date sélectionnée
         });
     });
-
-    loadAvailableSlots();
+    loadAppointments();
 };
 
-const loadAvailableSlots = async () => {
-    if (!selectedDate) return;
-
-    const userId = document.querySelector('#user-select').value;
-    const employeeIds = Array.from(document.querySelectorAll('.employee-select .btn-check:checked')).map(btn => btn.dataset.id);
-    const prestationIds = Array.from(document.querySelectorAll('.prestation-select .btn-check:checked')).map(btn => btn.dataset.id);
-
-    if (!userId || employeeIds.length === 0 || prestationIds.length === 0) {
-        document.getElementById('slots-container').innerHTML = '';
-        return;
-    }
-
-    try {
-        let response = await fetch(`/calendar/slots?date=${selectedDate.toISOString().split('T')[0]}&user=${userId}&employees=${employeeIds.join(',')}&prestations=${prestationIds.join(',')}`);
-        if (!response.ok) {
-            throw new Error('Server response was not ok');
-        }
-        let slots = await response.json();
-
-        let slotsContainer = document.getElementById('slots-container');
-        slotsContainer.innerHTML = '';
-
-        slots.forEach(slot => {
-            let slotElement = document.createElement('div');
-            slotElement.className = 'btn btn-success m-1';
-            slotElement.innerText = `${slot.time} - ${slot.employee}`;
-            slotElement.addEventListener('click', () => confirmAppointment(slot));
-            slotsContainer.appendChild(slotElement);
-        });
-    } catch (error) {
-        console.error('Error fetching available slots:', error);
-    }
-};
 
 const confirmAppointment = async (slot) => {
     const userId = document.querySelector('#user-select').value;
-    const employeeNames = Array.from(document.querySelectorAll('.employee-select .btn-check:checked')).map(btn => btn.nextElementSibling.innerText);
-    const prestationNames = Array.from(document.querySelectorAll('.prestation-select .btn-check:checked')).map(btn => btn.nextElementSibling.innerText);
+    const employeeName = slot.employee;
+    const prestationElements = Array.from(document.querySelectorAll('.prestation-select .btn-check:checked'));
+    const prestationNames = prestationElements.map(btn => btn.nextElementSibling.innerText);
+    const prestationDurations = prestationElements.map(btn => parseInt(btn.dataset.duration));
 
-    const userName = document.querySelector(`#user-select option[value="${userId}"]`).text;
+    const userName = userId ? document.querySelector(`#user-select option[value="${userId}"]`).text : 'Non sélectionné';
+
+    if (!userId || prestationNames.length === 0) {
+        Swal.fire({
+            title: 'Erreur',
+            text: 'Veuillez sélectionner un utilisateur et une prestation avant de prendre rendez-vous.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
+
+    const totalDuration = prestationDurations.reduce((total, duration) => total + duration, 0);
+    const startTime = new Date(slot.start_time);
+    const endTime = new Date(startTime.getTime() + totalDuration * 60000);
+
+    const formattedStartTime = startTime.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
 
     const confirmationHtml = `
-        <p><strong>User:</strong> ${userName}</p>
-        <p><strong>Employees:</strong> ${employeeNames.join(', ')}</p>
-        <p><strong>Prestations:</strong> ${prestationNames.join(', ')}</p>
-        <p><strong>Date:</strong> ${selectedDate.toISOString().split('T')[0]}</p>
-        <p><strong>Time:</strong> ${slot.time}</p>
+        <p><strong>Utilisateur :</strong> ${userName}</p>
+        <p><strong>Employé :</strong> ${employeeName}</p>
+        <p><strong>Prestations :</strong> ${prestationNames.join(', ')}</p>
+        <p><strong>Date :</strong> ${selectedDate.toISOString().split('T')[0]}</p>
+        <p><strong>Heure :</strong> ${formattedStartTime} à ${endTime.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</p>
     `;
 
+    console.log(userId)
+
     Swal.fire({
-        title: 'Confirm Appointment',
+        title: 'Confirmer le Rendez-vous',
         html: confirmationHtml,
         icon: 'info',
         showCancelButton: true,
-        confirmButtonText: 'Confirm',
-        cancelButtonText: 'Cancel'
+        confirmButtonText: 'Confirmer',
+        cancelButtonText: 'Annuler'
     }).then((result) => {
         if (result.isConfirmed) {
-            bookAppointment(slot);
+            bookAppointment(slot, endTime, formattedStartTime);
         }
     });
 };
 
-const bookAppointment = async (slot) => {
-    const userId = document.querySelector('#user-select').value;
-    const employeeIds = Array.from(document.querySelectorAll('.employee-select .btn-check:checked')).map(btn => btn.dataset.id);
+
+const bookAppointment = async (slot, endTime, formattedStartTime) => {
+    const userSelectElement = document.querySelector('#user-select');
+    const userId = userSelectElement.value;
+    const bookableType = userSelectElement.options[userSelectElement.selectedIndex].getAttribute('data-type');
+
+    console.log(bookableType)
+
     const prestationIds = Array.from(document.querySelectorAll('.prestation-select .btn-check:checked')).map(btn => btn.dataset.id);
 
+    // Récupérer le token JWT depuis le cookie
+    const jwtToken = document.cookie.split('; ').find(row => row.startsWith('jwt_token=')).split('=')[1];
+
     try {
+        // Fetch existing appointments for the selected employee and date
+        let existingAppointmentsResponse = await fetch(`/calendar/appointments?date=${selectedDate.toISOString().split('T')[0]}&employee=${slot.employee_id}`);
+        if (!existingAppointmentsResponse.ok) {
+            throw new Error('La réponse du serveur n\'était pas correcte');
+        }
+        let existingAppointments = await existingAppointmentsResponse.json();
+
+        // Check for conflicts
+        const newStartTime = new Date(`${selectedDate.toISOString().split('T')[0]}T${formattedStartTime}`);
+        const newEndTime = endTime;
+
+        const hasConflict = existingAppointments.some(appointment => {
+            const appointmentStart = new Date(appointment.start_time);
+            const appointmentEnd = new Date(appointment.end_time);
+            return (newStartTime >= appointmentStart && newStartTime < appointmentEnd) ||
+                (newEndTime > appointmentStart && newEndTime <= appointmentEnd) ||
+                (newStartTime < appointmentStart && newEndTime > appointmentEnd);
+        });
+
+        if (hasConflict) {
+            Swal.fire('Erreur', 'Ce créneau horaire est déjà réservé ou chevauche un autre rendez-vous.', 'error');
+            loadAppointments();
+            return;
+        }
+
         let response = await fetch(`/calendar/book`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Authorization': `Bearer ${jwtToken}` // Ajouter le token JWT dans les en-têtes
             },
             body: JSON.stringify({
                 date: selectedDate.toISOString().split('T')[0],
-                time: slot.time,
+                time: formattedStartTime, // Utiliser l'heure formatée ici
                 user: userId,
-                employees: employeeIds,
+                type: bookableType,
+                employees: [slot.employee_id.toString()],
                 prestations: prestationIds
             })
         });
         if (!response.ok) {
-            throw new Error('Failed to book appointment');
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Échec de la réservation du rendez-vous');
         }
-        Swal.fire('Success!', 'Appointment booked successfully!', 'success');
-        loadAvailableSlots();
+        Swal.fire('Succès', 'Rendez-vous réservé avec succès', 'success');
+        loadAppointments(); // Recharger les rendez-vous après la réservation
     } catch (error) {
-        console.error('Error booking appointment:', error);
-        Swal.fire('Error', 'Failed to book appointment', 'error');
+        console.error('Erreur lors de la réservation du rendez-vous:', error);
+        Swal.fire('Erreur', error.message, 'error');
+        loadAppointments();
     }
 };
 
+
+
 document.querySelectorAll('.prestation-select .btn-check').forEach(checkbox => {
-    checkbox.addEventListener('change', loadAvailableSlots);
+    checkbox.addEventListener('change', loadAppointments);
 });
 
 document.querySelectorAll('.employee-select .btn-check').forEach(checkbox => {
     checkbox.addEventListener('change', () => {
         renderCalendar();
-        loadAvailableSlots();
+        loadAppointments();
     });
 });
 
 document.querySelectorAll('.user-select .btn-check').forEach(checkbox => {
-    checkbox.addEventListener('change', loadAvailableSlots);
+    checkbox.addEventListener('change', loadAppointments);
 });
 
 renderCalendar();
@@ -209,6 +491,6 @@ prevNextIcon.forEach(icon => {
 
 employeeButtons.forEach(button => {
     button.addEventListener('change', function() {
-        loadAvailableSlots();
+        loadAppointments();
     });
 });
