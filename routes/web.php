@@ -62,6 +62,7 @@ Route::get('/confidentiality', function () {
 
 Route::get('/reviews/list', [ReviewController::class, 'list'])->name('reviews.list');
 
+Route::resource('/reviews', ReviewController::class);
 
 Route::middleware(['jwt', 'role:user,admin'])->group(function () {
     Route::post('/confirm-reservation', [ReservationController::class, 'confirmReservation'])->name('confirmReservation');
@@ -114,7 +115,6 @@ Route::middleware(['jwt', 'role:admin'])->group(function () {
     Route::post('/employees/{employee}/schedule', [EmployeeScheduleController::class, 'store'])->name('employees.schedule.store');
 
     Route::resource('/absences',AbsenceController::class);
-    Route::resource('/reviews', ReviewController::class);
     Route::resource('/photos', PhotoPresController::class);
 });
 

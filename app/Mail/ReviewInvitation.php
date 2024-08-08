@@ -35,7 +35,7 @@ class ReviewInvitation extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Review Invitation',
+            subject: 'Un-rendez-vous.fr - Votre avis nous intéresse',
         );
     }
     /**
