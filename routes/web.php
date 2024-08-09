@@ -90,6 +90,7 @@ Route::middleware(['jwt', 'role:user,admin'])->group(function () {
 });
 Route::middleware(['jwt', 'role:admin'])->group(function () {
     Route::get('/calendar/appointments', [CalendarController::class, 'getAppointmentsByDate']);
+    Route::post('/appointments/{appointment}/complete', [AppointmentController::class, 'completeAppointment'])->name('appointments.complete');
 
     Route::get('/calendar', [CalendarController::class, 'index'])->name('calendar.index');
     Route::get('/calendar/availability', [CalendarController::class, 'getAvailability']);

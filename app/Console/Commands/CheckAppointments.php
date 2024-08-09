@@ -20,15 +20,18 @@ class CheckAppointments extends Command
 
     public function handle()
     {
-        $appointments = Appointment::all();
+        // Récupérer tous les rendez-vous qui sont terminés mais pour lesquels l'invitation n'a pas encore été envoyée
+        $appointments = Appointment::where('is_completed', true)
+            ->where('review_invitation_sent', false)
+            ->get();
 
         foreach ($appointments as $appointment) {
-            $endTime = \Carbon\Carbon::parse($appointment->end_time);
-            if ($endTime->isPast() && !$appointment->review_invitation_sent) {
-                Mail::to($appointment->bookable->email)->send(new ReviewInvitation($appointment));
-                $appointment->review_invitation_sent = true;
-                $appointment->save();
-            }
+            // Envoyer l'invitation pour un avis
+            Mail::to($appointment->bookable->email)->send(new ReviewInvitation($appointment));
+
+            // Marquer que l'invitation a été envoyée
+            $appointment->review_invitation_sent = true;
+            $appointment->save();
         }
     }
 }

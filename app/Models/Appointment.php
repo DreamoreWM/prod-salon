@@ -11,7 +11,7 @@ class Appointment extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['employee_id', 'start_time', 'end_time', 'bookable_id', 'bookable_type'];
+    protected $fillable = ['employee_id', 'start_time', 'end_time', 'bookable_id', 'bookable_type', 'is_completed'];
 
     // Assurez-vous que la table users existe et que vous avez un modèle User correspondant.
     public function user()
@@ -52,6 +52,11 @@ class Appointment extends Model
     public function loyaltyCard()
     {
         return $this->belongsTo(LoyaltyCard::class);
+    }
+
+    public function isCompleted()
+    {
+        return $this->is_completed;
     }
 
 

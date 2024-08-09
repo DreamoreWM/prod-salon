@@ -199,7 +199,6 @@ const generateAppointmentsTable = (appointmentsByEmployee) => {
     let thead = document.createElement('thead');
     let headerRow = document.createElement('tr');
 
-    // Ajout des en-têtes pour chaque employé
     Object.keys(appointmentsByEmployee).forEach(employeeId => {
         let employeeButton = document.querySelector(`.employee-select .btn-check[data-id="${employeeId}"]`);
         let employeeName = employeeButton ? employeeButton.nextElementSibling.textContent : `Employé ${employeeId}`;
@@ -213,10 +212,9 @@ const generateAppointmentsTable = (appointmentsByEmployee) => {
     table.appendChild(thead);
 
     let tbody = document.createElement('tbody');
-
     let maxAppointments = Math.max(...Object.values(appointmentsByEmployee).map(a => a.length), 1);
 
-    const now = new Date(); // Date actuelle
+    const now = new Date();
 
     for (let i = 0; i < maxAppointments; i++) {
         let row = document.createElement('tr');
@@ -241,7 +239,7 @@ const generateAppointmentsTable = (appointmentsByEmployee) => {
 
                 let isAvailable = appointment.client === 'Libre';
                 let cardClass = isAvailable ? 'bg-success' : employeeColors[Object.keys(appointmentsByEmployee).indexOf(employeeId) % employeeColors.length];
-                let disabledClass = startTime < now ? 'disabled-card' : ''; // Griser les créneaux passés
+                let disabledClass = startTime < now ? 'disabled-card' : '';
 
                 let card = document.createElement('div');
                 card.className = `card ${cardClass} text-dark ${disabledClass}`;
@@ -260,6 +258,9 @@ const generateAppointmentsTable = (appointmentsByEmployee) => {
                             <a href="/loyalty-card/${appointment.bookable.id}" class="btn btn-primary btn-sm float-right loyalty-card" style="margin-right: 5px;">
                                 <i class="fas fa-star"></i> Carte de Fidélité
                             </a>
+                            <button class="btn btn-success btn-sm float-right complete-appointment" data-appointment-id="${appointment.id}" style="margin-right: 5px;">
+                                <i class="fas fa-check"></i> Valider
+                            </button>
                         </div>
                     `;
                 } else {
@@ -281,7 +282,6 @@ const generateAppointmentsTable = (appointmentsByEmployee) => {
 
                 td.appendChild(card);
             } else if (i === 0) {
-                // Ajouter une carte "Aucun créneau disponible" pour le premier index si aucun créneau n'est disponible
                 let card = document.createElement('div');
                 card.className = 'card bg-secondary text-dark';
                 card.innerHTML = `
@@ -328,7 +328,50 @@ const generateAppointmentsTable = (appointmentsByEmployee) => {
             showPrestationDetails(appointmentId);
         });
     });
+
+    // Ajouter l'événement pour valider le rendez-vous
+    document.querySelectorAll('.complete-appointment').forEach(button => {
+        button.addEventListener('click', function() {
+            const appointmentId = this.getAttribute('data-appointment-id');
+            Swal.fire({
+                title: 'Confirmer le rendez-vous?',
+                text: "Cette action marquera le rendez-vous comme terminé.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Oui, confirmer!',
+                cancelButtonText: 'Non, annuler!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    completeAppointment(appointmentId);
+                }
+            });
+        });
+    });
 };
+
+// Fonction pour marquer un rendez-vous comme terminé
+const completeAppointment = async (appointmentId) => {
+    try {
+        const response = await fetch(`/appointments/${appointmentId}/complete`, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (response.ok) {
+            Swal.fire('Succès', 'Le rendez-vous a été marqué comme terminé.', 'success').then(() => {
+                loadAppointments();
+            });
+        } else {
+            Swal.fire('Erreur', 'Une erreur est survenue', 'error');
+        }
+    } catch (error) {
+        Swal.fire('Erreur', 'Une erreur est survenue', 'error');
+    }
+};
+
 
 
 // Fonction pour afficher les détails des prestations
