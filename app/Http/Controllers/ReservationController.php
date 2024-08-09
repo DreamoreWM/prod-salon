@@ -6,6 +6,7 @@ use App\Models\Appointment;
 use App\Models\User;
 use App\Models\Employee;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class ReservationController extends Controller
@@ -24,11 +25,28 @@ class ReservationController extends Controller
         $userId = auth()->id();
         $user = User::find($userId);
 
+        $employeeId = $request->employee_id;
+        $start_time = $data['date'] . ' ' . $data['start'];
+        $end_time = $data['date'] . ' ' . $data['end'];
+
+        $existingAppointment = Appointment::where('employee_id', $employeeId)
+            ->where(function ($query) use ($start_time, $end_time) {
+                $query->where(function ($query) use ($start_time, $end_time) {
+                    $query->where('start_time', '<', $end_time)
+                        ->where('end_time', '>', $start_time);
+                });
+            })->first();
+
+        if ($existingAppointment) {
+            Log::warning('Conflict found for employee', ['employee_id' => $employeeId, 'start_time' => $start_time, 'end_time' => $end_time]);
+            return redirect('/dashboard')->with('error', 'Le créneau a été réservé par une autre personne simultanément. Veuillez réessayer avec un autre créneau');
+        }
+
         // Créer la nouvelle réservation
         $appointment = Appointment::create([
-            'employee_id' => $request->employee_id,
-            'start_time' => $data['date'] . ' ' . $data['start'],
-            'end_time' => $data['date'] . ' ' . $data['end'],
+            'employee_id' =>  $employeeId,
+            'start_time' =>  $start_time,
+            'end_time' => $end_time,
             'bookable_id' => $user->id,
             'bookable_type' => get_class($user),
         ]);

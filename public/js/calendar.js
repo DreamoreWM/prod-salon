@@ -216,6 +216,8 @@ const generateAppointmentsTable = (appointmentsByEmployee) => {
 
     let maxAppointments = Math.max(...Object.values(appointmentsByEmployee).map(a => a.length), 1);
 
+    const now = new Date(); // Date actuelle
+
     for (let i = 0; i < maxAppointments; i++) {
         let row = document.createElement('tr');
 
@@ -239,19 +241,20 @@ const generateAppointmentsTable = (appointmentsByEmployee) => {
 
                 let isAvailable = appointment.client === 'Libre';
                 let cardClass = isAvailable ? 'bg-success' : employeeColors[Object.keys(appointmentsByEmployee).indexOf(employeeId) % employeeColors.length];
+                let disabledClass = startTime < now ? 'disabled-card' : ''; // Griser les créneaux passés
 
                 let card = document.createElement('div');
-                card.className = `card ${cardClass} text-dark`;
+                card.className = `card ${cardClass} text-dark ${disabledClass}`;
 
                 if (!isAvailable) {
                     card.innerHTML = `
                         <div class="card-body">
                             <span class="badge badge-primary">${formattedStartTime} à ${formattedEndTime}</span>
                             <span class="badge ${isAvailable ? 'badge-secondary' : 'badge-primary'}">Client : ${appointment.bookable.name}</span>
-                            <button class="btn btn-info btn-sm float-right info-prestation" data-appointment-id="${appointment.id}">
+                            <button class="btn btn-info btn-sm float-right info-prestation ${disabledClass}" data-appointment-id="${appointment.id}" ${disabledClass ? 'disabled' : ''}>
                                 <i class="fas fa-info-circle"></i>
                             </button>
-                            <button class="btn btn-danger btn-sm float-right delete-prestation" data-appointment-id="${appointment.id}" style="margin-right: 5px;">
+                            <button class="btn btn-danger btn-sm float-right delete-prestation ${disabledClass}" data-appointment-id="${appointment.id}" ${disabledClass ? 'disabled' : ''} style="margin-right: 5px;">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </div>
@@ -265,7 +268,7 @@ const generateAppointmentsTable = (appointmentsByEmployee) => {
                     `;
                 }
 
-                if (isAvailable) {
+                if (!disabledClass && isAvailable) {
                     card.addEventListener('click', () => confirmAppointment({
                         employee_id: employeeId,
                         start_time: startTime.toISOString(),
@@ -323,6 +326,7 @@ const generateAppointmentsTable = (appointmentsByEmployee) => {
         });
     });
 };
+
 
 // Fonction pour afficher les détails des prestations
 const showPrestationDetails = async (appointmentId) => {
@@ -388,20 +392,28 @@ const renderCalendar = async () => {
         await fetchEmployeeAvailability(currYear, currMonth, employeeIds) :
         await fetchInitialAvailability(currYear, currMonth);
 
+    const today = new Date(); // Date actuelle
+
     for (let i = firstDayofMonth; i > 0; i--) {
         liTag += `<li class="inactive">${lastDateofLastMonth - i + 1}</li>`;
     }
 
     for (let i = 1; i <= lastDateofMonth; i++) {
-        let isToday = i === date.getDate() && currMonth === new Date().getMonth()
-        && currYear === new Date().getFullYear() ? "active" : "";
+        let isToday = i === today.getDate() && currMonth === today.getMonth() && currYear === today.getFullYear() ? "active" : "";
 
         let dayClass = availability[i] ? "available" : "unavailable";
+
+        const currentDay = new Date(currYear, currMonth, i);
+        if (currentDay < today && !isToday) {
+            dayClass = "past"; // Griser les jours passés
+        }
 
         let selected = selectedDate.getDate() === i && currMonth === selectedDate.getMonth()
         && currYear === selectedDate.getFullYear() ? "selected" : "";
 
-        liTag += `<li class="${isToday} ${dayClass} ${selected}" data-date="${currYear}-${String(currMonth + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}"><div class="number">${i}</div></li>`;
+        liTag += `<li class="${isToday} ${dayClass} ${selected}" data-date="${currYear}-${String(currMonth + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}">
+                    <div class="number">${i}</div>
+                  </li>`;
     }
 
     for (let i = lastDayofMonth; i < 6; i++) {
@@ -411,15 +423,19 @@ const renderCalendar = async () => {
     daysTag.innerHTML = liTag;
 
     document.querySelectorAll('.days li').forEach(day => {
-        day.addEventListener('click', function() {
-            selectedDate = new Date(this.dataset.date);
-            document.querySelectorAll('.days li').forEach(d => d.classList.remove('selected'));
-            this.classList.add('selected');
-            loadAppointments(); // Charger les rendez-vous pour la date sélectionnée
-        });
+        if (!day.classList.contains('past')) {
+            day.addEventListener('click', function() {
+                selectedDate = new Date(this.dataset.date);
+                document.querySelectorAll('.days li').forEach(d => d.classList.remove('selected'));
+                this.classList.add('selected');
+                loadAppointments(); // Charger les rendez-vous pour la date sélectionnée
+            });
+        }
     });
     loadAppointments();
 };
+
+
 
 
 const confirmAppointment = async (slot) => {

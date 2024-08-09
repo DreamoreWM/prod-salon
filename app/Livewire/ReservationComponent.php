@@ -94,152 +94,6 @@ class ReservationComponent extends Component
         ]);
     }
 
-    public function confirmFinalReservation()
-    {
-        // Appeler la méthode de confirmation de la réservation
-        $this->confirmReservation($this->selectedSlotDetails['date'], $this->selectedSlotDetails['start']);
-    }
-
-    public function confirmReservation($date, $start)
-    {
-        // Récupérer les prestations sélectionnées
-        $selectedPrestations = $this->getSelectedPrestations();
-
-        // Calculer l'heure de fin en additionnant les durées de toutes les prestations
-        $totalDuration = 0;
-        foreach ($selectedPrestations as $prestation) {
-            $totalDuration += $prestation['temps'];
-        }
-
-        // Convertir l'heure de début en objet DateTime
-        $startDatetime = new DateTime($date . ' ' . $start);
-
-        // Calculer l'heure de fin en ajoutant la durée totale des prestations à l'heure de début
-        $endDatetime = clone $startDatetime;
-        $endDatetime->add(new DateInterval('PT' . $totalDuration . 'M'));
-
-        // Vérifier si le créneau est disponible
-        if ($this->isSlotAvailable($startDatetime, $endDatetime, $this->selectedEmployee)) {
-            // Mettre à jour le tableau $selectedSlot avec l'heure de fin
-            $this->selectedSlot = [
-                'date' => $date,
-                'start' => $start,
-                'end' => $endDatetime->format('H:i') // Formater l'heure de fin dans le format HH:MM
-            ];
-
-            $userId = auth()->id(); // Assurez-vous que l'utilisateur est authentifié.
-            $user = User::find($userId);
-
-            // Créer la nouvelle réservation
-            $appointment = Appointment::create([
-                'employee_id' => $this->selectedEmployee,
-                'start_time' => $this->selectedSlot['date'] . ' ' . $this->selectedSlot['start'],
-                'end_time' => $this->selectedSlot['date'] . ' ' . $this->selectedSlot['end'],
-                'bookable_id' => $user->id,
-                'bookable_type' => get_class($user),
-            ]);
-
-            // Lier les prestations à la réservation
-            foreach ($this->selectedPrestations as $prestationId) {
-                $appointment->prestations()->attach($prestationId);
-            }
-
-            // Envoyer un email de confirmation
-            $prestations = $appointment->prestations()->get();
-            \Mail::to($user->email)->send(new \App\Mail\ReservationConfirmed($user, $appointment, $prestations));
-            $employee = Employee::where('id', $this->selectedEmployee)->first();
-            \Mail::to($employee->email)->send(new \App\Mail\SlotBookedForEmployee($user, $appointment, $prestations));
-
-            // Réinitialiser les données
-            $this->selectedPrestations = [];
-            $this->selectedEmployee = null;
-            $this->selectedSlot = null;
-            $this->availableSlots = [];
-
-            return redirect('/dashboard')->with('success', 'Le créneau a été réservé avec succès.');
-        } else {
-            return redirect('/dashboard')->with('error', 'Le créneau est déjà réservé.');
-        }
-    }
-
-
-    public function refreshGoogleToken($user)
-    {
-        $client = new Google_Client();
-        $client->setClientId(env('GOOGLE_CLIENT_ID'));
-        $client->setClientSecret(env('GOOGLE_CLIENT_SECRET'));
-        $client->setAccessType('offline');
-
-        if ($user->google_refresh_token) {
-            $client->refreshToken($user->google_refresh_token);
-            $newAccessToken = $client->getAccessToken();
-
-            if (isset($newAccessToken['access_token'])) {
-                $user->google_token = $newAccessToken['access_token']; // Mettre à jour le jeton d'accès dans le client Google
-
-                // Stocker le nouveau jeton d'accès et le jeton de rafraîchissement dans la base de données
-                if (isset($newAccessToken['expires_in'])) {
-                    $user->token_expires_at = now()->addSeconds($newAccessToken['expires_in'] + 7400);
-                }
-                if (isset($newAccessToken['refresh_token'])) {
-                    $user->google_refresh_token = $newAccessToken['refresh_token'];
-                }
-
-                $user   ->save();
-            } else {
-                // Gérer l'erreur si le nouveau jeton d'accès n'est pas disponible
-                Log::log('Une erreur s\'est produite lors de la récupération du nouveau jeton d\'accès.');
-            }
-        } else {
-            throw new Exception('No refresh token is available');
-        }
-    }
-
-    private function addEventToGoogleCalendar($user, $appointment)
-    {
-        $this->refreshGoogleToken($user);
-
-        $client = new Google_Client();
-        // Configurez le client Google avec vos clés API
-        $client->setClientId(env('GOOGLE_CLIENT_ID'));
-        $client->setClientSecret(env('GOOGLE_CLIENT_SECRET'));
-        $client->setAccessType('offline');
-
-        $client->refreshToken($user->google_refresh_token);
-        $accessToken = $client->getAccessToken();
-        $client->setAccessToken($accessToken);
-
-        $user->google_token = $accessToken['access_token'];
-
-        $service = new Google_Service_Calendar($client);
-
-        // Convertir les heures de début et de fin en objets DateTime avec le bon fuseau horaire
-        $startDateTime = new DateTime($appointment->start_time);
-        $startDateTime->setTimezone(new DateTimeZone($user->timezone ?? 'UTC')); // Utiliser le fuseau horaire de l'utilisateur ou 'UTC' par défaut
-        $startDateTime->modify('-2 hours'); // Ajouter 2 heures pour compenser le décalage
-
-        $endDateTime = new DateTime($appointment->end_time);
-        $endDateTime->setTimezone(new DateTimeZone($user->timezone ?? 'UTC'));
-        $endDateTime->modify('-2 hours');
-
-        $startEventDateTime = new Google_Service_Calendar_EventDateTime();
-        $startEventDateTime->setDateTime($startDateTime->format('c'));
-
-        $endEventDateTime = new Google_Service_Calendar_EventDateTime();
-        $endEventDateTime->setDateTime($endDateTime->format('c'));
-
-        $event = new Google_Service_Calendar_Event([
-            'summary' => 'Rendez-vous Coiffeur',
-            'start' => ['dateTime' => $startEventDateTime->getDateTime()],
-            'end' => ['dateTime' => $endEventDateTime->getDateTime()],
-        ]);
-
-        $calendarId = 'primary';
-        $service->events->insert($calendarId, $event);
-    }
-
-
-
     private function isSlotAvailable($startTime, $endTime, $employeeId)
     {
         $requestedSlot = [
@@ -279,7 +133,7 @@ class ReservationComponent extends Component
     }
     private function doSlotsOverlap($slot1, $slot2)
     {
-        return $slot1['start']->lte($slot2['end']) && $slot1['end']->gte($slot2['start']);
+        return $slot1['start']->lt($slot2['end']) && $slot1['end']->gt($slot2['start']);
     }
 
     public function updatedSelectedPrestations()
@@ -366,16 +220,6 @@ class ReservationComponent extends Component
     public function toggleAddPrestationDiv()
     {
         $this->showAddPrestationDiv = !$this->showAddPrestationDiv;
-    }
-    public function book()
-    {
-        // Logique pour enregistrer la réservation
-        // Vous pouvez par exemple créer un nouvel enregistrement dans la table des réservations
-    }
-
-    public function bookSlot()
-    {
-        //
     }
 
     public function getSelectedPrestations()
