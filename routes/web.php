@@ -64,15 +64,19 @@ Route::get('/reviews/list', [ReviewController::class, 'list'])->name('reviews.li
 
 Route::resource('/reviews', ReviewController::class);
 
+
+Route::get('/appointments', [AppointmentController::class, 'index'])->name('appointments.index');
+Route::delete('/appointments/{appointment}', [AppointmentController::class, 'cancel'])->name('appointments.cancel');
+Route::get('/appointments/create', [AppointmentController::class, 'create'])->name('appointments.create');
+Route::post('/appointments', [AppointmentController::class, 'store'])->name('appointments.store');
+
+Route::post('/confirm-reservation', [ReservationController::class, 'confirmReservation'])->name('confirmReservation');
+
 Route::middleware(['jwt', 'role:user,admin'])->group(function () {
-    Route::post('/confirm-reservation', [ReservationController::class, 'confirmReservation'])->name('confirmReservation');
-    Route::get('/appointments/create', [AppointmentController::class, 'create'])->name('appointments.create');
-    Route::post('/appointments', [AppointmentController::class, 'store'])->name('appointments.store');
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    Route::get('/appointments', [AppointmentController::class, 'index'])->name('appointments.index');
-    Route::delete('/appointments/{appointment}', [AppointmentController::class, 'cancel'])->name('appointments.cancel');
 
 
 });
