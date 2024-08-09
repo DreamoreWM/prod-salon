@@ -74,6 +74,13 @@ class AppointmentController extends Controller
         return redirect()->route('appointments.index')->with('success', 'Rendez-vous annulé avec succès.');
     }
 
+    public function completeAppointment(Appointment $appointment)
+    {
+        $appointment->is_completed = true;
+        $appointment->save();
+
+        return response()->json(['success' => true]);
+    }
 
 
 
