@@ -4,6 +4,7 @@ use App\Http\Controllers\AbsenceController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\LoyaltyCardController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\RoleController;
@@ -65,7 +66,7 @@ Route::get('/reviews/list', [ReviewController::class, 'list'])->name('reviews.li
 Route::resource('/reviews', ReviewController::class);
 
 
-Route::get('/appointments', [AppointmentController::class, 'index'])->name('appointments.index');
+
 Route::delete('/appointments/{appointment}', [AppointmentController::class, 'cancel'])->name('appointments.cancel');
 Route::get('/appointments/create', [AppointmentController::class, 'create'])->name('appointments.create');
 Route::post('/appointments', [AppointmentController::class, 'store'])->name('appointments.store');
@@ -77,6 +78,13 @@ Route::middleware(['jwt', 'role:user,admin'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/appointments', [AppointmentController::class, 'index'])->name('appointments.index');
+
+
+    Route::get('/loyalty-card', [LoyaltyCardController::class, 'show'])->name('loyalty-card.show');
+    Route::post('/loyalty-card/{user}', [LoyaltyCardController::class, 'store'])->name('loyalty-card.store');
+    Route::post('/loyalty-card/{card}/add-stamp', [LoyaltyCardController::class, 'addStamp'])->name('loyalty-card.add-stamp');
+    Route::delete('/loyalty-card/{card}', [LoyaltyCardController::class, 'destroy'])->name('loyalty-card.destroy');
 
 
 });
@@ -115,7 +123,7 @@ Route::middleware(['jwt', 'role:admin'])->group(function () {
 
     Route::post('/appointments/{id}', [CalendarController::class, 'destroy'])->name('appointments.destroy');
     Route::get('/appointments/{id}/prestations', [CalendarController::class, 'getPrestationsByAppointment']);
-
+    Route::get('/loyalty-card/{user?}', [LoyaltyCardController::class, 'show'])->name('loyalty-card.show');
 
 
     Route::get('/employees/{employee}/schedule', [EmployeeScheduleController::class, 'edit'])->name('employees.schedule.edit');

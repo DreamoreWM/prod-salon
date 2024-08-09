@@ -62,10 +62,14 @@
                                         <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">{{ $user->name }}</th>
                                         <td class="px-4 py-3">{{ $user->email }}</td>
                                         <td class="px-4 py-3 flex items-center justify-end">
+                                            <a href="/loyalty-card/{{ $user->id }}" class="mr-2 btn btn-primary btn-sm float-right loyalty-card" style="margin-right: 5px;">
+                                                <i class="fas fa-star"></i> Carte de Fidélité
+                                            </a>
                                             <button type="button" class="px-3 py-1 bg-blue-500 text-white rounded mr-2" data-toggle="modal" data-target="#userInfoModal{{ $user->id }}">
                                                 Info
                                             </button>
                                             <button type="button" class="px-3 py-1 bg-red-500 text-white rounded" onclick="confirmDeletion({{ $user->id }})">X</button>
+
                                         </td>
                                     </tr>
                                 @endforeach

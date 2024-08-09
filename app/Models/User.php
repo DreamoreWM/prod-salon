@@ -95,5 +95,15 @@ class User extends Authenticatable implements JWTSubject
         return [];
     }
 
+    public function loyaltyCards()
+    {
+        return $this->hasMany(LoyaltyCard::class);
+    }
+
+    public function hasRole($role)
+    {
+        return $this->role === $role; // Supposons que le rôle est stocké dans la colonne 'role'
+    }
+
 
 }

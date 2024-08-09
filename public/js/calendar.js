@@ -251,12 +251,15 @@ const generateAppointmentsTable = (appointmentsByEmployee) => {
                         <div class="card-body">
                             <span class="badge badge-primary">${formattedStartTime} à ${formattedEndTime}</span>
                             <span class="badge ${isAvailable ? 'badge-secondary' : 'badge-primary'}">Client : ${appointment.bookable.name}</span>
-                            <button class="btn btn-info btn-sm float-right info-prestation ${disabledClass}" data-appointment-id="${appointment.id}" ${disabledClass ? 'disabled' : ''}>
+                            <button class="btn btn-info btn-sm float-right info-prestation" data-appointment-id="${appointment.id}">
                                 <i class="fas fa-info-circle"></i>
                             </button>
-                            <button class="btn btn-danger btn-sm float-right delete-prestation ${disabledClass}" data-appointment-id="${appointment.id}" ${disabledClass ? 'disabled' : ''} style="margin-right: 5px;">
+                            <button class="btn btn-danger btn-sm float-right delete-prestation" data-appointment-id="${appointment.id}" style="margin-right: 5px;">
                                 <i class="fas fa-trash"></i>
                             </button>
+                            <a href="/loyalty-card/${appointment.bookable.id}" class="btn btn-primary btn-sm float-right loyalty-card" style="margin-right: 5px;">
+                                <i class="fas fa-star"></i> Carte de Fidélité
+                            </a>
                         </div>
                     `;
                 } else {

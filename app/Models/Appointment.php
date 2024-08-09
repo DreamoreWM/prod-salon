@@ -49,4 +49,10 @@ class Appointment extends Model
         return Carbon::parse($this->end_time)->translatedFormat('H:i');
     }
 
+    public function loyaltyCard()
+    {
+        return $this->belongsTo(LoyaltyCard::class);
+    }
+
+
 }
