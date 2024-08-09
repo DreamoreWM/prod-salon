@@ -880,16 +880,9 @@
 
                                 </div>
                                 <div class="boutton-home">
-                                    @if(Auth::check())
                                         <a href="{{ route('appointments.create') }}" style="z-index: 10; position: absolute; top: 200px; right: 55px; font-size: 18px; padding: 12px 36px;" class="btn-home btn btn-red">
                                             Prendre Rendez-Vous
                                         </a>
-                                    @else
-                                        <!-- Bouton qui ouvre la modal pour les utilisateurs non connectés -->
-                                        <a class="btn-home btn btn-red" style="z-index: 10; position: absolute; top: 200px; right: 55px; font-size: 18px; padding: 12px 36px;" data-toggle="modal" data-target="#loginModal">
-                                            Prendre un rendez-vous
-                                        </a>
-                                    @endif
                                 </div>
                             </div>
                         </div>

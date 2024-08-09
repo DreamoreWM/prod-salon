@@ -346,7 +346,9 @@
             <input type="hidden" name="end" id="end">
             <input type="hidden" name="prestations" id="prestations">
             <input type="hidden" name="employee_id" id="employee_id">
+            <input type="hidden" name="email" id="email"> <!-- Ajout du champ email -->
         </form>
+
 
         @script
         <script>
@@ -363,39 +365,74 @@
 
                 let prestationList = prestations.map(p => `<li style="list-style-type: disc;">${p.name} (${p.temps} min) - ${p.prix} €</li>`).join('');
 
+                // Construire le HTML de la boîte de dialogue
+                let swalHtml = `
+            <h6>Prestations sélectionnées :</h6>
+            <ul>${prestationList}</ul>
+            <br>
+            <h6>Date et heure :</h6>
+            <p>Le ${formattedDate} de ${slot.start} à ${slot.end}</p>
+            <br>
+        `;
+
+                // Ajouter le champ e-mail si l'utilisateur n'est pas connecté
+                if (!isUserLoggedIn) {
+                    swalHtml += `
+                <h6>Entrez votre adresse e-mail :</h6>
+                <input type="email" id="emailInput" class="swal2-input" placeholder="Votre email" required>
+            `;
+                }
+
                 Swal.fire({
                     title: 'Confirmation de réservation',
-                    html: `
-                <h6>Prestations sélectionnées :</h6>
-                <ul>${prestationList}</ul>
-                <br>
-                <h6>Date et heure :</h6>
-                <p>Le ${formattedDate} de ${slot.start} à ${slot.end}</p>
-            `,
+                    html: swalHtml,
                     icon: 'info',
                     showCancelButton: true,
                     confirmButtonText: 'Confirmer',
                     cancelButtonText: 'Annuler',
+                    preConfirm: () => {
+                        if (!isUserLoggedIn) {
+                            const email = document.getElementById('emailInput').value;
+                            if (!email || !validateEmail(email)) {
+                                Swal.showValidationMessage('Veuillez entrer une adresse e-mail valide');
+                                return false;
+                            }
+                            return email;
+                        }
+                    }
                 }).then((result) => {
                     if (result.isConfirmed) {
                         // Récupérer le formulaire
                         const form = document.getElementById('reservation-form');
+
                         // Mettre à jour les champs cachés
                         document.getElementById('date').value = slot.date;
                         document.getElementById('start').value = slot.start;
                         document.getElementById('end').value = slot.end;
                         document.getElementById('prestations').value = JSON.stringify(prestations);
                         document.getElementById('employee_id').value = employeeId;
+
+                        if (!isUserLoggedIn) {
+                            document.getElementById('email').value = result.value; // Assign the captured email
+                        }
+
                         // Soumettre le formulaire
                         form.submit();
                     }
                 });
+
+                // Function to validate email format
+                function validateEmail(email) {
+                    const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@(([^<>()[\]\\.,;:\s@"]+\.)+[^<>()[\]\\.,;:\s@"]{2,})$/i;
+                    return re.test(String(email).toLowerCase());
+                }
             });
         </script>
-
-
         @endscript
-</div>
+
+
+
+    </div>
 
 
 

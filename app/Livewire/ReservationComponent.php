@@ -23,6 +23,8 @@ use App\Models\Employee;
 
 class ReservationComponent extends Component
 {
+
+    public $email;
     public $prestations;
     public $employees;
 

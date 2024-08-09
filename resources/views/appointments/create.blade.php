@@ -26,5 +26,11 @@
 
     </script>
 
+    <script>
+        // Définir une variable JavaScript pour savoir si l'utilisateur est connecté
+        var isUserLoggedIn = @json(Auth::check());
+    </script>
+
+
 
 @endsection
