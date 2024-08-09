@@ -1,6 +1,14 @@
 <div>
     <style>
 
+        .disabled-slot {
+            text-decoration: line-through;
+            color: #ccc;
+            pointer-events: none;
+            background-color: #f0f0f0;
+        }
+
+
         .div-responsive {
             display: none;
         }
@@ -179,15 +187,11 @@
                     </div>
                     <section class="mt-2">
                         <div class="mx-auto max-w-screen-lg px-4 lg:px-12">
-                            @php
-                                $startOfMonth = \Carbon\Carbon::now()->startOfWeek();
-                                $endOfMonth = \Carbon\Carbon::now()->endOfMonth();
-                                $currentWeekStart = $startOfMonth->copy();
-                            @endphp
                             <swiper-container class="mySwiper" navigation="true">
                                 @php
                                     $currentWeekStart = \Carbon\Carbon::now()->startOfWeek();
                                     $oneMonthLater = $currentWeekStart->copy()->addMonth();
+                                    $now = \Carbon\Carbon::now(); // Date et heure actuelles
                                 @endphp
                                 @while($currentWeekStart->lt($oneMonthLater))
                                     @php
@@ -199,20 +203,25 @@
                                                 @while($currentWeekStart->lte($currentWeekEnd))
                                                     @php
                                                         $formattedDay = $currentWeekStart->format('Y-m-d');
+                                                        $daySlots = collect($availableSlots)->filter(function($slot) use ($formattedDay) {
+                                                            return $slot['date'] == $formattedDay;
+                                                        });
                                                     @endphp
                                                     <div class="col" style="min-width:120px; text-align: center; padding: 3px" wire:key="week-day-{{ $formattedDay }}">
                                                         <div class="mb-3 mt-3 align-items-center justify-content-center">
                                                             <h5>{{ $currentWeekStart->format('l') }}</h5>
                                                             <h5 style="color: gray; font-weight: bold">{{ $currentWeekStart->format('d M') }}</h5>
                                                         </div>
-                                                        @foreach($availableSlots as $slot)
-                                                            @if($slot['date'] == $formattedDay)
-                                                                <div>
-                                                            <span wire:click="showConfirmationModal('{{ $slot['date'] }}', '{{ $slot['start'] }}')" class="badge bg-gray-200 mb-2" style="font-weight: normal; color: black; font-size:14px; padding: 13px 40px; border-radius: 10px;">
-                                                                {{ $slot['start'] }}
-                                                            </span>
-                                                                </div>
-                                                            @endif
+                                                        @foreach($daySlots as $slot)
+                                                            @php
+                                                                $slotDateTime = \Carbon\Carbon::parse($slot['date'] . ' ' . $slot['start']);
+                                                                $isPast = $slotDateTime->lt($now); // Vérifier si le créneau est dans le passé
+                                                            @endphp
+                                                            <div>
+                                                <span wire:click="{{ !$isPast ? "showConfirmationModal('{$slot['date']}', '{$slot['start']}')" : '' }}" class="badge bg-gray-200 mb-2 {{ $isPast ? 'disabled-slot' : '' }}" style="font-weight: normal; color: black; font-size:14px; padding: 13px 40px; border-radius: 10px;">
+                                                    {{ $slot['start'] }}
+                                                </span>
+                                                            </div>
                                                         @endforeach
                                                     </div>
                                                     @php $currentWeekStart->addDay(); @endphp
@@ -228,6 +237,7 @@
                         </div>
                     </section>
                 </div>
+
             @endif
 
             @if(count($selectedPrestations) !== 0 && $selectedEmployee)

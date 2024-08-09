@@ -38,6 +38,20 @@
             .accordion-button {
                 background-color: transparent !important;
             }
+            .disabled-card {
+                background-color: #e0e0e0;
+                color: #999;
+                pointer-events: none;
+                opacity: 0.6;
+            }
+
+            .past {
+                background-color: #f0f0f0;
+                color: #b0b0b0;
+                pointer-events: none;
+            }
+
+
         </style>
     </head>
     <body>
