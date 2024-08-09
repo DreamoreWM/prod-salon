@@ -705,6 +705,7 @@
         width: 80%; /* Ajustez la largeur selon vos besoins */
         margin-top: -150px; /* Espace négatif pour coller à la première image */
         z-index: 3; /* Place cette div au-dessus de la première image si besoin */
+        padding-bottom: 150px;
     }
 
     .review-card {
@@ -818,7 +819,7 @@
 
 
 
-        <div id="content" class="content">
+        <div id="content" class="content pt-10">
 
 
 
