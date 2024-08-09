@@ -24,7 +24,7 @@
 
         .content {
             background-color:  {{ $background_color }};
-            min-height: 100 vh;
+            min-height: 100vh;
         }
 
         .sorting-options {
@@ -113,7 +113,6 @@
                         <select id="sort" onchange="sortReviews()">
                             <option value="date" {{ request()->query('sort') == 'date' ? 'selected' : '' }}>Date</option>
                             <option value="rating" {{ request()->query('sort') == 'rating' ? 'selected' : '' }}>Évaluation</option>
-                            <option value="service" {{ request()->query('sort') == 'service' ? 'selected' : '' }}>Service</option>
                         </select>
                     </div>
 

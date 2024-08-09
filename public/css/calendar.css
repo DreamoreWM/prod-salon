@@ -120,6 +120,11 @@ header .current-date {
     color: white;
 }
 
+.days li.partially-available .number {
+    background-color: #ffc107; /* Jaune pour les jours partiellement disponibles (optionnel) */
+    color: white;
+}
+
 .days li.selected .number {
     background-color: #9B59B6;
     color: white;
