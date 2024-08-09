@@ -12,6 +12,9 @@ let date = new Date(),
 const months = ["January", "February", "March", "April", "May", "June", "July",
     "August", "September", "October", "November", "December"];
 
+const moisFrancais = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet",
+    "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
+
 const fetchInitialAvailability = async (year, month) => {
     try {
         let response = await fetch(`/calendar/initial-availability?year=${year}&month=${month + 1}`);
@@ -244,14 +247,20 @@ const generateAppointmentsTable = (appointmentsByEmployee) => {
                     card.innerHTML = `
                         <div class="card-body">
                             <span class="badge badge-primary">${formattedStartTime} à ${formattedEndTime}</span>
-                            <span class="badge ${isAvailable ? 'badge-secondary' : 'badge-primary'}">Client : ${appointment.bookable.name} </span>
+                            <span class="badge ${isAvailable ? 'badge-secondary' : 'badge-primary'}">Client : ${appointment.bookable.name}</span>
+                            <button class="btn btn-info btn-sm float-right info-prestation" data-appointment-id="${appointment.id}">
+                                <i class="fas fa-info-circle"></i>
+                            </button>
+                            <button class="btn btn-danger btn-sm float-right delete-prestation" data-appointment-id="${appointment.id}" style="margin-right: 5px;">
+                                <i class="fas fa-trash"></i>
+                            </button>
                         </div>
                     `;
                 } else {
                     card.innerHTML = `
                         <div class="card-body">
-                            <span class="badge badge-primary">${formattedStartTime} </span>
-                            <span class="badge ${isAvailable ? 'badge-secondary' : 'badge-primary'}">Libre </span>
+                            <span class="badge badge-primary">${formattedStartTime}</span>
+                            <span class="badge ${isAvailable ? 'badge-secondary' : 'badge-primary'}">Libre</span>
                         </div>
                     `;
                 }
@@ -286,9 +295,84 @@ const generateAppointmentsTable = (appointmentsByEmployee) => {
     table.appendChild(tbody);
     tableContainer.innerHTML = '';
     tableContainer.appendChild(table);
+
+    // Ajouter l'événement de suppression après avoir généré la table
+    document.querySelectorAll('.delete-prestation').forEach(button => {
+        button.addEventListener('click', function() {
+            const appointmentId = this.getAttribute('data-appointment-id');
+            Swal.fire({
+                title: 'Êtes-vous sûr?',
+                text: "Cette action est irréversible!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Oui, supprimer!',
+                cancelButtonText: 'Non, annuler!',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    deletePrestation(appointmentId);
+                }
+            });
+        });
+    });
+
+    // Ajouter l'événement pour afficher les détails des prestations
+    document.querySelectorAll('.info-prestation').forEach(button => {
+        button.addEventListener('click', function() {
+            const appointmentId = this.getAttribute('data-appointment-id');
+            showPrestationDetails(appointmentId);
+        });
+    });
+};
+
+// Fonction pour afficher les détails des prestations
+const showPrestationDetails = async (appointmentId) => {
+    try {
+        const response = await fetch(`/appointments/${appointmentId}/prestations`);
+        if (response.ok) {
+            const prestations = await response.json();
+            let prestationList = prestations.map(p => `<li>${p.nom} - ${p.description} (${p.temps} min)</li>`).join('');
+            prestationList = `<ul>${prestationList}</ul>`;
+
+            Swal.fire({
+                title: 'Détails des Prestations',
+                html: prestationList,
+                icon: 'info',
+                confirmButtonText: 'Fermer'
+            });
+        } else {
+            Swal.fire('Erreur!', 'Un problème est survenu lors de la récupération des détails.', 'error');
+        }
+    } catch (error) {
+        Swal.fire('Erreur!', 'Un problème est survenu lors de la récupération des détails.', 'error');
+    }
 };
 
 
+// Fonction pour supprimer la prestation
+const deletePrestation = async (appointmentId) => {
+
+    const jwtToken = document.cookie.split('; ').find(row => row.startsWith('jwt_token=')).split('=')[1];
+
+    try {
+        const response = await fetch(`/appointments/${appointmentId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Authorization': `Bearer ${jwtToken}` // Ajouter le token JWT dans les en-têtes
+            }
+        });
+
+        if (response.ok) {
+            Swal.fire('Supprimé!', 'La prestation a été supprimée.', 'success')
+            loadAppointments(); // Recharger les rendez-vous après suppression
+        } else {
+            Swal.fire('Erreur!', 'Un problème est survenu lors de la suppression.', 'error');
+        }
+    } catch (error) {
+        Swal.fire('Erreur!', 'Un problème est survenu lors de la suppression.', 'error');
+    }
+};
 
 
 const renderCalendar = async () => {
@@ -393,8 +477,6 @@ const bookAppointment = async (slot, endTime, formattedStartTime) => {
     const userId = userSelectElement.value;
     const bookableType = userSelectElement.options[userSelectElement.selectedIndex].getAttribute('data-type');
 
-    console.log(bookableType)
-
     const prestationIds = Array.from(document.querySelectorAll('.prestation-select .btn-check:checked')).map(btn => btn.dataset.id);
 
     // Récupérer le token JWT depuis le cookie
@@ -405,25 +487,6 @@ const bookAppointment = async (slot, endTime, formattedStartTime) => {
         let existingAppointmentsResponse = await fetch(`/calendar/appointments?date=${selectedDate.toISOString().split('T')[0]}&employee=${slot.employee_id}`);
         if (!existingAppointmentsResponse.ok) {
             throw new Error('La réponse du serveur n\'était pas correcte');
-        }
-        let existingAppointments = await existingAppointmentsResponse.json();
-
-        // Check for conflicts
-        const newStartTime = new Date(`${selectedDate.toISOString().split('T')[0]}T${formattedStartTime}`);
-        const newEndTime = endTime;
-
-        const hasConflict = existingAppointments.some(appointment => {
-            const appointmentStart = new Date(appointment.start_time);
-            const appointmentEnd = new Date(appointment.end_time);
-            return (newStartTime >= appointmentStart && newStartTime < appointmentEnd) ||
-                (newEndTime > appointmentStart && newEndTime <= appointmentEnd) ||
-                (newStartTime < appointmentStart && newEndTime > appointmentEnd);
-        });
-
-        if (hasConflict) {
-            Swal.fire('Erreur', 'Ce créneau horaire est déjà réservé ou chevauche un autre rendez-vous.', 'error');
-            loadAppointments();
-            return;
         }
 
         let response = await fetch(`/calendar/book`, {
@@ -442,10 +505,12 @@ const bookAppointment = async (slot, endTime, formattedStartTime) => {
                 prestations: prestationIds
             })
         });
+
         if (!response.ok) {
             const errorData = await response.json();
-            throw new Error(errorData.message || 'Échec de la réservation du rendez-vous');
+            throw new Error(errorData.error || 'Échec de la réservation du rendez-vous');
         }
+
         Swal.fire('Succès', 'Rendez-vous réservé avec succès', 'success');
         loadAppointments(); // Recharger les rendez-vous après la réservation
     } catch (error) {
@@ -454,6 +519,7 @@ const bookAppointment = async (slot, endTime, formattedStartTime) => {
         loadAppointments();
     }
 };
+
 
 
 

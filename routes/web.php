@@ -109,6 +109,9 @@ Route::middleware(['jwt', 'role:admin'])->group(function () {
     Route::get('/salon/settings', [SalonController::class, 'edit'])->name('salon.edit');
     Route::put('/salon/settings', [SalonController::class, 'update'])->name('salon.update');
 
+    Route::post('/appointments/{id}', [CalendarController::class, 'destroy'])->name('appointments.destroy');
+    Route::get('/appointments/{id}/prestations', [CalendarController::class, 'getPrestationsByAppointment']);
+
 
 
     Route::get('/employees/{employee}/schedule', [EmployeeScheduleController::class, 'edit'])->name('employees.schedule.edit');
@@ -116,6 +119,8 @@ Route::middleware(['jwt', 'role:admin'])->group(function () {
 
     Route::resource('/absences',AbsenceController::class);
     Route::resource('/photos', PhotoPresController::class);
+    Route::delete('/photos/{id}', [PhotoPresController::class, 'destroy'])->name('photos.destroy');
+
 });
 
 require __DIR__.'/auth.php';

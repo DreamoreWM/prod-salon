@@ -166,7 +166,6 @@ class CalendarController extends Controller
             $prestationIds = $request->input('prestations');
             $bookableType = $request->input('type');
 
-
             $start_time = Carbon::parse("$date $time");
             $totalDuration = array_sum(Prestation::whereIn('id', $prestationIds)->pluck('temps')->toArray());
             $end_time = $start_time->copy()->addMinutes($totalDuration);
@@ -174,6 +173,21 @@ class CalendarController extends Controller
             Log::info('Calculated times:', compact('start_time', 'end_time'));
 
             foreach ($employeeIds as $employeeId) {
+                // Vérification des conflits de créneaux horaires
+                $existingAppointment = Appointment::where('employee_id', $employeeId)
+                    ->where(function ($query) use ($start_time, $end_time) {
+                        $query->where(function ($query) use ($start_time, $end_time) {
+                            $query->where('start_time', '<', $end_time)
+                                ->where('end_time', '>', $start_time);
+                        });
+                    })->first();
+
+                if ($existingAppointment) {
+                    Log::warning('Conflict found for employee', ['employee_id' => $employeeId, 'start_time' => $start_time, 'end_time' => $end_time]);
+                    return response()->json(['error' => 'Un créneau horaire est déjà réservé pour cet employé dans cette plage horaire.'], 400);
+                }
+
+                // Création du rendez-vous si aucun conflit
                 $appointment = new Appointment([
                     'employee_id' => $employeeId,
                     'start_time' => $start_time,
@@ -186,15 +200,11 @@ class CalendarController extends Controller
 
                 Log::info('Appointment created:', $appointment->toArray());
             }
-            $user = User::find($userId);
 
+            $user = ($bookableType === 'TemporaryUser') ? TemporaryUser::find($userId) : User::find($userId);
             $prestations = $appointment->prestations()->get();
-            if ($bookableType === 'TemporaryUser') {
-                $user = TemporaryUser::find($userId);
-            }else{
-                $user = User::find($userId);
-            }
             \Mail::to($user->email)->send(new \App\Mail\ReservationConfirmed($user, $appointment, $prestations));
+
             $employee = Employee::where('id',  $employeeIds)->first();
             \Mail::to($employee->email)->send(new \App\Mail\SlotBookedForEmployee($user, $appointment, $prestations));
 
@@ -202,6 +212,16 @@ class CalendarController extends Controller
         } catch (\Exception $e) {
             Log::error('Booking Error', ['exception' => $e]);
             return response()->json(['error' => 'Internal Server Error'], 500);
+        }
+    }
+
+    public function getPrestationsByAppointment($id)
+    {
+        try {
+            $appointment = Appointment::with('prestations')->findOrFail($id);
+            return response()->json($appointment->prestations);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Erreur lors de la récupération des prestations.'], 500);
         }
     }
 
@@ -386,6 +406,19 @@ class CalendarController extends Controller
         return response()->json($availability);
     }
 
+    public function destroy($id)
+    {
+        try {
+            $appointment = Appointment::findOrFail($id);
+            $employee = Employee::find($appointment->employee_id);
+            $user = User::find($appointment->bookable_id);
+            $appointment->delete();
+            \Mail::to($employee->email)->send(new \App\Mail\AppointmentCancelledEmployee($appointment, $user, $employee));
+            return response()->json(['message' => 'Prestation supprimée avec succès!'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Erreur lors de la suppression de la prestation.'], 500);
+        }
+    }
 
 
 }
