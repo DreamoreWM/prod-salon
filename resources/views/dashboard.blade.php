@@ -365,7 +365,7 @@
         }
 
         .slogan {
-            margin-top: 200px;
+            margin-top: 300px;
         }
 
     }
