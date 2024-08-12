@@ -364,6 +364,10 @@
             width: 80% !important;
         }
 
+        .slogan {
+            margin-top: 200px;
+        }
+
     }
 
     @media (max-width: 800px){
