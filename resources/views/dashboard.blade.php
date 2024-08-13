@@ -263,18 +263,256 @@
     }
 
     .content {
+        padding-top: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-image: url('{{ asset('background/' . $backgroundImage) }}');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        margin: 0;
+        height: 100vh;
+    }
+
+    /* .main-div prend 70% de la taille de la .content */
+    .main-div {
+        width: 70%;
+        height: 70%;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    /* Section gauche prend 50% de la largeur */
+    .left-section {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        margin-right: 20px;
+    }
+
+    /* Section droite */
+    .right-section {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        flex-direction: column; /* Permet d'empiler les éléments (image, bouton, avis) */
+    }
+
+    /* Image centrée qui prend 75% de la largeur de la div */
+    .right-section img {
+        max-width: 75%;
+        height: auto;
+        object-fit: cover;
+    }
+
+    /* Bouton sur l'image, positionné proportionnellement */
+    .right-section .btn-on-image {
+        position: absolute;
+        top: 20%;
+        left: 60%;
+        transform: translate(-50%, -50%);
+        padding: 1% 2%;
+        background-color: #e74c3c;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 1.5vw;
+        text-align: center;
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+    .left-section {
+        display: flex;
+        flex-direction: column;
+        justify-content: center; /* Centre le contenu verticalement */
+        align-items: center; /* Centre le contenu horizontalement */
+        height: 100%; /* Prend toute la hauteur disponible */
+        padding: 22px;
+    }
+
+    .centered-content {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between; /* Espace le slogan et les horaires au milieu */
+        align-items: center;
+        text-align: center;
+    }
+
+    .slogan {
+        margin-bottom: 20px; /* Ajoute un peu d'espace en bas du slogan */
+    }
+
+    .status {
+        font-size: 1.2em; /* Ajustez la taille du texte des horaires */
+    }
+
+    .slogan, .status {
+        font-size: 4vw;
+    }
+
+
+    /* Card des avis */
+    .review-card-container {
+        position: relative;
+        overflow: hidden;
+        width: 100%;
+        max-width: 450px;
+        max-height: 150px;
+        height: auto;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        background-image: url('{{ asset('background/' . $backgroundImage) }}');
-        background-size: cover; /* Couvre toute la zone disponible sans redimensionner l'image */
-        background-position: center;
-        background-repeat: no-repeat; /* Empêche la répétition de l'image */ /* Définissez une hauteur fixe ou utilisez flexbox/grid pour définir la hauteur */
-        margin: 0; /* Reset margin */
-        padding: 0;
-        height: 100vh;
+        margin: 0 auto;
+        border-radius: 10px; /* Ajout du border-radius ici */
+        background-color: white; /* Assure un fond blanc visible */
     }
+
+    .review-slider {
+        display: flex;
+        transition: transform 0.5s ease-in-out;
+        width: 100%;
+        border-radius: 10px; /* S'assure que le slider respecte aussi les coins arrondis */
+    }
+
+    .review-slide {
+        min-width: 100%;
+        box-sizing: border-box;
+        padding: 20px;
+        background-color: white;
+        border-radius: 10px; /* S'assure que chaque slide a aussi des coins arrondis */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        position: relative;
+    }
+
+    .review-slide h4 {
+        margin: 0 0 10px;
+        font-size: 24px;
+        color: #FFD700;
+        position: relative;
+        top: 10px;
+    }
+
+    .review-slide p {
+        margin: 15px 0 5px;
+        font-size: 16px;
+        color: #333;
+    }
+
+    /* Boutons de contrôle */
+    .slider-controls {
+        position: absolute;
+        top: 50%;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        transform: translateY(-50%);
+    }
+
+    .slider-controls button {
+        background-color: rgba(0, 0, 0, 0.5);
+        border: none;
+        color: white;
+        padding: 10px;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+
+    .slider-controls button:hover {
+        background-color: rgba(0, 0, 0, 0.8);
+    }
+
+    /* Responsive design pour les petits écrans */
+    @media (max-width: 1300px) {
+        .slogan, .status {
+            font-size: 5vw;
+        }
+
+        .btn-on-image {
+            font-size: 6vw;
+        }
+
+        .right-section .btn-on-image {
+            top: 50%;
+            left: 50%;
+            font-size: 4vw;
+        }
+    }
+
+    @media (max-width: 1200px) {
+        .slogan, .status {
+            font-size: 6vw;
+        }
+        .main-div {
+            height: 95%;
+            width: 90%;
+        }
+
+        .btn-on-image {
+            font-size: 6vw;
+        }
+    }
+
+    @media (max-width: 850px) {
+        .main-div {
+            flex-direction: column;
+            height: auto;
+            width: 90%;
+        }
+
+        .left-section, .right-section {
+            width: 100%;
+            margin-right: 0;
+            margin-bottom: 20px;
+        }
+
+        .left-section {
+            order: 1; /* S'assure que la section gauche (slogan et horaires) est affichée en premier */
+        }
+
+        .right-section {
+            order: 2; /* L'image passe en deuxième */
+        }
+
+        .right-section img {
+            max-width: 100%;
+            max-height: 30vh; /* Limite la hauteur de l'image à 50% de la hauteur de la fenêtre */
+            object-fit: contain; /* Contient l'image dans la zone définie sans déformation */
+        }
+
+        .slogan, .status {
+            font-size: 7vw;
+        }
+
+        .right-section .btn-on-image {
+            font-size: 4vw;
+            top: 30%;
+        }
+
+        .review-card-container {
+            max-width: 70%;
+        }
+
+        .review-slide h4 {
+            font-size: 20px;
+        }
+
+        .review-slide p {
+            font-size: 14px;
+        }
+
+        .slider-controls button {
+            font-size: 20px;
+        }
+    }
+
+
 
     .menu-bar {
         border-radius: 25px;
@@ -318,71 +556,6 @@
         transform: scale(1.2);
     }
 
-    .content-wrapper {
-        display: flex;
-        justify-content: space-between;
-        width: 80%;
-        max-width: 75vw;
-    }
-
-    .left-section,
-    .right-section {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        width: 50%;
-    }
-
-    @media (max-width: 1500px){
-        .logo {
-            max-width: 150px;
-        }
-
-        .slogan {
-            font-size: 60px;
-        }
-
-        .content-wrapper {
-            width: 100%;
-        }
-    }
-
-
-    @media (max-width: 1100px){
-        .content-wrapper {
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .left-section{
-            padding-top: 4em
-        }
-
-        .left-section,
-        .right-section {
-            width: 80% !important;
-        }
-
-        .slogan {
-            margin-top: 250px;
-        }
-
-    }
-
-    @media (max-width: 800px){
-        .content-wrapper {
-            max-width: 100vw;
-        }
-
-        .left-section,
-        .right-section {
-            width: 100% !important;
-        }
-    }
-
-
-
 </style>
 <style>
     .swiper {
@@ -396,25 +569,6 @@
 
     .swiper-button-prev {
         margin-right: 10px; /* Ajustez cette valeur selon vos besoins */
-    }
-</style>
-<style>
-    @media (max-width: 1100px) {
-        .flex-container {
-            flex-direction: column;
-        }
-
-        .logo {
-            max-width: 100px;
-        }
-
-        .slogan {
-            font-size: 50px;
-        }
-
-        .icon-web {
-            padding-top: 200px;
-        }
     }
 </style>
 
@@ -682,13 +836,6 @@
         }
     }
 
-    .right-section {
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-
     .main-image {
         position: relative;
         z-index: 2; /* Place la première image au-dessus */
@@ -704,61 +851,6 @@
         margin-top: 55px;
     }
 
-    .review-card-container {
-        position: relative;
-        width: 80%; /* Ajustez la largeur selon vos besoins */
-        margin-top: -150px; /* Espace négatif pour coller à la première image */
-        z-index: 3; /* Place cette div au-dessus de la première image si besoin */
-        padding-bottom: 150px;
-    }
-
-    .review-card {
-        padding: 20px; /* Ajoutez de l'espace intérieur */
-    }
-
-    @media (max-width: 599px) {
-        .btn-home{
-            padding: 12px 12px !important;
-            top: 50px !important;
-            right: 20px !important;
-            font-size: 13px !important;
-            position: static;
-        }
-    }
-
-    /* Appareils moyens (tablettes en mode portrait, 600px à 767px) */
-    @media (min-width: 600px) and (max-width: 767px) {
-        .btn-home{
-            top: 30px !important;
-        }
-    }
-
-    /* Appareils larges (tablettes en mode paysage, petits ordinateurs portables, 768px à 991px) */
-    @media (min-width: 768px) and (max-width: 991px) {
-        .btn-home{
-            top: 50px !important;
-        }
-    }
-
-    /* Appareils extra-larges (ordinateurs portables et de bureau, 992px à 1199px) */
-    @media (min-width: 992px) and (max-width: 1199px) {
-        .btn-home{
-            top: 80px !important;
-        }
-    }
-
-    /* Appareils ultra-larges (grands écrans de bureau, 1200px et plus) */
-    @media (min-width: 1200px) {
-        .btn-home{
-            top: 80px !important;
-            right: 40px !important;
-        }
-    }
-
-    .slogan {
-        text-align: center;
-        margin-top: 20px;
-    }
 
     .status {
         margin-top: 20px;
@@ -823,81 +915,77 @@
 
 
 
-        <div id="content" class="content pt-10">
-
-
-
-            <div class="py-6">
-                @if(session()->has('success'))
-                    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 alert alert-success alert-dismissible fade show" role="alert">
-                        {{ session('success') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"><i class="bi bi-x-circle"></i></button>
+    <div class="content">
+        <div class="main-div">
+            <!-- Section gauche -->
+            <div class="left-section">
+                <!-- Contenu centré -->
+                <div class="centered-content">
+                    <div class="slogan">
+                        {{ $slogan }}
                     </div>
-                @endif
-                @if(session()->has('error'))
-                    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 alert alert-warning alert-dismissible fade show" role="alert">
-                        {{ session('error') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"><i class="bi bi-x-circle"></i></button>
+                    <div class="status">
+                        @if ($isOpen)
+                            <p class="status-open">OUVERT</p>
+                            <p class="status-info">Horaires d'aujourd'hui : {{ $openingTime->format('H:i') }} - {{ $breakStart->format('H:i') }} et {{ $breakEnd->format('H:i') }} - {{ $closingTime->format('H:i') }}</p>
+                        @elseif($isOnBreak)
+                            <p class="status-break">PAUSE</p>
+                            <p class="status-info">Reprise aujourd'hui à : <?= $breakEnd->format('H:i') ?></p>
+                        @else
+                            <p class="status-closed">FERMÉ</p>
+                            <p class="status-info">Prochaine ouverture : {{ $nextOpeningTime ? $nextOpeningDayFrench . ' ' . $nextOpeningTime->format('H:i') : 'N/A' }}</p>
+                        @endif
                     </div>
-                @endif
-                    <div class="home" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                        <div class="content-wrapper">
-                            <!-- Section de gauche pour le logo et le slogan -->
-                            <div class="left-section">
+                </div>
+            </div>
 
-
-
-                                <!-- Logo -->
-
-
-
-                                <span class="slogan">
-                                    {{ $slogan }}
-                                </span>
-                                <div class="status">
-                                    @if ($isOpen)
-                                        <p class="status-open">OUVERT</p>
-                                        <p class="status-info">Horaires d'aujourd'hui : {{ $openingTime->format('H:i') }} - {{ $breakStart->format('H:i') }} et {{ $breakEnd->format('H:i') }} - {{ $closingTime->format('H:i') }}</p>
-                                    @elseif($isOnBreak)
-                                        <p class="status-break">PAUSE</p>
-                                        <p class="status-info">Reprise aujourd'hui à : <?= $breakEnd->format('H:i') ?></p>
-                                    @else
-                                        <p class="status-closed">FERMÉ</p>
-                                        <p class="status-info">Prochaine ouverture : {{ $nextOpeningTime ? $nextOpeningDayFrench . ' ' . $nextOpeningTime->format('H:i') : 'N/A' }}</p>
-                                    @endif
-
-                                </div>
-                            </div>
-
-                            <!-- Section de droite pour l'image des avis -->
-                            <div class="right-section" id="right-section">
-                                <img src="{{ asset('images/home/' . $salonSetting->dashboard_image) }}" alt="Avis" class="main-image" style="max-width: 80%;">
-                                <div class="review-card-container">
-                                    <div class="review-card">
-                                        <!-- Contenu de la carte des avis -->
-                                        @include('reviews.index', ['reviews' => $reviews])
-                                        <div class="d-flex justify-content-center">
-                                            <a href="{{ route('reviews.list') }}" class="styled-link">Voir tout les avis</a>
-                                        </div>
-
-                                    </div>
-
-
-                                </div>
-                                <div class="boutton-home">
-                                        <a href="{{ route('appointments.create') }}" style="z-index: 10; position: absolute; top: 200px; right: 55px; font-size: 18px; padding: 12px 36px;" class="btn-home btn btn-red">
-                                            Prendre Rendez-Vous
-                                        </a>
-                                </div>
-                            </div>
+            <!-- Section droite (vide pour le moment) -->
+            <div class="right-section" id="right-section">
+                <img src="{{ asset('images/home/' . $salonSetting->dashboard_image) }}" alt="Image du tableau de bord">
+                <a href="#" class="btn-on-image">Mon Bouton</a> <!-- Le bouton placé sur l'image -->
+                <a href="{{ route('appointments.create') }}" class="btn-on-image">
+                    Prendre Rendez-Vous
+                </a>
+                <div class="review-card-container">
+                    <div class="review-slider">
+                        <div class="review-slide active">
+                            <h4>⭐️⭐️⭐️⭐️⭐️</h4>
+                            <p>"Service excellent, très professionnel !"</p>
+                            <p>- Alice</p>
+                        </div>
+                        <div class="review-slide">
+                            <h4>⭐️⭐️⭐️⭐️</h4>
+                            <p>"Bonne expérience, je reviendrai sûrement."</p>
+                            <p>- Bob</p>
+                        </div>
+                        <div class="review-slide">
+                            <h4>⭐️⭐️⭐️</h4>
+                            <p>"C'était correct, mais il y a des points à améliorer."</p>
+                            <p>- Charlie</p>
+                        </div>
+                        <div class="review-slide">
+                            <h4>⭐️⭐️</h4>
+                            <p>"Pas très satisfait, service lent."</p>
+                            <p>- David</p>
+                        </div>
+                        <div class="review-slide">
+                            <h4>⭐️</h4>
+                            <p>"Très déçu, je ne recommande pas."</p>
+                            <p>- Eve</p>
                         </div>
                     </div>
-
-
+                    <div class="slider-controls">
+                        <button class="prev">←</button>
+                        <button class="next">→</button>
+                    </div>
+                </div>
             </div>
-        </div>
 
-        <div class="prestation">
+        </div>
+    </div>
+
+
+    <div class="prestation">
             <section>
                 <div class="mx-auto max-w-screen-lg px-4 lg:px-12">
                     <div class="mb-4 d-flex justify-content-center">
@@ -1040,27 +1128,29 @@
         </footer>
 
 
+    <script>
+        $(document).ready(function(){
+            let currentIndex = 0;
+            const slides = $('.review-slide');
+            const totalSlides = slides.length;
 
-
-    <script type="text/javascript">
-        const buttons = document.querySelectorAll('.btn-booking');
-        buttons.forEach(button => {
-            button.addEventListener('click', function(e) {
-                let x = e.clientX - e.target.offsetLeft;
-                let y = e.clientY - e.target.offsetTop;
-
-                let ripples = document.createElement('span');
-                ripples.classList.add('effect');
-                ripples.style.left = x + 'px';
-                ripples.style.top = y + 'px';
-                this.appendChild(ripples);
-
-                setTimeout(() => {
-                    ripples.remove()
-                }, 1000);
+            $('.next').click(function() {
+                currentIndex = (currentIndex + 1) % totalSlides;
+                updateSlider();
             });
+
+            $('.prev').click(function() {
+                currentIndex = (currentIndex - 1 + totalSlides) % totalSlides;
+                updateSlider();
+            });
+
+            function updateSlider() {
+                const offset = -currentIndex * 100 + '%';
+                $('.review-slider').css('transform', 'translateX(' + offset + ')');
+            }
         });
     </script>
+
 
     <script>
         const swiper = new Swiper('.swiper', {
