@@ -65,6 +65,10 @@
             overflow-y: auto;
         }
 
+        .badge {
+            cursor: pointer;
+        }
+
 
 
 
@@ -208,7 +212,7 @@
                                                         });
                                                     @endphp
                                                     <div class="col" style="min-width:120px; text-align: center; padding: 3px" wire:key="week-day-{{ $formattedDay }}">
-                                                        <div class="mb-3 mt-3 align-items-center justify-content-center">
+                                                        <div class="day mb-3 mt-3 align-items-center justify-content-center">
                                                             <h5>{{ $currentWeekStart->format('l') }}</h5>
                                                             <h5 style="color: gray; font-weight: bold">{{ $currentWeekStart->format('d M') }}</h5>
                                                         </div>
@@ -428,6 +432,14 @@
                 }
             });
         </script>
+
+
+
+
+
+
+
+
         @endscript
 
 
