@@ -278,7 +278,7 @@
                                                 <div class="accordion-item">
                                                     <h2 class="accordion-header" id="{{ $headingId }}">
                                                         <button class="accordion-button {{ $hasValidSlots ? '' : 'collapsed' }}" type="button" data-bs-toggle="collapse" data-bs-target="#{{ $collapseId }}" aria-expanded="{{ $hasValidSlots ? 'true' : 'false' }}" style="background-color: transparent !important">
-                                                            <div class="align-items-center justify-content-center">
+                                                            <div class="day align-items-center justify-content-center">
                                                                 <h5>{{ $currentWeekStart->format('l') }}</h5>
                                                                 <h5 style="color: gray; font-weight: bold">{{ $currentWeekStart->format('d M') }}</h5>
                                                             </div>
