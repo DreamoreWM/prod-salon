@@ -23,8 +23,8 @@ class SalonController extends Controller
     public function update(Request $request)
     {
         $request->validate([
-            'logo_upload' => 'nullable|image|mimes:jpg,png,jpeg,gif,svg|max:52048',
-            'bg_upload' => 'nullable|image|mimes:jpg,png,jpeg,gif,svg|max:52048',
+            'logo_upload' => 'nullable|image|mimes:jpg,png,jpeg,gif,svg,webp|max:52048',
+            'bg_upload' => 'nullable|image|mimes:jpg,png,jpeg,gif,svg,webp|max:52048',
             'dashboard_image' => 'nullable|string'
         ]);
 

@@ -7,17 +7,27 @@
 @endphp
 
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&display=swap');
+
+        body {
+            margin: 0;
+            font-family: 'Montserrat', sans-serif;
+        }
+
         .navbar {
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
             width: 100%;
             padding: 10px 20px;
-            background: {{ $backgroundColor }};
+            background: rgba(0, 0, 0, 0.5);
             position: absolute;
             top: 0;
             z-index: 1000;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
         }
 
         .navbar-content {
@@ -25,15 +35,14 @@
             justify-content: space-between;
             align-items: center;
             width: 100%;
-            max-width: 1200px;
+            color: white;
         }
 
         .logo-nav {
             display: flex;
-            justify-content: center;
-            flex: 1;
+            align-items: center;
             max-width: 50px;
-            margin: 0 5px 5px 0;
+            margin: 0;
         }
 
         .logo-nav img {
@@ -41,97 +50,130 @@
             height: auto;
         }
 
-        .menu-button {
+        .nav-links {
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 1.5rem;
-            background-color: #e74c3c;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            text-align: center;
-            max-width: 150px;
-            width: auto;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1rem;
+            gap: 30px;
         }
 
-        .overlay-menu {
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            position: fixed;
-            top: 0;
-            left: 0;
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            position: relative;
+            padding-bottom: 5px;
+        }
+
+        .nav-links a:hover,
+        .nav-links a:focus {
+            color: #b5b5b5;
+        }
+
+        .nav-links a.active,
+        .nav-links a:hover,
+        .nav-links a:focus {
+            color: white;
+        }
+
+        .nav-links a.active::after,
+        .nav-links a:hover::after,
+        .nav-links a:focus::after {
+            content: '';
+            display: block;
             width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.9);
-            color: white;
-            z-index: 1001;
-            overflow: auto;
-        }
-
-        .overlay-menu .menu-button {
+            height: 2px;
+            background: white;
             position: absolute;
-            top: 20px;
-            right: 20px;
-            max-width: none;
-            width: auto;
+            bottom: 0;
+            left: 0;
         }
 
-        .overlay-menu.active {
-            display: flex;
-        }
-
-        .overlay-menu .menu-content {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-            width: 90%;
-            max-width: 600px;
-        }
-
-        .overlay-menu a,
-        .overlay-menu form {
-            margin: 5px 0;
-            font-size: 1.2rem;
+        .user-icon {
             color: white;
+            font-size: 1.5rem;
             text-decoration: none;
         }
 
-        .overlay-menu form button {
-            font-size: 1.2rem;
-            background: none;
-            border: none;
-            cursor: pointer;
-            color: white;
-            text-align: center;
-            display: inline-block;
-            padding: 0;
-            margin: 0;
+        .dropdown {
+            position: relative;
         }
 
-        .btn {
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: #444;
+            padding: 10px 0;
+            min-width: 200px;
+            z-index: 1000;
+        }
+
+        .dropdown-content a {
+            color: white;
             padding: 10px 20px;
-            border-radius: 20px;
-            font-weight: bold;
-            text-align: center;
+            text-decoration: none;
+            display: block;
+            text-align: left;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #555;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .burger {
+            display: none;
             cursor: pointer;
-            transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
-            border: 2px solid transparent;
         }
 
-        .btn-red {
-            background-color: #e74c3c;
-            color: white;
-            border-color: #e74c3c;
+        .burger div {
+            width: 25px;
+            height: 3px;
+            background-color: white;
+            margin: 5px;
+            transition: all 0.3s ease;
         }
 
-        .btn-red:hover {
-            background-color: #c0392b;
+        @media screen and (max-width: 1024px) {
+            .nav-links {
+                position: fixed;
+                right: -100%;
+                top: 70px;
+                height: calc(100vh - 70px);
+                background-color: rgba(0, 0, 0, 0.9);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                width: 50%;
+                transition: right 0.5s ease;
+                padding-top: 20px;
+            }
+
+            .nav-links.active {
+                right: 0;
+            }
+
+            .burger {
+                display: block;
+            }
+
+            .dropdown-content {
+                position: static;
+                background-color: transparent;
+                display: none;
+            }
+
+            .dropdown.active .dropdown-content {
+                display: block;
+            }
         }
     </style>
 </head>
@@ -143,56 +185,65 @@
                 <img src="{{ asset('logo/logo.png') }}" alt="Logo">
             </a>
         </div>
-        <button class="menu-button btn btn-red" id="menuButton">Menu</button>
+        <div class="nav-links">
+            <a href="{{ route('dashboard.index') }}" class="active">ACCUEIL</a>
+            @if(Auth::check())
+                @if(Auth::user()->role == 'admin')
+                    <div class="dropdown">
+                        <a href="javascript:void(0)">ADMINISTRATION</a>
+                        <div class="dropdown-content">
+                            <a href="{{ route('users.index') }}">UTILISATEURS</a>
+                            <a href="{{ route('employees.index') }}">COIFFEURS</a>
+                            <a href="{{ route('prestations.create') }}">PRESTATIONS</a>
+                            <a href="{{ route('calendar.index') }}">CALENDRIER</a>
+                            <a href="{{ route('salon.edit') }}">PARAMÈTRES</a>
+                            <a href="{{ route('absences.index') }}">ABSENCES</a>
+                            <a href="{{ route('photos.index') }}">PHOTOS</a>
+                        </div>
+                    </div>
+                @endif
+                <a href="{{ route('appointments.index') }}">MES RENDEZ-VOUS</a>
+                <a href="{{ route('loyalty-card.show') }}">MA CARTE DE FIDÉLITÉ</a>
+                <a href="{{ route('reviews.list') }}">AVIS</a>
+                <a href="{{ route('appointments.create') }}">PRENDRE RENDEZ-VOUS</a>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" style="background:none;border:none;color:white;cursor:pointer;">DÉCONNEXION</button>
+                </form>
+            @endif
+            @if(!Auth::check())
+                <a href="{{ route('appointments.create') }}">PRENEZ RENDEZ-VOUS</a>
+                <a href="{{ route('register') }}">CRÉER UN COMPTE</a>
+                <a href="{{ route('reviews.list') }}">AVIS</a>
+                <a href="{{ route('login') }}">SE CONNECTER</a>
+            @endauth
+        </div>
+        <div>
+            <a href="{{ route('profile.edit') }}" class="user-icon">
+                <i class="fa fa-user"></i>
+            </a>
+        </div>
+        <div class="burger">
+            <div class="line1"></div>
+            <div class="line2"></div>
+            <div class="line3"></div>
+        </div>
     </div>
 </nav>
 
-<div class="overlay-menu" id="overlayMenu">
-    <button class="menu-button btn btn-red" id="closeButton">Fermer</button>
-    <div class="menu-content">
-        <a href="{{ route('dashboard.index') }}" class="btn btn-red">Accueil</a>
-        @if(Auth::check())
-            @if(Auth::user()->role == 'admin')
-                <a href="{{ route('users.index') }}" class="btn btn-red">Utilisateurs</a>
-                <a href="{{ route('employees.index') }}" class="btn btn-red">Coiffeurs</a>
-                <a href="{{ route('prestations.create') }}" class="btn btn-red">Prestations</a>
-                <a href="{{ route('calendar.index') }}" class="btn btn-red">Calendrier</a>
-                <a href="{{ route('salon.edit') }}" class="btn btn-red">Paramétres</a>
-                <a href="{{ route('absences.index') }}" class="btn btn-red">Absences</a>
-                <a href="{{ route('photos.index') }}" class="btn btn-red">Photos</a>
-            @endif
-            <a href="{{ route('appointments.index') }}" class="btn btn-red">Mes rendez-vous</a>
-                <a href="{{ route('loyalty-card.show') }}" class="btn btn-red">Ma carte de fidélité</a>
-                <a href="{{ route('reviews.list') }}" class="btn btn-red">Avis</a>
-            <a href="{{ route('appointments.create') }}" class="btn btn-red">Prendre rendez-vous</a>
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button type="submit" class="btn btn-red">Déconnexion</button>
-            </form>
-        @endif
-        @if(!Auth::check())
-            <a href="{{ route('appointments.create') }}" class="btn btn-red">Prenez rendez-vous</a>
-            <a href="{{ route('register') }}" class="btn btn-red">Créer un compte</a>
-            <a href="{{ route('reviews.list') }}" class="btn btn-red">Avis</a>
-            <a href="{{ route('login') }}" class="btn btn-red">Se connecter</a>
-        @endauth
-    </div>
-</div>
-
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const menuButton = document.getElementById('menuButton');
-        const closeButton = document.getElementById('closeButton');
-        const overlayMenu = document.getElementById('overlayMenu');
+    const burger = document.querySelector('.burger');
+    const nav = document.querySelector('.nav-links');
+    const dropdowns = document.querySelectorAll('.dropdown');
 
-        menuButton.addEventListener('click', () => {
-            overlayMenu.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        });
+    burger.addEventListener('click', () => {
+        nav.classList.toggle('active');
+        burger.classList.toggle('toggle');
+    });
 
-        closeButton.addEventListener('click', () => {
-            overlayMenu.classList.remove('active');
-            document.body.style.overflow = 'auto';
+    dropdowns.forEach(dropdown => {
+        dropdown.addEventListener('click', () => {
+            dropdown.classList.toggle('active');
         });
     });
 </script>

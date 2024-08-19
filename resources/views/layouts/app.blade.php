@@ -21,6 +21,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="{{ URL::asset('css/app.css') }}">
+
     <!-- SweetAlert JS -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
@@ -31,21 +33,8 @@
 <body class="font-sans antialiased">
 <div class="min-h-screen bg-gray-100">
 
-
-
-    <!-- Page Heading
-        <header class="bg-white shadow">
-            <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                @if(isset($header))
-                    {{ $header }}
-                @endif
-                @yield('header')
-            </div>
-        </header> -->
-
     <!-- Page Content -->
     <main>
-
         @include('layouts.navigation')
         @if(isset($slot))
             {{ $slot }}

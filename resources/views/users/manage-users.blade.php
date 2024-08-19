@@ -7,7 +7,7 @@
 @endsection
 
 @section('content')
-    <div class="py-6">
+    <div class="">
         <livewire:users-slot-table/>
     </div>
 @endsection

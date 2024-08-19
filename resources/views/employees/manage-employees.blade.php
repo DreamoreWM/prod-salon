@@ -11,12 +11,11 @@
 
     <style>
         .content {
-            min-height: 100vh;
             background-color: {{ $background_color }};
         }
 
     </style>
-    <div class="content py-6 mt-10 pt-10">
+    <div class="content   ">
         <livewire:employees-slots-table/>
     </div>
 @endsection

@@ -11,13 +11,12 @@
     <style>
         .content {
             background-color: {{ $background_color }};
-            min-height: 100vh;
         }
     </style>
 
-    <div class="content py-6 mt-10 pt-10">
+    <div class="content   ">
 
-        <section class="mt-10">
+        <section class="">
             <div class="mx-auto max-w-screen-xl px-4 lg:px-12">
                 <div class="bg-white shadow overflow-hidden sm:rounded-lg">
                     <div class="px-4 py-5 sm:px-6">
