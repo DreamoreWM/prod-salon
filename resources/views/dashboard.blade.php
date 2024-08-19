@@ -26,6 +26,8 @@
         flex-direction: row;
     }
 
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&display=swap');
+
     @font-face {
         font-family: 'Denver-Broncos-Custom';
         src:url('/font/Denver-Broncos-Custom.ttf.woff') format('woff'),
@@ -43,12 +45,14 @@
     }
 
     .slogan {
-        font-family: 'YourFontName';
+        font-family: 'Montserrat', sans-serif;
         font-size: 65px;
         color: white;
         text-align: center;
-        margin-top: 10px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); /* Ajoute une ombre noire légère */
     }
+
+
 
     .map-responsive iframe {
         left:0;
@@ -815,8 +819,6 @@
 
     <div class="content">
         <div class="main-div">
-            <img src="{{ asset('logo/logo.png') }}" alt="Logo" class="logo"> <!-- Logo -->
-
             <div class="slogan">
                 {{ $slogan }} <!-- Slogan -->
             </div>

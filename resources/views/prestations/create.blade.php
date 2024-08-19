@@ -9,11 +9,16 @@
 
 @section('content')
 
+    <style>
+        .content {
+            background-color: {{ $background_color }};
+        }
+    </style>
 
-    <div class="content mt-10 pt-10">
-        <div style="background-color: {{ $background_color }}; min-height: 100vh; padding: 20px">
-            <livewire:prestations-management />
-        </div>
+    <div class="content  ">
+        <section>
+                <livewire:prestations-management />
+        </section>
     </div>
 
 @endsection

@@ -73,10 +73,10 @@
 
 
     </style>
-    <div class="content mt-5">
-        <div class="content-inner">
+    <div class="content pt-10">
+        <div class="pt-10 content-inner">
             <!-- Affichage des prestations -->
-            <div class="m-3 mx-auto max-w-screen-lg px-4 lg:px-12" style="font-size: 30px">
+            <div class="pt-10 m-3 mx-auto max-w-screen-lg px-4 lg:px-12" style="font-size: 30px">
                 <div class="inline-block">
                     @if(count($selectedPrestations) === 0)
                         <h1><span style="color: dodgerblue">1.</span> Choix de la prestation</h1>

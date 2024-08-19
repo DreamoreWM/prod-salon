@@ -1,8 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="content pt-10">
-        <div class="container pt-10">
+    <div class="content ">
+        <div class="container ">
             <!-- Titre conditionnel -->
             @if(auth()->user()->hasRole('admin'))
                 <h1>Carte de Fidélité de {{ $user->name }}</h1>

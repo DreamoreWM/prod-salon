@@ -44,8 +44,8 @@
         </style>
     </head>
     <body>
-    <div class="content py-6 mt-10 pt-10">
-        <section class="mt-10">
+    <div class="content   ">
+        <section class="">
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-md-4">

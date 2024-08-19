@@ -100,7 +100,7 @@
     </style>
 
 
-    <div class="content mt-10 pt-10">
+    <div class="content  ">
         <div class="mx-auto max-w-screen-xl px-4 lg:px-12">
 
             <div class=" dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden">
