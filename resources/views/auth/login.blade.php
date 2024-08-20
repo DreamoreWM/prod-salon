@@ -1,91 +1,165 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Connexion - Salon de Coiffure</title>
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-    <style>
-        body {
-            background-color: #f2c10e;
-            font-family: 'Arial', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .login-container {
-            background-color: #fff;
-            padding: 2em;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 400px;
-        }
-        .login-container h2 {
-            margin-bottom: 1em;
-            color: #333;
-        }
-        .login-container label {
-            display: block;
-            margin-bottom: 0.5em;
-            color: #555;
-        }
-        .login-container input[type="email"],
-        .login-container input[type="password"] {
-            width: calc(100% - 1em);
-            padding: 0.5em;
-            margin-bottom: 1em;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        .login-container input[type="checkbox"] {
-            margin-right: 0.5em;
-        }
-        .login-container button {
-            width: 100%;
-            padding: 0.75em;
-            border: none;
-            border-radius: 4px;
-            background-color: #e53935;
-            color: #fff;
-            font-size: 1em;
-        }
-        .login-container a {
-            color: #e53935;
-            text-decoration: none;
-        }
-        .login-container a:hover {
-            text-decoration: underline;
-        }
-    </style>
+    <title>Login</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
 </head>
+<style>
+
+    * {
+        margin: 0;
+        padding: 0;
+        font-family: "Poppins", sans-serif;
+        box-sizing: border-box;
+    }
+
+    body{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background: url('{{ asset('background/test.png') }}') no-repeat;
+        background-size: cover;
+        background-position: center;
+    }
+
+    .wrapper{
+        width: 420px;
+        background: transparent;
+        border: 2px solid rgba(255, 255, 255, .2);
+        backdrop-filter: blur(20px);
+        box-shadow: 0 0 10px rgba(0, 0, 0, .2);
+        color: #FFFFFF;
+        border-radius: 10px;
+        padding: 30px 40px;
+    }
+
+    .wrapper h1{
+        font-size: 36px;
+        text-align: center;
+    }
+
+    .wrapper .input-box{
+        position: relative;
+        width: 100%;
+        height: 50px;
+        margin: 30px 0;
+    }
+
+    .input-box input{
+        width: 100%;
+        height: 100%;
+        background: transparent;
+        border: none;
+        outline: none;
+        border: 2px solid rgba(255, 255, 255, .2);
+        border-radius: 40px;
+        font-size: 16px;
+        padding: 20px 45px 20px 20px;
+    }
+
+    .input-box input::placeholder{
+        color: #FFFFFF;
+    }
+
+    .input-box i {
+        position: absolute;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 20px;
+    }
+
+    .wrapper .remember-forgot{
+        display: flex;
+        justify-content: space-between;
+        font-size: 14.5px;
+        margin: -15px 0 15px;
+    }
+
+    .remember-forgot label input{
+        accent-color: #FFFFFF;
+        margin-right: 3px;
+    }
+
+
+    .remember-forgot a {
+        color: #FFFFFF;
+        text-decoration: none;
+    }
+
+    .remember-forgot a:hover{
+        text-decoration: underline;
+    }
+
+    .wrapper .btn{
+        width: 100%;
+        height: 45px;
+        background: #FFFFFF;
+        border: none;
+        outline: none;
+        border-radius: 40px;
+        box-shadow:  0 0 10px rgba(0, 0, 0, .1);
+        cursor: pointer;
+        font-size: 16px;
+        color: #333;
+        font-weight: 600;
+    }
+
+    .wrapper .register-link{
+        font-size: 14.5px;
+        text-align: center;
+        margin: 20px 0 15px;
+    }
+
+    .register-link p a{
+        color: #FFFFFF;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .register-link p a:hover{
+        text-decoration: underline;
+    }
+
+
+
+</style>
+
 <body>
-<div class="login-container">
-    <h2>Connexion</h2>
+
+<div class="wrapper">
     <form method="POST" action="{{ route('login') }}">
-        @csrf
-
-        <label for="email">Email</label>
-        <input id="email" type="email" name="email" required autofocus>
-
-        <label for="password">Mot de passe</label>
-        <input id="password" type="password" name="password" required>
-
-        <div style="margin-bottom: 1em;">
-            <label for="remember_me">
-                <input id="remember_me" type="checkbox" name="remember">
-                Garder session active
+    @csrf
+        <h1>Login</h1>
+        <div class="input-box">
+            <input type="email" name="email" placeholder="Email" required>
+            <i class="bx bxs-user"></i>
+        </div>
+        <div class="input-box">
+            <input type="password" name="password" placeholder="Password" required>
+            <i class="bx bxs-lock-alt"></i>
+        </div>
+        <div class="remember-forgot">
+            <label for="">
+                <input type="checkbox" name="" id="">
+                Remember me
             </label>
+            <a href="{{ route('password.request') }}">Forgot password?</a>
         </div>
 
-        <button type="submit">Se connecter</button>
+        <button type="submit" class="btn">Login</button>
 
-        @if (Route::has('password.request'))
-            <a href="{{ route('password.request') }}">Mot de passe oublié?</a>
-        @endif
+        <div class="register-link">
+            <p>Don't have an account?
+                <a href="{{ route('register') }}">Register</a></p>
+        </div>
     </form>
 </div>
+
 </body>
 </html>
