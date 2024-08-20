@@ -1,52 +1,175 @@
-<x-guest-layout>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
+</head>
+<style>
+
+    * {
+        margin: 0;
+        padding: 0;
+        font-family: "Poppins", sans-serif;
+        box-sizing: border-box;
+    }
+
+    body{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background: url('{{ asset('background/test.png') }}') no-repeat;
+        background-size: cover;
+        background-position: center;
+    }
+
+    .wrapper{
+        width: 420px;
+        background: transparent;
+        border: 2px solid rgba(255, 255, 255, .2);
+        backdrop-filter: blur(20px);
+        box-shadow: 0 0 10px rgba(0, 0, 0, .2);
+        color: #FFFFFF;
+        border-radius: 10px;
+        padding: 30px 40px;
+    }
+
+    .wrapper h1{
+        font-size: 36px;
+        text-align: center;
+    }
+
+    .wrapper .input-box{
+        position: relative;
+        width: 100%;
+        height: 50px;
+        margin: 30px 0;
+    }
+
+    .input-box input{
+        width: 100%;
+        height: 100%;
+        background: transparent;
+        border: none;
+        outline: none;
+        border: 2px solid rgba(255, 255, 255, .2);
+        border-radius: 40px;
+        font-size: 16px;
+        padding: 20px 45px 20px 20px;
+    }
+
+    .input-box input::placeholder{
+        color: #FFFFFF;
+    }
+
+    .input-box i {
+        position: absolute;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 20px;
+    }
+
+    .wrapper .remember-forgot{
+        display: flex;
+        justify-content: space-between;
+        font-size: 14.5px;
+        margin: -15px 0 15px;
+    }
+
+    .remember-forgot label input{
+        accent-color: #FFFFFF;
+        margin-right: 3px;
+    }
+
+
+    .remember-forgot a {
+        color: #FFFFFF;
+        text-decoration: none;
+    }
+
+    .remember-forgot a:hover{
+        text-decoration: underline;
+    }
+
+    .wrapper .btn{
+        width: 100%;
+        height: 45px;
+        background: #FFFFFF;
+        border: none;
+        outline: none;
+        border-radius: 40px;
+        box-shadow:  0 0 10px rgba(0, 0, 0, .1);
+        cursor: pointer;
+        font-size: 16px;
+        color: #333;
+        font-weight: 600;
+    }
+
+    .wrapper .register-link{
+        font-size: 14.5px;
+        text-align: center;
+        margin: 20px 0 15px;
+    }
+
+    .register-link p a{
+        color: #FFFFFF;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .register-link p a:hover{
+        text-decoration: underline;
+    }
+
+
+
+</style>
+
+<body>
+
+<div class="wrapper">
     <form method="POST" action="{{ route('register') }}">
         @csrf
-
-        <!-- Name -->
-        <div>
-            <x-input-label for="name" :value="__('Name')" />
-            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
-            <x-input-error :messages="$errors->get('name')" class="mt-2" />
+        <h1>Registration</h1>
+        <div class="input-box">
+            <input type="text" id="name" name="name" placeholder="Name" required>
+            <i class="bx bxs-user"></i>
+        </div>
+        <div class="input-box">
+            <input type="email" id="email" name="email" placeholder="Email" required>
+            <i class="bx bxs-user"></i>
+        </div>
+        <div class="input-box">
+            <input id="password"
+                   type="password"
+                   name="password"
+                   placeholder="Password"
+                   required autocomplete="new-password">
+            <i class="bx bxs-lock-alt"></i>
+        </div>
+        <div class="input-box">
+            <input id="password_confirmation"
+                   type="password"
+                   name="password_confirmation"
+                   placeholder="Password confirmation"
+                   required autocomplete="new-password">
+            <i class="bx bxs-lock-alt"></i>
         </div>
 
-        <!-- Email Address -->
-        <div class="mt-4">
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
+        <button type="submit" class="btn">Register</button>
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
-
-        <!-- Confirm Password -->
-        <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
-
-            <x-text-input id="password_confirmation" class="block mt-1 w-full"
-                            type="password"
-                            name="password_confirmation" required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
-        </div>
-
-        <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 " href="{{ route('login') }}">
-                {{ __('Already registered?') }}
-            </a>
-
-            <x-primary-button class="ms-4">
-                {{ __('Register') }}
-            </x-primary-button>
+        <div class="register-link">
+            <p>Already registered?
+                <a href="{{ route('login') }}">Login</a></p>
         </div>
     </form>
-</x-guest-layout>
+</div>
+
+</body>
+</html>
+
