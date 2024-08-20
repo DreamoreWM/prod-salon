@@ -252,6 +252,14 @@ class ReservationComponent extends Component
         }
         $this->getAvailableSlots();
         $this->toggleAddPrestationDiv();
+        $this->dispatch('prestationSelected');
+    }
+
+    public function selectEmployee($employeeId)
+    {
+        $this->selectedEmployee = $employeeId;
+
+        $this->dispatch('employeeSelected');
     }
 
     public function render()

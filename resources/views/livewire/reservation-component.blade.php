@@ -60,7 +60,6 @@
             background-repeat: no-repeat;
             background-position: center center;
             background-attachment: fixed;
-            height: calc(100vh - 80px); /* Ajuster la hauteur pour laisser de l'espace pour la navbar */
             padding-top: 10px; /* Ajouter un padding pour décaler le contenu */
             overflow-y: auto;
         }
@@ -115,7 +114,7 @@
                                                                             <p class="mb-0 font-weight-bold">{{ $prestation->prix }} €</p>
                                                                         </div>
                                                                         <div class="col-12 col-md-3 d-flex align-items-center justify-content-end mt-2 mt-md-0">
-                                                                            <button wire:click="togglePrestation({{ $prestation->id }})" class="btn btn-primary">Sélectionner</button>
+                                                                            <button wire:click="togglePrestation({{ $prestation->id }})" class="btn btn-primary" onclick="scrollToDateSelection();">Sélectionner</button>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -165,7 +164,7 @@
                                                         </label>
                                                         <h5 class="card-title ml-2 mr-20 ">{{ $employee->name }}</h5>
                                                         <div class="form-check form-check-inline" style="margin-right: -10px;">
-                                                            <input class="form-check-input" type="radio" wire:model.live="selectedEmployee" value="{{ $employee->id }}" id="employee-{{ $employee->id }}">
+                                                            <input class="form-check-input" type="radio" wire:model.live="selectedEmployee" value="{{ $employee->id }}" id="employee-{{ $employee->id }}" onclick="scrollToDateSelection();">
                                                         </div>
                                                     </div>
                                                 </div>
@@ -245,7 +244,7 @@
             @endif
 
             @if(count($selectedPrestations) !== 0 && $selectedEmployee)
-                <div class="div-responsive">
+                <div class="div-responsive" id="date-selection">
                     <div class="mx-auto max-w-screen-lg px-4 lg:px-12" style="font-size: 30px">
                         <div class="inline-block">
                             <h1><span style="color: dodgerblue">2.</span> Choix de la date</h1>
@@ -353,6 +352,32 @@
             <input type="hidden" name="email" id="email"> <!-- Ajout du champ email -->
         </form>
 
+        <script>
+            function scrollToDateSelection() {
+                console.log("Scroll function triggered");
+
+                setTimeout(function() {
+                    const targetSection = document.getElementById('date-selection');
+                    const targetScroll = document.getElementById('scroll');
+                    if (targetSection) {
+                        console.log("Target section found, attempting to scroll");
+                        // Calculer la position de la section et faire défiler jusqu'à elle
+                        targetSection.scrollIntoView({ block: "start" });
+                    } else {
+                        console.log("Target section not found, retrying...");
+                        setTimeout(scrollToDateSelection, 500);  // Réessaye après 0.5 seconde
+                    }
+                }, 1000);  // Attente de 1 seconde pour s'assurer que l'élément est bien rendu
+            }
+
+            // Appeler la fonction après la sélection de la prestation ou de l'employé
+            document.addEventListener('DOMContentLoaded', function() {
+                // Exemple : appel de la fonction après la sélection d'une prestation ou d'un employé
+                scrollToDateSelection();
+            });
+        </script>
+
+
 
         @script
         <script>
@@ -432,13 +457,6 @@
                 }
             });
         </script>
-
-
-
-
-
-
-
 
         @endscript
 
