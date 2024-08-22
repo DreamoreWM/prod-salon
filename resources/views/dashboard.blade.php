@@ -311,7 +311,7 @@
         transform: scale(1.2);
     }
 
-    .content {
+    .content-home {
         padding-top: 80px;
         display: flex;
         align-items: center;
@@ -338,7 +338,6 @@
     }
 
     .slogan, .status {
-        font-size: 3vw; /* Ajustez selon les besoins */
         text-align: center;
         margin-bottom: 20px;
     }
@@ -386,6 +385,7 @@
         cursor: pointer;
         text-decoration: none;
         margin: 20px 0;
+        font-size: 30px;
     }
 
     .review-card-container {
@@ -459,12 +459,8 @@
 
     /* Responsive design pour les petits écrans */
     @media (max-width: 1300px) {
-        .slogan, .status {
-            font-size: 4vw;
-        }
-
-        .btn-on-image {
-            font-size: 4vw;
+        .slogan {
+            font-size: 45px;
         }
     }
 
@@ -473,12 +469,8 @@
             width: 90%;
         }
 
-        .slogan, .status {
-            font-size: 5vw;
-        }
-
-        .btn-on-image {
-            font-size: 6vw;
+        .slogan {
+            font-size: 35px;
         }
 
         .review-card-container {
@@ -504,306 +496,21 @@
 </style>
 
 <style>
-    @import url(https://fonts.googleapis.com/css?family=Ek+Mukta:200);
-
-    .menu-responsive {
-        position: relative;
-        display: block;
-        width: 360px;
-        height: 567px;
-        margin: 10px auto 0;
-        box-shadow: 0 0 65px 15px rgba(0, 0, 0, 0.2);
-        overflow: hidden;
-        border-radius: 3px;
-        background: #F1F1F1;
-    }
-    .menu-responsive .header {
-        position: absolute;
-        display: block;
-        top: 0;
-        left: 0;
-        height: 50px;
-        width: 100%;
-        background: rgba(0, 0, 0, 0.8);
-        overflow: hidden;
-        -webkit-transition: all 0.5s ease-out, background 1s ease-out;
-        transition: all 0.5s ease-out, background 1s ease-out;
-        -webkit-transition-delay: 0.2s;
-        transition-delay: 0.2s;
-        z-index: 1;
-    }
-    .menu-responsive .header .burger-container {
-        position: relative;
-        display: inline-block;
-        height: 50px;
-        width: 50px;
-        cursor: pointer;
-        -webkit-transform: rotate(0deg);
-        transform: rotate(0deg);
-        -webkit-transition: all 0.3s cubic-bezier(0.4, 0.01, 0.165, 0.99);
-        transition: all 0.3s cubic-bezier(0.4, 0.01, 0.165, 0.99);
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-        -webkit-tap-highlight-color: transparent;
-    }
-    .menu-responsive .header .burger-container #burger {
-        width: 18px;
-        height: 8px;
-        position: relative;
-        display: block;
-        margin: -4px auto 0;
-        top: 50%;
-    }
-    .menu-responsive .header .burger-container #burger .bar {
-        width: 100%;
-        height: 1px;
-        display: block;
-        position: relative;
-        background: #FFF;
-        -webkit-transition: all 0.3s cubic-bezier(0.4, 0.01, 0.165, 0.99);
-        transition: all 0.3s cubic-bezier(0.4, 0.01, 0.165, 0.99);
-        -webkit-transition-delay: 0s;
-        transition-delay: 0s;
-    }
-    .menu-responsive .header .burger-container #burger .bar.topBar {
-        -webkit-transform: translateY(0px) rotate(0deg);
-        transform: translateY(0px) rotate(0deg);
-    }
-    .menu-responsive .header .burger-container #burger .bar.btmBar {
-        -webkit-transform: translateY(6px) rotate(0deg);
-        transform: translateY(6px) rotate(0deg);
-    }
-    .menu-responsive .header .icon {
-        display: inline-block;
-        position: absolute;
-        height: 100%;
-        line-height: 50px;
-        width: 50px;
-        height: 50px;
-        text-align: center;
-        color: #FFF;
-        font-size: 22px;
-        left: 50%;
-        -webkit-transform: translateX(-50%);
-        transform: translateX(-50%);
-    }
-    .menu-responsive .header .icon.icon-bag {
-        right: 0;
-        top: 0;
-        left: auto;
-        -webkit-transform: translateX(0px);
-        transform: translateX(0px);
-        -webkit-transition: -webkit-transform 0.5s cubic-bezier(0.4, 0.01, 0.165, 0.99);
-        transition: -webkit-transform 0.5s cubic-bezier(0.4, 0.01, 0.165, 0.99);
-        transition: transform 0.5s cubic-bezier(0.4, 0.01, 0.165, 0.99);
-        transition: transform 0.5s cubic-bezier(0.4, 0.01, 0.165, 0.99), -webkit-transform 0.5s cubic-bezier(0.4, 0.01, 0.165, 0.99);
-        -webkit-transition-delay: 0.65s;
-        transition-delay: 0.65s;
-    }
-    .menu-responsive .header ul.menu {
-        position: relative;
-        display: block;
-        padding: 0px 48px 0;
-        list-style: none;
-    }
-    .menu-responsive .header ul.menu li.menu-item {
-        border-bottom: 1px solid #333;
-        margin-top: 5px;
-        -webkit-transform: scale(1.15) translateY(-30px);
-        transform: scale(1.15) translateY(-30px);
+    .hidden {
         opacity: 0;
-        -webkit-transition: opacity 0.6s cubic-bezier(0.4, 0.01, 0.165, 0.99), -webkit-transform 0.5s cubic-bezier(0.4, 0.01, 0.165, 0.99);
-        transition: opacity 0.6s cubic-bezier(0.4, 0.01, 0.165, 0.99), -webkit-transform 0.5s cubic-bezier(0.4, 0.01, 0.165, 0.99);
-        transition: transform 0.5s cubic-bezier(0.4, 0.01, 0.165, 0.99), opacity 0.6s cubic-bezier(0.4, 0.01, 0.165, 0.99);
-        transition: transform 0.5s cubic-bezier(0.4, 0.01, 0.165, 0.99), opacity 0.6s cubic-bezier(0.4, 0.01, 0.165, 0.99), -webkit-transform 0.5s cubic-bezier(0.4, 0.01, 0.165, 0.99);
-    }
-    .menu-responsive .header ul.menu li.menu-item:nth-child(1) {
-        -webkit-transition-delay: 0.49s;
-        transition-delay: 0.49s;
-    }
-    .menu-responsive .header ul.menu li.menu-item:nth-child(2) {
-        -webkit-transition-delay: 0.42s;
-        transition-delay: 0.42s;
-    }
-    .menu-responsive .header ul.menu li.menu-item:nth-child(3) {
-        -webkit-transition-delay: 0.35s;
-        transition-delay: 0.35s;
-    }
-    .menu-responsive .header ul.menu li.menu-item:nth-child(4) {
-        -webkit-transition-delay: 0.28s;
-        transition-delay: 0.28s;
-    }
-    .menu-responsive .header ul.menu li.menu-item:nth-child(5) {
-        -webkit-transition-delay: 0.21s;
-        transition-delay: 0.21s;
-    }
-    .menu-responsive .header ul.menu li.menu-item:nth-child(6) {
-        -webkit-transition-delay: 0.14s;
-        transition-delay: 0.14s;
-    }
-    .menu-responsive .header ul.menu li.menu-item:nth-child(7) {
-        -webkit-transition-delay: 0.07s;
-        transition-delay: 0.07s;
-    }
-    .menu-responsive .header ul.menu li.menu-item a {
-        display: block;
-        position: relative;
-        color: #FFF;
-        font-family: "Ek Mukta", sans-serif;
-        font-weight: 100;
-        text-decoration: none;
-        font-size: 22px;
-        line-height: 2.35;
-        font-weight: 200;
-        width: 100%;
-    }
-    .menu-responsive .header.menu-opened {
-        height: 100%;
-        background-color: #000;
-        -webkit-transition: all 0.3s ease-in, background 0.5s ease-in;
-        transition: all 0.3s ease-in, background 0.5s ease-in;
-        -webkit-transition-delay: 0.25s;
-        transition-delay: 0.25s;
-    }
-    .menu-responsive .header.menu-opened .burger-container {
-        -webkit-transform: rotate(90deg);
-        transform: rotate(90deg);
-    }
-    .menu-responsive .header.menu-opened .burger-container #burger .bar {
-        -webkit-transition: all 0.4s cubic-bezier(0.4, 0.01, 0.165, 0.99);
-        transition: all 0.4s cubic-bezier(0.4, 0.01, 0.165, 0.99);
-        -webkit-transition-delay: 0.2s;
-        transition-delay: 0.2s;
-    }
-    .menu-responsive .header.menu-opened .burger-container #burger .bar.topBar {
-        -webkit-transform: translateY(4px) rotate(45deg);
-        transform: translateY(4px) rotate(45deg);
-    }
-    .menu-responsive .header.menu-opened .burger-container #burger .bar.btmBar {
-        -webkit-transform: translateY(3px) rotate(-45deg);
-        transform: translateY(3px) rotate(-45deg);
-    }
-    .menu-responsive .header.menu-opened ul.menu li.menu-item {
-        -webkit-transform: scale(1) translateY(0px);
-        transform: scale(1) translateY(0px);
-        opacity: 1;
-    }
-    .menu-responsive .header.menu-opened ul.menu li.menu-item:nth-child(1) {
-        -webkit-transition-delay: 0.27s;
-        transition-delay: 0.27s;
-    }
-    .menu-responsive .header.menu-opened ul.menu li.menu-item:nth-child(2) {
-        -webkit-transition-delay: 0.34s;
-        transition-delay: 0.34s;
-    }
-    .menu-responsive .header.menu-opened ul.menu li.menu-item:nth-child(3) {
-        -webkit-transition-delay: 0.41s;
-        transition-delay: 0.41s;
-    }
-    .menu-responsive .header.menu-opened ul.menu li.menu-item:nth-child(4) {
-        -webkit-transition-delay: 0.48s;
-        transition-delay: 0.48s;
-    }
-    .menu-responsive .header.menu-opened ul.menu li.menu-item:nth-child(5) {
-        -webkit-transition-delay: 0.55s;
-        transition-delay: 0.55s;
-    }
-    .menu-responsive .header.menu-opened ul.menu li.menu-item:nth-child(6) {
-        -webkit-transition-delay: 0.62s;
-        transition-delay: 0.62s;
-    }
-    .menu-responsive .header.menu-opened ul.menu li.menu-item:nth-child(7) {
-        -webkit-transition-delay: 0.69s;
-        transition-delay: 0.69s;
-    }
-    .menu-responsive .header.menu-opened .icon.icon-bag {
-        -webkit-transform: translateX(75px);
-        transform: translateX(75px);
-        -webkit-transition-delay: 0.3s;
-        transition-delay: 0.3s;
-    }
-    .menu-responsive .content {
-        font-family: "Ek Mukta", sans-serif;
-        padding: 67px 4% 0;
-        text-align: justify;
-        overflow: scroll;
-        max-height: 100%;
-    }
-    .menu-responsive .content::-webkit-scrollbar {
-        display: none;
-    }
-    .menu-responsive .content h2 {
-        margin-bottom: 0px;
-        letter-spacing: 1px;
-    }
-    .menu-responsive .content img {
-        width: 95%;
-        position: relative;
-        display: block;
-        margin: 75px auto 75px;
-    }
-    .menu-responsive .content img:nth-of-type(2) {
-        margin: 75px auto;
     }
 
-    .menu-responsive {
-        display: none;
-    }
-    @media (max-width: 1050px) {
-        .menu-responsive {
-            display: block;
-            width: 100%;
-            margin: 0;
-            border-radius: 0px;
-        }
-        .menu-responsive .header {
-            position: fixed;
-        }
-
-        .menu {
-            display: none;
-        }
-    }
-
-    .main-image {
-        position: relative;
-        z-index: 2; /* Place la première image au-dessus */
-    }
-
-    .overlay-image {
-        position: absolute;
-        top: 0;
-        right: 0;
-        max-width: 55%; /* Ajustez la taille de l'image selon vos besoins */ /* Ajoutez un peu de marge pour un meilleur espacement */
-        z-index: 1; /* Place la nouvelle image derrière */
-        margin-right: 30px; /* Ajoutez un peu de marge pour un meilleur espacement */
-        margin-top: 55px;
-    }
-
-
-
-
-    .styled-link {
-        display: inline-block;
-        color: #e74c3c;
-        padding: 10px 20px;
-        border-radius: 5px;
-        text-decoration: none;
-        font-weight: bold;
-        border: 2px solid #e74c3c;
-        transition: background-color 0.3s ease, color 0.3s ease;
-    }
-
-    .styled-link:hover {
-        background-color: #e74c3c;
+    .console-container {
+        text-align: center;
+        display: flex;
         color: white;
+        margin: auto;
+        font-family: inherit; /* Utilise la police par défaut définie dans votre projet */
     }
-
-
 
 </style>
+
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
 <link
     rel="stylesheet"
@@ -818,22 +525,23 @@
 
 
 
-    <div class="content">
+    <div class="content-home">
         <div class="main-div">
-            <div class="slogan">
-                {{ $slogan }} <!-- Slogan -->
+            <div class="slogan console-container">
+                <span id="text"></span>
             </div>
 
-            <div class="status">
+
+            <div class="status" data-aos="fade-down" data-aos-duration="1200">
                 @if ($isOpen)
                     <p class="status-open">OUVERT</p>
-                    <p class="status-info">Horaires d'aujourd'hui : {{ $openingTime->format('H:i') }} - {{ $breakStart->format('H:i') }} et {{ $breakEnd->format('H:i') }} - {{ $closingTime->format('H:i') }}</p>
+                    <p class="status-info" style="color: #92ee53; font-weight:bold ">Horaires d'aujourd'hui : {{ $openingTime->format('H:i') }} - {{ $breakStart->format('H:i') }} et {{ $breakEnd->format('H:i') }} - {{ $closingTime->format('H:i') }}</p>
                 @elseif($isOnBreak)
                     <p class="status-break">PAUSE</p>
-                    <p class="status-info">Reprise aujourd'hui à : {{ $breakEnd->format('H:i') }}</p>
+                    <p class="status-info" style="color: #eeca28; font-weight:bold ">Reprise aujourd'hui à : {{ $breakEnd->format('H:i') }}</p>
                 @else
                     <p class="status-closed">FERMÉ</p>
-                    <p class="status-info">Prochaine ouverture : {{ $nextOpeningTime ? $nextOpeningDayFrench . ' ' . $nextOpeningTime->format('H:i') : 'N/A' }}</p>
+                    <p class="status-info" style="color: #ee3211; font-weight:bold ">Prochaine ouverture : {{ $nextOpeningTime ? $nextOpeningDayFrench . ' ' . $nextOpeningTime->format('H:i') : 'N/A' }}</p>
                 @endif
             </div>
 
@@ -841,19 +549,28 @@
                 Prendre Rendez-Vous <!-- Bouton rendez-vous -->
             </a>
 
-            <div class="review-card-container">
+            <div class="review-card-container" data-aos="fade-up" data-aos-duration="1200">
                 <div class="review-slider">
-                    <div class="review-slide active">
-                        <h4>⭐️⭐️⭐️⭐️⭐️</h4>
-                        <p>"Service excellent, très professionnel !"</p>
-                        <p>- Alice</p>
-                    </div>
-                    <div class="review-slide">
-                        <h4>⭐️⭐️⭐️⭐️</h4>
-                        <p>"Bonne expérience, je reviendrai sûrement."</p>
-                        <p>- Bob</p>
-                    </div>
-                    <!-- Ajoutez plus d'avis si nécessaire -->
+                    @foreach($reviews as $review)
+                        <div class="review-slide {{ $loop->first ? 'active' : '' }}">
+                            <h4>
+                                @for ($i = 0; $i < $review->rating; $i++)
+                                    ⭐️
+                                @endfor
+                            </h4>
+                            <p>"{{ $review->comment }}"</p>
+                            <p>- {{ $review->appointment->bookable->name }}</p>
+                            <div class="image-slider" style="padding-bottom: 5px">
+                                @if(optional($review->photo))
+                                    @foreach($review->photo as $photo)
+                                        <div class="photo">
+                                            <img src="{{ asset('storage/app/public/' . $photo->filename) }}" alt="Photo de la revue" class="review-image" onclick="showImage(this)">
+                                        </div>
+                                    @endforeach
+                                @endif
+                            </div>
+                        </div>
+                    @endforeach
                 </div>
             </div>
 
@@ -870,7 +587,7 @@
                             <h2 class=" p-10 text-center" style="font-size: 40px; font-family: 'Montserrat', sans-serif">Nos tarifs</h2>
                             <div class="row">
                                 @foreach($categories as $category)
-                                    <div class="col-md-6">
+                                    <div class="col-md-6" data-aos="fade-up" data-aos-duration="1200">
                                         <div class="card mt-4 border-0 bg-transparent">
                                             <div class="card-header bg-transparent">
                                                 <h3 class="text-left font-bold">{{ strtoupper($category->name) }}</h3>
@@ -898,7 +615,7 @@
             <h2 class=" p-10 text-center" style="font-size: 40px;  color: white; font-family: 'Montserrat', sans-serif">Nos réalisations</h2>
             <div class="container-fluid tm-container-content" >
                 <div class="row tm-gallery pt-5 pb-5" style="justify-content: center !important">
-                        <div class="swiper">
+                        <div class="swiper" data-aos="fade-down" data-aos-duration="1200">
                             <!-- Additional required wrapper -->
                             <div class="swiper-wrapper">
                                 @foreach($photos as $photo)
@@ -1004,16 +721,47 @@
             </div>
         </footer>
 
+    <script>
+        function consoleText(words, id, colors) {
+            if (colors === undefined) colors = ['#fff'];
+            var visible = true;
+            var con = document.getElementById('console');
+            var letterCount = 1;
+            var x = 1;
+            var waiting = false;
+            var target = document.getElementById(id);
+            target.setAttribute('style', 'color:' + colors[0]);
+
+            window.setInterval(function() {
+                if (waiting === false) {
+                    target.innerHTML = words[0].substring(0, letterCount);
+                    letterCount += x;
+                }
+            }, 30);
+        }
+
+        // Appelez la fonction consoleText avec le slogan
+        document.addEventListener("DOMContentLoaded", function() {
+            consoleText(['{{ $slogan }}'], 'text', ['#fff']);
+        });
+    </script>
 
     <script>
         $(document).ready(function(){
             let currentIndex = 0;
             const slides = $('.review-slide');
             const totalSlides = slides.length;
+            const intervalTime = 2500; // Temps en millisecondes entre chaque défilement automatique
 
-            $('.next').click(function() {
+            // Fonction pour passer au slide suivant
+            function nextSlide() {
                 currentIndex = (currentIndex + 1) % totalSlides;
                 updateSlider();
+            }
+
+            // Fonction pour passer au slide précédent
+            $('.next').click(function() {
+                nextSlide();
             });
 
             $('.prev').click(function() {
@@ -1021,12 +769,19 @@
                 updateSlider();
             });
 
+            // Fonction pour mettre à jour la position du slider
             function updateSlider() {
                 const offset = -currentIndex * 100 + '%';
                 $('.review-slider').css('transform', 'translateX(' + offset + ')');
             }
+
+            // Défilement automatique des slides
+            setInterval(function() {
+                nextSlide();
+            }, intervalTime);
         });
     </script>
+
 
 
     <script>
