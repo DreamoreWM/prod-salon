@@ -508,6 +508,24 @@
         font-family: inherit; /* Utilise la police par défaut définie dans votre projet */
     }
 
+    .image-slider {
+        display: flex;
+        justify-content: right;
+        gap: 10px; /* This will add 10px of space between each image */
+        flex-wrap: wrap;
+        margin: 0; /* Reset margin */
+        padding: 0;
+    }
+
+    .review-image {
+        width: 30px !important;
+        height: 30px !important;
+        border-radius: 4px !important; /* This will make the image round */
+        object-fit: cover !important; /* This will cover the whole area without distortion */
+        cursor: pointer;
+        margin: 7px 0px;
+    }
+
 </style>
 
 
