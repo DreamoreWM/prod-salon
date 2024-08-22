@@ -50,20 +50,6 @@
                             @method('PUT')
 
                             <div class="row">
-                                <div class="mb-3">
-                                    <label class="form-label"><i class="fas fa-image"></i> Image pour le Dashboard</label>
-                                    <div class="image-selector" id="dashboard-image-selector">
-                                        @foreach(File::files(public_path('images/home')) as $file)
-                                            @php
-                                                $filename = pathinfo($file)['basename'];
-                                            @endphp
-                                            <div data-filename="{{ $filename }}" class="{{ $filename == $setting->dashboard_image ? 'selected' : '' }}">
-                                                <img src="{{ asset('images/home/' . $filename) }}" alt="Image" style="width: 100px; height: 100px; object-fit: cover;">
-                                            </div>
-                                        @endforeach
-                                    </div>
-                                    <input type="hidden" id="dashboard_image" name="dashboard_image" value="{{ old('dashboard_image', $setting->dashboard_image) }}">
-                                </div>
                                 <div class="col-md-6">
                                     <div class="mb-3">
                                         <label for="name" class="form-label"><i class="fas fa-store"></i> Nom du Salon</label>
@@ -98,20 +84,37 @@
 
                                     <div class="mb-3">
                                         <label class="form-label"><i class="fas fa-image"></i> Image de fond</label>
-                                        <button type="button" id="uploadBgButton" class="btn btn-primary">Ajouter une image</button>
-                                        <img id="previewbg" style="display: none;">
-                                        <input type="file" id="bgUpload" name="bg_upload" style="display: none;">
-                                        <div class="image-selector" id="image-selector">
-                                            @foreach(File::files(public_path('background')) as $file)
-                                                @php
-                                                    $filename = pathinfo($file)['basename'];
-                                                @endphp
-                                                <div data-filename="{{ $filename }}" class="{{ $filename == $setting->background_image ? 'selected' : '' }}">
-                                                    <img src="{{ asset('background/' . $filename) }}" alt="Image" style="width: 100px; height: 100px; object-fit: cover;">
-                                                </div>
-                                            @endforeach
-                                        </div>
+                                        <button type="button" id="openBgModalButton" class="btn btn-primary">Sélectionner une image</button>
                                         <input type="hidden" id="background_image" name="background_image" value="{{ old('background_image', $setting->background_image) }}">
+                                    </div>
+
+                                    <div class="modal fade" id="bgModal" tabindex="-1" aria-labelledby="bgModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-lg">
+                                            <div class="modal-content">
+                                                <button type="button" id="uploadBgButton" class="btn btn-primary">Ajouter une image</button>
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="bgModalLabel">Sélectionner une image de fond</h5>
+                                                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Fermer">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <input type="file" id="bgUpload" name="bg_upload" style="display: none;">
+                                                    <div class="image-selector" id="image-selector">
+                                                        @foreach(File::files(public_path('background')) as $file)
+                                                            @php
+                                                                $filename = pathinfo($file)['basename'];
+                                                            @endphp
+                                                            <div data-filename="{{ $filename }}" class="{{ $filename == $setting->background_image ? 'selected' : '' }}">
+                                                                <img src="{{ asset('background/' . $filename) }}" alt="Image" style="width: 100px; height: 100px; object-fit: cover;">
+                                                            </div>
+                                                        @endforeach
+                                                    </div>
+                                                    <h1>Photo uploadée:</h1>
+                                                    <img id="previewbg" style="display: none;">
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
 
                                     <div class="mb-3">
@@ -169,6 +172,32 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+
+        document.getElementById('openBgModalButton').addEventListener('click', function() {
+            $('#bgModal').modal('show');
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var imageSelector = document.getElementById('image-selector');
+            var backgroundImageInput = document.getElementById('background_image');
+
+            imageSelector.addEventListener('click', function(event) {
+                if (event.target.tagName === 'IMG') {
+                    var selectedDiv = event.target.parentNode;
+                    var filename = selectedDiv.getAttribute('data-filename');
+                    backgroundImageInput.value = filename;
+
+                    var previouslySelectedDiv = imageSelector.querySelector('.selected');
+                    if (previouslySelectedDiv) {
+                        previouslySelectedDiv.classList.remove('selected');
+                    }
+
+                    selectedDiv.classList.add('selected');
+                    $('#bgModal').modal('hide');
+                }
+            });
+        });
+
         document.getElementById('uploadLogoButton').addEventListener('click', function() {
             document.getElementById('logoUpload').click();
         });
@@ -200,12 +229,35 @@
             reader.onloadend = function() {
                 document.getElementById('previewbg').src = reader.result;
                 document.getElementById('previewbg').style.display = 'block';
+
+                // Créer un nouvel élément div pour l'image téléchargée
+                var newDiv = document.createElement('div');
+                newDiv.classList.add('selected');  // Ajouter la classe 'selected' directement
+                newDiv.setAttribute('data-filename', file.name);
+
+                var img = document.createElement('img');
+                img.src = reader.result;
+                img.style.width = '100px';
+                img.style.height = '100px';
+                img.style.objectFit = 'cover';
+
+                newDiv.appendChild(img);
+
+                // Ajouter la nouvelle image à l'image selector
+                document.getElementById('image-selector').appendChild(newDiv);
+
+                // Définir la valeur de l'input caché pour la nouvelle image
+                document.getElementById('background_image').value = file.name;
+
+                // Retirer la classe 'selected' des autres images
+                var previouslySelectedDiv = document.querySelector('.image-selector .selected');
+                if (previouslySelectedDiv) {
+                    previouslySelectedDiv.classList.remove('selected');
+                }
             }
 
             if (file) {
                 reader.readAsDataURL(file);
-            } else {
-                document.getElementById('previewbg').style.display = 'none';
             }
         });
 
