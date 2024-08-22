@@ -734,8 +734,7 @@
                 <a href="/confidentiality" style="text-decoration: none; color: #FFFFFF;">Régles de confidentialités</a>
             </div>
             <div>
-                <p style="margin: 0; color: #E2E2E2;">© 2024 MonSiteWeb. Tous droits réservés.</p>
-                <p style="margin: 0; color: #E2E2E2;">contact@monsiteweb.com | +33 1 23 45 67 89</p>
+                <p style="margin: 0; color: #E2E2E2;">© 2024 Un-rendez-vous.fr. Tous droits réservés.</p>
             </div>
         </footer>
 
