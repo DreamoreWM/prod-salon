@@ -135,32 +135,33 @@
 
 <div class="wrapper">
     <form method="POST" action="{{ route('login') }}">
-    @csrf
-        <h1>Login</h1>
+        @csrf
+        <h1>Connexion</h1>
         <div class="input-box">
-            <input type="email" name="email" placeholder="Email" required>
+            <input type="email" name="email" placeholder="E-mail" required>
             <i class="bx bxs-user"></i>
         </div>
         <div class="input-box">
-            <input type="password" name="password" placeholder="Password" required>
+            <input type="password" name="password" placeholder="Mot de passe" required>
             <i class="bx bxs-lock-alt"></i>
         </div>
         <div class="remember-forgot">
             <label for="">
                 <input type="checkbox" name="" id="">
-                Remember me
+                Se souvenir de moi
             </label>
-            <a href="{{ route('password.request') }}">Forgot password?</a>
+            <a href="{{ route('password.request') }}">Mot de passe oublié ?</a>
         </div>
 
-        <button type="submit" class="btn">Login</button>
+        <button type="submit" class="btn">Connexion</button>
 
         <div class="register-link">
-            <p>Don't have an account?
-                <a href="{{ route('register') }}">Register</a></p>
+            <p>Vous n'avez pas de compte ?
+                <a href="{{ route('register') }}">S'inscrire</a></p>
         </div>
     </form>
 </div>
+
 
 </body>
 </html>

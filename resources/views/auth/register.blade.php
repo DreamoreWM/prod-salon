@@ -136,20 +136,20 @@
 <div class="wrapper">
     <form method="POST" action="{{ route('register') }}">
         @csrf
-        <h1>Registration</h1>
+        <h1>Inscription</h1>
         <div class="input-box">
-            <input type="text" id="name" name="name" placeholder="Name" required>
+            <input type="text" id="name" name="name" placeholder="Nom" required>
             <i class="bx bxs-user"></i>
         </div>
         <div class="input-box">
-            <input type="email" id="email" name="email" placeholder="Email" required>
+            <input type="email" id="email" name="email" placeholder="E-mail" required>
             <i class="bx bxs-user"></i>
         </div>
         <div class="input-box">
             <input id="password"
                    type="password"
                    name="password"
-                   placeholder="Password"
+                   placeholder="Mot de passe"
                    required autocomplete="new-password">
             <i class="bx bxs-lock-alt"></i>
         </div>
@@ -157,19 +157,20 @@
             <input id="password_confirmation"
                    type="password"
                    name="password_confirmation"
-                   placeholder="Password confirmation"
+                   placeholder="Confirmation du mot de passe"
                    required autocomplete="new-password">
             <i class="bx bxs-lock-alt"></i>
         </div>
 
-        <button type="submit" class="btn">Register</button>
+        <button type="submit" class="btn">S'inscrire</button>
 
         <div class="register-link">
-            <p>Already registered?
-                <a href="{{ route('login') }}">Login</a></p>
+            <p>Déjà inscrit ?
+                <a href="{{ route('login') }}">Connexion</a></p>
         </div>
     </form>
 </div>
+
 
 </body>
 </html>
